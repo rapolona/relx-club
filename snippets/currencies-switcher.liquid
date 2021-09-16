@@ -1,0 +1,54 @@
+{% assign codes = 'USD,EUR,GBP,CAD,AFN,ALL,DZD,AOA,ARS,AMD,AWG,AUD,BBD,AZN,BDT,BSD,BHD,BIF,BYR,BZD,BMD,BTN,BAM,BRL,BOB,BWP,BND,BGN,MMK,KHR,CVE,KYD,XAF,CLP,CNY,COP,KMF,CDF,CRC,HRK,CZK,DKK,DOP,XCD,EGP,ETB,XPF,FJD,GMD,GHS,GTQ,GYD,GEL,HTG,HN,HKD,HUF,ISK,INR,IDR,ILS,IQD,JMD,JPY,JEP,JOD,KZT,KES,KWD,KGS,LAK,LVL,LBP,LSL,LRD,MGA,MKD,MOP,MWK,MVR,MXN,MYR,MUR,MDL,MAD,MNT,MZN,NAD,NPR,ANG,NZD,NIO,NGN,NOK,OMR,PAB,PKR,PGK,PYG,PEN,PHP,PLN,QAR,RON,RUB,RWF,WST,SAR,STD,RD,SCR,SGD,SDG,SYP,ZAR,KRW,SSP,SBD,LKR,SRD,SZL,SEK,CHF,TWD,THB,TZS,TTD,TND,TRY,TMT,UGX,UAH,AED,UYU,UZS,VUV,VEF,VND,XOF,YER,ZMW' | split: ',' %}
+{% assign currency_nam = 'US dollar (USD),Euro (EUR),British pound (GBP),Canadian dollar (CAD),Afghan Afghani (AFN),Albanian lek (ALL),Algerian dinar (DZD),Angolan kwanza (AOA),Argentine peso (ARS),Armenian dram (AMD),Aruban florin (AWG),Australian dollar (AUD),Barbadian dollar (BBD),Azerbaijani manat (AZN),Bangladeshi taka (BDT),Bahamian dollar (BSD),Bahraini dinar (BHD),Burundian franc (BIF),Belarusian ruble (BYR),Belize dollar (BZD),Bermudan dollar (BMD),Bhutanese ngultrum (BTN),Bosnia-Herzegovina convertible mark (BAM),Brazilian real (BRL),Bolivian boliviano (BOB),Botswanan pula (BWP),Brunei dollar (BND),Bulgarian lev (BGN),Myanmar kyat (MMK),Cambodian riel (KHR),Cape Verdean escudo (CVE),Cayman Islands dollar (KYD),Central African CFA franc (XAF),Chilean peso (CLP),Chinese yuan (CNY),Colombian peso (COP),Comorian franc (KMF),Congolese franc (CDF),Costa Rican colón (CRC),Croatian kuna (HRK),Czech koruna (CZK),Danish krone (DKK),Dominican peso (DOP),East Caribbean dollar (XCD),Egyptian pound (EGP),Ethiopian birr (ETB),CFP franc (XPF),Fijian dollar (FJD),Gambian dalasi (GMD),Ghanaian cedi (GHS),Guatemalan quetzal (GTQ),Guyanaese dollar (GYD),Georgian lari (GEL),Haitian gourde (HTG),Honduran lempira (HNL),Hong Kong dollar (HKD),Hungarian forint (HUF),Icelandic króna (ISK),Indian rupee (INR),Indonesian rupiah (IDR),Israeli new shekel (ILS),Iraqi dinar (IQD),Jamaican dollar (JMD),Japanese yen (JPY),Jersey pound (JEP),Jordanian dinar (JOD),Kazakhstani tenge (KZT),Kenyan shilling (KES),Kuwaiti dinar (KWD),Kyrgystani som (KGS),Laotian kip (LAK),Latvian lats (LVL),Lebanese pound (LBP),Lesotho loti (LSL),Liberian dollar (LRD),Malagasy ariary (MGA),Macedonian denar (MKD),Macanese pataca (MOP),Malawian kwacha (MWK),Maldivian rufiyaa (MVR),Mexican peso (MXN),Malaysian ringgit (MYR),Mauritian rupee (MUR),Moldovan leu (MDL),Moroccan dirham (MAD),Mongolian tugrik (MNT),Mozambican metical (MZN),Namibian dollar (NAD),Nepalese rupee (NPR),Netherlands Antillean guilder (ANG),New Zealand dollar (NZD),Nicaraguan córdoba (NIO),Nigerian naira (NGN),Norwegian krone (NOK),Omani rial (OMR),Panamanian balboa (PAB),Pakistani rupee (PKR),Papua New Guinean kina (PGK),Paraguayan guarani (PYG),Peruvian sol (PEN),Philippine piso (PHP),Polish zloty (PLN),Qatari rial (QAR),Romanian leu (RON),Russian ruble (RUB),Rwandan franc (RWF),Samoan tala (WST),Saudi riyal (SAR),São Tomé &amp; Príncipe dobra (STD),Serbian dinar (RSD),Seychellois rupee (SCR),Singapore dollar (SGD),Sudanese pound (SDG),Syrian pound (SYP),South African rand (ZAR),South Korean won (KRW),South Sudanese pound (SSP),Solomon Islands dollar (SBD),Sri Lankan rupee (LKR),Surinamese dollar (SRD),Swazi lilangeni (SZL),Swedish krona (SEK),Swiss franc (CHF),New Taiwan dollar (TWD),Thai baht (THB),Tanzanian shilling (TZS),Trinidad &amp; Tobago dollar (TTD),Tunisian dinar (TND),Turkish lira (TRY),Turkmenistani manat (TMT),Ugandan shilling (UGX),Ukrainian hryvnia (UAH),UAE dirham (AED),Uruguayan peso (UYU),Uzbekistani som (UZS),Vanuatu vatu (VUV),Venezuelan bolívar (VEF),Vietnamese dong (VND),West African CFA franc (XOF),Yemeni rial (YER),Zambian kwacha (ZMW)' | split: ',' %}
+{% assign currency_option = settings.currency_option %}
+{% assign show_flag       = true %}
+{% if settings.flag_currency == 'none' %}{% assign show_flag = false %}{% endif %}
+
+{% if currency_option == 'selected_currency' %}
+  {% assign supported_codes = settings.supported_currencies | split: ' ' %}
+{% endif %}
+
+{% unless type == 'footer' %}
+  <select class="currencies_src currencies-select hide nostranslate" name="currencies">
+    <option value="{{ shop.currency }}" selected="selected">{{ shop.currency }}</option>
+    {% if currency_option == 'selected_currency' %}
+      {% for code in supported_codes %}
+        {% if code != shop.currency and codes contains code %}
+          <option value="{{ code }}">{{ code }}</option>
+        {% endif %}
+      {% endfor %}
+    {% else %}
+      {% for code in codes %}
+        {% if code != shop.currency %}
+        <option value="{{ code }}">{{ code }}</option>
+        {% endif %}
+      {% endfor %}
+    {% endif %}
+  </select>
+{% endunless %}
+
+<div class="currencies-btn f-select nostranslate{% if type == 'footer' %} f-select-up{% endif %}">
+  <a href="javascript:void(0);"></a>
+
+  <ul class="currencies-list">
+    {% if currency_option == 'selected_currency' %}
+      {%- for code in codes -%}
+        {%- if supported_codes contains code -%}
+          <li data-value="{{ code }}">
+            {% if show_flag %}<span class="currency-flag currency-flag-{{ code | downcase }}"></span>{% endif %}
+            <span class="currency-code">{{ code }}</span>
+            <span class="currency-name">{{currency_nam[forloop.index0]}}</span>
+          </li>
+        {%- endif -%}
+      {%- endfor -%}
+    {% else %}
+      {% for code in codes %}
+        <li data-value="{{ code }}">
+          {% if show_flag %}<span class="currency-flag currency-flag-{{ code | downcase }}"></span>{% endif %}
+          <span class="currency-code">{{ code }}</span>
+          <span class="currency-name">{{currency_nam[forloop.index0]}}</span>
+        </li>
+      {% endfor %}
+    {% endif %}
+  </ul>
+</div>

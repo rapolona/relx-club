@@ -1,0 +1,124 @@
+{% assign description = product.description %}
+{% capture description %}{{ description }}{% endcapture %}
+
+<div class="product-simple-tab">
+  <div class="description-product">{% render 'judgeme_widgets', widget_type: 'judgeme_review_widget', concierge_install: true, product: product %}
+      <ul class="nav-ver-2">
+
+        {% if section.blocks.size > 0 %}
+          {% for block in section.blocks %}
+                      
+            {% case block.type %}
+              {% when 'description' %}
+                {% unless description == blank %}
+
+                  {% if block.settings.multi-tab %}
+                    {% assign description_parts = description | split: "<h5" %}
+                    {% assign temp_des = product.description | split: '<h5>' | first | strip %}
+                    {% if temp_des.size > 0 %}
+                      <li class="nav-item active" {{ block.shopify_attributes }}>
+                        <a class="nav-link" href="javascript:void(0);">{{ 'products.product.description' | t }}
+                        <i class="demo-icon icon-des icon-plus"></i>
+                        </a>
+                        <div class="tab-content">
+                          <div class="tab-pane show active">
+                            {{ temp_des }}
+                            </div>
+                          </div>
+                      </li>
+                    {% endif %}
+
+                    {% for part in description_parts %}
+                      {% if part contains "</h5>" %}
+                        {% assign remove = part | split: ">" | first | append: ">" %}
+                        {% capture ind %}{{ forloop.index | plus: 0}}{% endcapture %}
+                        {% assign tab_title = part | split: "</h5>" | first | strip_html | replace: remove, "" %}
+
+                        <li class="nav-item">
+                          <a class="nav-link" href="javascript:void(0);">{{ tab_title }}<i class="demo-icon icon-des icon-plus"></i></a>
+
+                          {% assign fp = part | append: " " | split: "</h5>" | last %}
+                          {% assign p = part | append: " " | split: "</h5>" | last | strip_html | replace: "&nbsp;", "" | replace: " ", "" | strip_newlines %}
+                          {% capture ind %}{{ forloop.index | plus: 0}}{% endcapture %}
+
+                          {% if p != "" or fp contains "<img " or fp contains "<iframe " %}
+                          <div class="tab-content">
+                            <div class="tab-pane">
+                              {{ part | split: "</h5>" | last | replace: "<div", "<span" | replace: "</div", "</span" }}
+                            </div>
+                          </div>
+                          {% endif %}
+
+                        </li>
+                      {% endif %}
+                    {% endfor %}
+
+                  {% else %}
+                    <li class="nav-item" {{ block.shopify_attributes }}>
+                      <a class="nav-link">{{ 'products.product.description' | t }}
+                      <i class="demo-icon icon-des icon-plus"></i>
+                      </a>
+                    <div class="tab-content">
+                      <div class="tab-pane">
+                        {{ product.description }}
+                      </div>
+                    </div>
+                  </li>
+                  {% endif %}
+
+                {% endunless %}
+
+              {% when 'page' %}
+            		<li class="nav-item" {{ block.shopify_attributes }}>
+                  <a class="nav-link" href="javascript:void(0);">{{ block.settings.page_title }}
+                    <i class="demo-icon icon-des icon-plus"></i>
+                  </a>
+                  <div class="tab-content">
+                    <div class="tab-pane">
+                      {{ pages[block.settings.page].content }}
+                    </div>
+                  </div>
+                </li>
+              
+              {%- when 'tab_metafield' -%}
+                {%- render 'product-customfield' ,type: 'metafield_description_tab_list' -%}
+
+            {% endcase %}
+
+          {% endfor %}
+        {% endif %}
+  
+        {% if settings.product_review_type != 'none' and section.settings.product_tab_review == 'inside' %}
+          <li class="nav-item">
+            <a class="nav-link" href="javascript:void(0);">{{'products.product.customer_reviews' | t }}<i class="demo-icon icon-des icon-plus"></i></a>
+            <div class="tab-content">
+              <div class="tab-pane">{% include 'include-reviews' %}</div>
+            </div>
+          </li>
+        {% endif %}
+      </ul>
+  </div>
+</div>
+{% comment %}<script>
+  jQuery(document).ready(function($) {
+    $('.nav-ver-2 li').removeClass('active').find('.tab-pane').removeClass('show active');
+    $('.nav-ver-2 li').first().addClass('active').find('.tab-pane').addClass('show active');
+
+    $(document).on('click','.nav-ver-2 a.nav-link',function(event){      
+      event.preventDefault();
+      let e = $(this).parent();
+
+      if (e.hasClass('active')) {
+        e.removeClass('active').find('.tab-pane').slideUp().removeClass('show active');
+      }else{
+        e.addClass('active').find('.tab-pane').slideDown().addClass('show active');
+      }
+      if (AT_Main.getWidthBrowser() < 991) {
+        if (e.hasClass('active')) {
+          let top = e.offset().top - 150;
+          jQuery('body,html').animate({scrollTop:top},800,'swing');
+        }
+      }
+    });
+  });
+</script>{% endcomment %}

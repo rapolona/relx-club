@@ -1,0 +1,695 @@
+{%- assign fomoSectionID = fomoSectionID | default: section.id -%}
+{%- assign section_type = section_type | default: 'product-page' -%}
+
+{%- case type -%}
+  	{%- when 'init' -%}
+	    {%- assign collectionFomo = collections['all'] -%}
+	    {%- assign min            = 0 -%}
+	    {%- assign max            = collectionFomo.all_products_count | minus: 1 -%}
+
+	    {%- capture fomo_productArray -%}
+	      {%- for i in (1..50) -%}
+	        {%- assign diff         = max | minus: min -%}
+	        {%- assign tempRandom   = "now" | date: "%N" | plus: i -%}
+	        {%- assign randomNumber = tempRandom | modulo: diff | plus: min -%}
+	        {%- assign _productJSON = collectionFomo.products[randomNumber] | default: collectionFomo.products[i] -%}
+	        {%- if _productJSON.id != null -%}
+	          {"id":{{ _productJSON.id | json }},"title":{{ _productJSON.title | json }},"url":{{ _productJSON.url | json }},"image":{{ _productJSON.images[0] | json }}}{%- unless forloop.last -%}+++{%- endunless -%}
+	        {%- endif -%}
+	      {%- endfor -%}
+	    {%- endcapture -%}
+	    <script id="relatedProductJSON{{fomoSectionID}}" type="application/json">[{{fomo_productArray | split: '+++' | uniq | join: ',' }}]</script>
+
+	    {%- assign date_second    = 'second'   | downcase -%}
+	    {%- assign date_seconds   = 'seconds'  | downcase -%}
+	    {%- assign date_minute    = 'minute'   | downcase -%}
+	    {%- assign date_minutes   = 'minutes'  | downcase -%}
+	    {%- assign date_hour      = 'hour'     | downcase -%}
+	    {%- assign date_hours     = 'hours'    | downcase -%}
+
+	    <script id="timesJSON{{fomoSectionID}}" type="application/json">[{ "id" : "second", "value": {{ date_second | json }}},{ "id" : "seconds", "value": {{ date_seconds | json }}},{ "id" : "minute", "value": {{ date_minute | json }}},{ "id" : "minutes", "value": {{ date_minutes | json }}},{ "id" : "hour", "value": {{ date_hour | json }}},{ "id" : "hours", "value": {{ date_hours | json }}}]</script>
+	    <script>
+	    	window.requestAnimFrame = (function () {
+	    		return (window.requestAnimationFrame || window.webkitRequestAnimationFrame ||window.mozRequestAnimationFrame ||window.oRequestAnimationFrame ||window.msRequestAnimationFrame ||function (callback) {window.setTimeout(callback, 1000 / 60)})
+	    	}())
+	    	window.cancelAnimFrame = (function () {
+	    		return (window.cancelAnimationFrame ||window.webkitCancelAnimationFrame ||window.mozCancelAnimationFrame ||window.oCancelAnimationFrame ||window.msCancelAnimationFrame ||function (id) {window.clearTimeout(id)})
+	    	}())
+	    	var number_rd = (min,max)=>Math.floor(Math.random() * (max - min + 1) ) + min
+	    		,arrCities_IP = []
+				,arrCities_Manual = '{{settings.sell_country}}'.split(';')
+	    		,productsRelated
+	    		,timeText;
+
+	    	var cookieProduct = {
+	    		setCookie : function(cname, cvalue, exdays=null, cexpire) {
+	    			var date;
+	    			if (exdays != null) {
+	    				date = new Date();
+	    				date.setTime(date.getTime() + (exdays * 1000));
+	    				$.cookie(cexpire, date,{expires: 1});
+	    			}
+	    			else{
+	    				date = new Date($.cookie(cexpire));
+	    			}
+	    			$.cookie(cname, cvalue, { expires: date });
+	    		}
+	    	}
+
+	    	productsRelated = JSON.parse(jQuery('#relatedProductJSON{{fomoSectionID}}').html());
+	    	timeText = JSON.parse(jQuery('#timesJSON{{fomoSectionID}}').html());
+
+	    	$(function(){
+	    		!$('#product-detail_fomo-handle{{fomoSectionID}} .fomo-notify').length && $('#product-detail_fomo-handle{{fomoSectionID}}').remove();
+	    		$('#product-detail_fomo-handle{{fomoSectionID}} .fomo-notify').length && $.ajax({
+	    			url: 'https://get.geojs.io/v1/ip/geo.js',
+	    			type: 'POST',
+	    			dataType: 'jsonp',
+	    			success: function(location) {
+	    				let html = '<select class="crs-country" data-region-id="list-state" data-default-value="' + location.country + '"></select>' + '<select id="list-state"></select>';
+	    				$('#fomo-country-target{{fomoSectionID}}').html(html);
+	    				window.crs.init();
+	    				$('#list-state option').each(function() {
+	    					arrCities_IP.push($(this).val());
+	    				});
+	    				$('#fomo-country-target{{fomoSectionID}}').remove();
+	    			}
+	    		})
+	    	})
+
+	    	var fomoCreate = function(id){
+	    		if ($('#fomo-'+id+'.toast').hasClass('toast-disabled')) {
+	    			return
+	    		}
+				let _toastID     = $('#fomo-'+id)
+				,cookieName   = 'number_exist_'+id
+				,cookieExpire = 'number_expire_'+id
+				,fomoData  	  = _toastID.find('input[name="fomo-data"]')
+				,maxOri       = Number(fomoData.attr('data-max'))
+				,minOri       = Number(fomoData.attr('data-min'))
+				,percent   	  = Number(fomoData.attr('data-deviation'))
+				,cookieHide   = Number(fomoData.attr('data-cookie-his'))
+				,arrayN       = []
+				,ranDomNumber
+				,_toast_number  = _toastID.find('.toast-numbers > span')
+				,_toast_times   = _toastID.find('.toast-times > span')
+				,_toast_address = _toastID.find('.toast-cities > span')
+				,_toast_product = _toastID.find('.toast-products > span')
+				,_toast_image   = _toastID.find('.toast-products-image-inner');
+
+
+				if (typeof fomoData.attr('data-position') != 'undefined') {
+					let _parentNode = $(`.toast-container-position.${fomoData.attr('data-position')}`);
+
+					if (!_parentNode.find('#fomo-'+id+'.toast').length) {
+						_parentNode.append($('#fomo-'+id+'.toast'));
+					}
+					_parentNode.find('.toast.show').first().before($('#fomo-'+id+'.toast'));
+				}
+
+
+				if (_toast_number.length) {
+				  if ($.cookie(cookieName) == null) {
+				    ranDomNumber = number_rd(minOri, maxOri);
+				    arrayN.push(ranDomNumber);
+				    cookieProduct.setCookie(cookieName, arrayN, cookieHide, cookieExpire);
+				  }
+				  else{
+				    let arrNumber_exist  = $.cookie(cookieName);
+				    arrayN = arrNumber_exist.toString().split(',')
+
+				    let lastest_el = Number(arrayN.pop())
+				    ,min = Math.round(lastest_el -(lastest_el * percent/100))
+				    ,max = Math.round(lastest_el +(lastest_el * percent/100))
+
+				    if(max > maxOri || isNaN(max)){ max = maxOri; }
+				    if(min < minOri || isNaN(min)){ min = minOri; }
+				    if( max == min ){ max = maxOri; min = minOri;}
+
+				    ranDomNumber = number_rd(min, max);
+
+				    arrayN.push(ranDomNumber);
+				    cookieProduct.setCookie(cookieName, arrayN, null, cookieExpire);
+				  }
+				  _toast_number.html(ranDomNumber);
+				}
+
+				if (_toast_times.length) {
+
+				  let rdTimeNumber = number_rd(1, 60), rdTimeText, rdTime;
+				  rdTimeText = rdTimeNumber > 24 ? number_rd(0,3) : number_rd(0,5);
+
+				  if (rdTimeNumber == 1) {
+				    rdTime = rdTimeText % 2 != 0 ? timeText[rdTimeText-1].value : timeText[rdTimeText].value
+				  }
+				  else{
+				    rdTime = rdTimeText % 2 == 0 ? timeText[rdTimeText+1].value : timeText[rdTimeText].value
+				  }
+				  _toast_times.html(rdTimeNumber + ' ' + rdTime);
+				}
+
+				if (_toast_address.length) {
+					let ranDomAddress, _address, arrCities_Select = fomoData.attr('data-manual-city') == 'true' ? arrCities_Manual : arrCities_IP
+
+				  	ranDomAddress 	= number_rd(0,arrCities_Select.length -1);
+				  	_address 		= arrCities_Select[ranDomAddress] == "" ? arrCities_Select[number_rd(0,arrCities_Select.length -1)] : arrCities_Select[ranDomAddress];
+
+				  	_toast_address.html(_address);
+				}
+
+				let relatedProducts = $('#fomo-'+id+'-relatedJSON').length ? JSON.parse($('#fomo-'+id+'-relatedJSON').html()) : productsRelated
+					,ranDomProducts = number_rd(0,relatedProducts.length -1);
+
+				if (_toast_image.length) {
+				  let productURL 	= relatedProducts[ranDomProducts].url || 'javascript:void(0);'
+				  	,productImg 	= _toast_image.attr('data-size') == 'master' ? relatedProducts[ranDomProducts].image : Shopify.resizeImage(relatedProducts[ranDomProducts].image, _toast_image.attr('data-size'))
+				   ,_product_layout = `<a href="${productURL}" target="_blank" rel="noopener" class="w-100"><img src="${productImg}"/></a>`;
+				  _toast_image.html(_product_layout);
+				}
+
+				if (_toast_product.length) {
+					let productURL = relatedProducts[ranDomProducts].url || 'javascript:void(0);'
+				  	_toast_product.html(relatedProducts[ranDomProducts].title).parents('a').first().attr('href',productURL);
+				}
+
+				$('#fomo-'+id+'.toast').toast('show');
+	    	}
+
+	    	var checkAnimFrames = true, everySeconds = ()=>{
+	    		AT_Main.debounceTime(()=>{
+	    			!$('.fomo-notify').length && (checkAnimFrames = false)
+
+	    			if (checkAnimFrames) {
+	    				loopSeconds = window.requestAnimFrame(everySeconds);
+
+	    				let startTime = Number($('#product-detail_fomo-handle{{fomoSectionID}}').attr('data-start-time'))
+	    					,nowTime  = Date.now();
+
+	    				$('.fomo-notify').length && $('.fomo-notify').each((i,v)=>{
+	    					let _this   = $(v)
+	    					,_this_data = _this.find('input[name="fomo-data"]')
+	    					,_blockID   = _this_data.attr('data-id')
+	    					,_firstShow = Number(_this_data.attr('data-first-delay'))
+	    					,_loopTime  = Number(_this_data.attr('data-loop'))
+	    					,_last_show = Number(_this_data.attr('data-last-show'))
+	    					,startTime  = Number(_this_data.attr('data-start-time'))
+	    					,calcStart	= Math.floor((nowTime - startTime)/1000)-1
+	    					,calcLast	= Math.floor((nowTime - _last_show)/1000);
+
+	    					if (_last_show == 0) {
+	    						if (calcStart > _firstShow) {_this_data.attr('data-start-time', Date.now())}
+	    						if (calcStart == _firstShow) {
+	    							fomoCreate(_blockID);
+	    							_this_data.attr('data-last-show', nowTime);
+	    						}
+	    					}else{
+	    						if (calcLast > _loopTime) {_this_data.attr('data-last-show',0).attr('data-start-time',nowTime)}
+	    						if (calcLast == _loopTime ) {
+	    							fomoCreate(_blockID);
+	    							_this_data.attr('data-last-show', nowTime);
+	    						}
+	    					}
+	    				})
+
+	    			}else{window.cancelAnimFrame(loopSeconds);}
+	    		},1000)();
+	    	}
+
+	    	$(()=>{
+	    		var loopSeconds;
+	    		$('.fomo-notify').length && (loopSeconds = window.requestAnimFrame(everySeconds));
+	    		var i_sections = new theme.Sections();
+	    		i_sections.register('{{section_type}}', function(){
+	    			if ($('.fomo-notify').length) {
+	    				$(document).on('click', '.fomo-notify button.close', function(e){$(this).parents('.fomo-notify').addClass('toast-disabled');})
+	    				$('.fomo-notify input[type="hidden"]').attr('data-start-time', (Date.now()));
+	    				$('.fomo-notify').on('shopify:block:select', (e)=>{
+	    					checkAnimFrames = false;
+
+	    					$(e.currentTarget).attr('style','display:block!important;opacity: 1;');
+	    					AT_Main.debounceTime(()=>{
+	    						checkAnimFrames = true;
+	    						loopSeconds = window.requestAnimFrame(everySeconds);
+	    					}, 1500)();
+	    				}).on('shopify:block:deselect', (e)=>{
+	    					$(e.currentTarget).removeAttr('style');
+	    				})
+	    			}
+	    			else{
+	    				checkAnimFrames = false;
+	    			}
+	    		})
+	    	})
+	    </script>
+
+  	{%- when 'fomo_popup' -%}
+
+  		{%- capture toastImgLayout -%}
+  			{%- if f_use_image or noti_icon != blank or noti_image != blank -%}
+			    <div class="fomo-img-container toast-products-{% if f_use_image or noti_image != blank %}image{% else %}icon{% endif %}">
+			      {%- if f_use_image 			-%}<div class="toast-products-image-inner" data-size="{{f_img_s}}"></div>
+			      {%- elsif noti_icon != blank 	-%}{{noti_icon}}
+			      {%- elsif noti_image != blank -%}<div class="toast-image-inner">{{noti_image}}</div>
+			      {%- endif -%}
+			    </div>
+  			{%- endif -%}
+  		{%- endcapture -%}
+
+	  	<div id="fomo-{{block.id}}" role="alert" aria-live="assertive" aria-atomic="true" data-autohide="true" data-delay="{{f_show_time | times: 1000}}"
+	    	class="toast fomo-notify product-noti-popup {{f_position}}{{f_anim}}{% if f_img_margin != blank %} toast-img-margin{% endif %}{% if f_hide_mobile %} d-none d-md-block{% endif %}"{{block.shopify_attributes}}>
+
+		  	<input name="fomo-data" type="hidden" value="fomo {{fomoCount}}"
+		  			data-index="{{fomoCount}}"
+					data-id="{{block.id}}"
+					data-position="{{f_position}}"
+					data-first-delay="{{f_first_show_time}}"
+					data-show="{{f_show_time}}"
+					data-loop="{{f_loop_time | plus: f_show_time }}"
+					data-manual-city="{{f_city_manual}}"
+					data-deviation="{{f_deviation_value}}"
+					data-max="{{f_max}}"
+					data-min="{{f_min}}"
+					data-cookie-his="{{f_cookie_history}}"
+					data-last-show="0">
+
+		  	<div class="toast-inner">
+				{%- if f_img_position == 'left' -%}{{toastImgLayout}}{%- endif -%}
+
+			    <div class="toast-content">
+			      <div class="toast-header fomo-header">
+			        <div class="toast-header-inner d-flex justify-content-between w-100 align-items-center fomo-header-inner">
+			          <div class="toast-header-content">
+			            <div class="toast-header-content-inner fomo-content">
+				            {%- render 'fomo-notify' ,type: 'text_handle' ,text: f_text_head, icon: f_icon -%}
+			            </div>
+			          </div>
+			          <div class="toast-header-button">
+			            <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+			              <span class="demo-icon icon-delete"></span>
+			            </button>
+			          </div>
+			        </div>
+			      </div>
+
+			      	{%- unless f_text_body == blank -%}
+				        <div class="toast-body fomo-body">
+				          <div class="toast-body-inner fomo-body-inner">
+				            <div class="toast-body-content fomo-content">
+				            	{%- render 'fomo-notify' ,type: 'text_handle' ,text: f_text_body, icon: f_icon -%}
+				            </div>
+				          </div>
+				        </div>
+			      	{%- endunless -%}
+		      	</div>
+
+				{%- if f_img_position == 'right' -%}{{toastImgLayout}}{%- endif -%}
+		  	</div>
+		</div>
+
+	{%- when 'fomo_inline' -%}
+
+		{%- capture fomo_Image -%}
+		    <div class="toast-products-{% if f_use_image or noti_image != blank %}image{% else %}icon{% endif %}{% if f_use_image == false and noti_icon == blank and noti_image == blank %} hide{% endif %}">
+		      {%- if f_use_image         	  -%}<div class="toast-products-image-inner" data-size="{{f_img_s}}"></div>
+		      {%- elsif noti_icon != blank    -%}{{noti_icon}}
+		      {%- elsif noti_image != blank   -%}<div class="toast-image-inner">{{noti_image}}</div>
+		      {%- endif -%}
+		    </div>
+		{%- endcapture -%}
+
+		<div id="fomo-{{block.id}}"
+		     class="fomo-notify fomo-inline{% if noti_hide_mobile %} d-none d-md-block{% endif %}"{{block.shopify_attributes}}>
+
+		  	<input name="fomo-data" type="hidden" value="fomo {{fomoCount}}"
+		  			data-id="{{block.id}}"
+					data-first-delay="0"
+		  			data-loop="{{f_loop_time}}"
+					data-manual-city="{{f_city_manual}}"
+			      	data-deviation="{{f_deviation_value}}"
+			      	data-max="{{f_max}}"
+			      	data-min="{{f_min}}"
+			      	data-cookie-his="{{f_cookie_history}}"
+					data-last-show="0">
+
+			<div class="notify-layout-inner fomo-image--{{f_img_position}} fomo-img-size--{{f_img_size}}">
+
+				{%- if f_img_position != 'right' -%}{{fomo_Image}}{%- endif -%}
+				{%- unless f_content.size == 0 -%}
+					<div class="notify-layout-content">
+						<div class="fomo-header">
+							<div class="fomo-header-inner">
+								<div class="fomo-content text-{{f_head_alignment}}">
+									{%- render 'fomo-notify' ,type: 'text_handle' ,text: f_text_head, icon: f_icon -%}
+								</div>
+							</div>
+						</div>
+
+						{%- unless f_text_body == blank -%}
+							<div class="fomo-body">
+								<div class="fomo-body-inner">
+									<div class="fomo-content text-{{f_body_alignment}}">
+										{%- render 'fomo-notify' ,type: 'text_handle' ,text: f_text_body, icon: f_icon -%}
+									</div>
+								</div>
+							</div>
+						{%- endunless -%}
+					</div>
+				{%- endunless -%}
+				{%- if f_img_position == 'right' -%}{{fomo_Image}}{%- endif -%}
+			</div>
+		</div>
+
+	{%- when 'text_handle' -%}
+		{%- unless text == blank -%}
+
+			{%- assign _test = text | strip | replace: '[','++[' | replace: ']',']++' | split: '++' -%}
+
+			{%- for it in _test -%}
+
+				{%- if it contains '[' -%}
+					{%- assign subClass = '' -%}
+					{%- assign subStyle = '' -%}
+
+					{%- if it contains '|' -%}
+						{%- assign new_it = it | split: '|' -%}
+
+						{%- for i_it in new_it -%}
+							{%- if i_it contains 'upcase' -%}
+								{%- assign subClass = subClass | append: ' text-uppercase' -%}
+
+							{%- elsif i_it contains 'downcase' -%}
+								{%- assign subClass = subClass | append: ' text-lowercase' -%}
+
+							{%- elsif i_it contains 'propercase ' -%}
+								{%- assign subClass = subClass | append: ' text-capitalize' -%}
+							{%- endif -%}
+
+							{%- if i_it contains 'bold' -%}
+								{%- assign sub_it = i_it | remove: 'bold' | remove: ':' | remove: ']' | strip -%}
+								{%- if sub_it.size > 0 -%}
+									{%- assign subClass = subClass | append: ' fw-' | append: sub_it -%}
+								{%- else -%}
+									{%- assign subClass = subClass | append: ' fw-700' -%}
+								{%- endif -%}
+							{%- endif -%}
+
+							{%- if i_it contains 'color' -%}
+								{%- assign sub_it = i_it | remove: 'color' | remove: ':' | remove: ']' | strip -%}
+								{%- assign subStyle = subStyle | append: 'color: ' | append: sub_it | append: ';' -%}
+							{%- endif -%}
+
+							{%- if i_it contains 'bg_color' -%}
+								{%- assign sub_it = i_it | remove: 'bg_color' | remove: ':' | remove: ']' | strip -%}
+								{%- assign subStyle = subStyle | append: 'background-color: ' | append: sub_it | append: ';' -%}
+							{%- endif -%}
+
+							{%- if i_it contains 'size' -%}
+								{%- assign sub_it = i_it | remove: 'size' | remove: ':' | remove: ']' | strip -%}
+								{%- assign subStyle = subStyle | append: 'font-size: ' | append: sub_it | append: ';' -%}
+							{%- endif -%}
+
+							{%- if i_it contains 'underline' -%}
+								{%- assign sub_it = i_it | remove: 'underline' | remove: ':' | remove: ']' | strip -%}
+								{%- assign subStyle = subStyle | append: 'text-decoration: underline;' -%}
+							{%- endif -%}
+
+							{%- if i_it contains 'tada!' -%}
+								{%- assign subClass = subClass | append: ' animated tada delay-1s' -%}
+								{%- assign subStyle = subStyle | append: 'display: inline-block;' -%}
+							{%- endif -%}
+
+							{%- if i_it contains 'icon' -%}
+								{%- assign sub_it = i_it | remove_first: 'icon' | remove: ':' | remove: '[' | remove: ']' | strip -%}
+								{%- assign subClass = subClass | append: ' ' | append: sub_it -%}
+							{%- endif -%}
+						{%- endfor -%}
+
+						{%- if subStyle != '' -%}
+							{%- assign subsubClass = subClass -%}
+							{%- capture subClass -%}{{subsubClass}}" style="{{subStyle}}{%- endcapture -%}
+						{%- endif -%}
+					{%- endif -%}
+
+
+					{%- if it contains 'cities' -%}
+						<span class="toast-cities{{subClass}}"><span>Cities</span></span>
+
+					{%- elsif it contains 'number' -%}
+						<span class="toast-numbers{{subClass}}"><span>Number</span></span>
+
+					{%- elsif it contains 'products' -%}
+						<a href="javascript:void(0);" target="_blank" rel="noopener"><span class="toast-products{{subClass}}"><span>Products</span></span></a>
+
+					{%- elsif it contains '[icon' -%}
+						{%- unless subClass == blank -%}<span class="{{subClass}}">{%- endunless -%}
+							{{- icon -}}
+						{%- unless subClass == blank -%}</span>{%- endunless -%}
+
+					{%- elsif it contains 'time' -%}
+						<span class="toast-times{{subClass}}"><span>Time</span></span>
+
+					{%- elsif it contains '"' or it contains "'" -%}
+						<span class="{{subClass}}">{{it | split: '|' | first | remove: '[' | remove: ']' | remove: '"' | remove: "'" }}</span>
+					{%- endif -%}
+
+				{%- else -%}{{it}}
+				{%- endif -%}
+	    	{%- endfor -%}
+
+		{%- endunless -%}
+
+	{%- when 'trigger' -%}
+		{%- assign f_hide_mobile			=  block.settings.hide_mobile -%}
+		{%- assign show_home 				=  block.settings.show_home -%}
+		{%- assign show_collection 			=  block.settings.show_collection -%}
+		{%- assign show_product 			=  block.settings.show_product -%}
+		{%- assign show_product_vendor 		=  block.settings.show_product_vendor -%}
+		{%- assign show_product_template 	=  block.settings.show_product_template -%}
+		{%- assign vendor_trigger 			=  block.settings.vendor_trigger -%}
+		{%- assign template_trigger 		=  block.settings.template_trigger -%}
+		{%- assign fomo_trigger 			= false -%}
+
+		{%- case template -%}
+			{%- when 'index' 			-%}{%- unless show_home 		-%}{%- assign fomo_trigger = true -%}{%- endunless -%}
+			{%- when 'list-collections' -%}{%- unless show_collection 	-%}{%- assign fomo_trigger = true -%}{%- endunless -%}
+			{%- when 'collection' 		-%}{%- unless show_collection 	-%}{%- assign fomo_trigger = true -%}{%- endunless -%}
+			{%- else -%}
+				{%- if template contains 'product' -%}
+					{%- unless show_product -%}{%- assign fomo_trigger = true -%}{%- endunless -%}
+
+					{%- if show_product_vendor or show_product_template -%}
+						{%- assign fomo_trigger 	 	 = false -%}
+						{%- assign vendor_fomo_trigger 	 = false -%}
+						{%- assign template_fomo_trigger = false -%}
+
+						{%- if show_product_vendor -%}
+							{%- assign _trigger_prefix   = product.vendor | downcase | prepend: '+++' | append: '+++' -%}
+							{%- assign new_Array_trigger = vendor_trigger | downcase | split: ',' -%}
+							{%- capture arrayCapture -%}{%- for v in new_Array_trigger -%}+++{{v | strip }}+++{%- endfor -%}{%- endcapture -%}
+
+
+							{%- if arrayCapture contains _trigger_prefix -%}
+								{%- assign vendor_fomo_trigger = true -%}
+							{%- endif -%}
+						{%- endif -%}
+
+						{%- if show_product_template -%}
+
+							{%- assign _trigger_prefix 		= template | downcase | remove: 'product.' | prepend: '+++' | append: '+++' -%}
+							{%- assign new_Array_trigger  	= template_trigger | downcase | split: ',' -%}
+							{%- capture arrayCapture -%}{%- for v in new_Array_trigger -%}+++{{v | strip }}+++{%- endfor -%}{%- endcapture -%}
+
+
+							{%- if arrayCapture contains _trigger_prefix -%}
+								{%- assign template_fomo_trigger = true -%}
+							{%- endif -%}
+
+						{%- endif -%}
+
+						{%- if show_product_vendor and show_product_template -%}
+							{%- if vendor_fomo_trigger == false or template_fomo_trigger == false -%}
+								{%- assign fomo_trigger = true -%}
+							{%- endif -%}
+						{%- else -%}
+							{%- if vendor_fomo_trigger == false and template_fomo_trigger == false -%}
+								{%- assign fomo_trigger = true -%}
+							{%- endif -%}
+						{%- endif -%}
+
+					{%- endif -%}
+
+				{%- else -%}
+					{%- assign fomo_trigger = true -%}
+				{%- endif -%}
+		{%- endcase -%}
+
+		{%- if fomo_trigger -%}{%- continue -%}{%- endif -%}
+
+	{%- when 'shipping' -%}
+		<div id="fomo-{{block.id}}">
+			<ul class="shipping-time hide" data-deliverytime="{{ block.settings.delivery_time }}" data-deadline="{{ block.settings.deadline_day }}">
+				<li class="delivery-time"></li>
+				<li class="deadline">
+					<span class="text">{{ 'products.product.order_within' | t }}</span>
+					<div class="countdown_deadline"></div>
+				</li>
+			</ul>
+		</div>
+	    {%- capture fomoID -%}#fomo-{{block.id}}{%- endcapture -%}
+	    {%- capture fomo_block_css -%}
+	    	{%- include 'css-responsive', classID: fomoID ,css_value: block.settings.fomo_margin ,css_property: 'margin' -%}
+	    {%- endcapture -%}
+	    {%- assign fomo_css = fomo_css | append: fomo_block_css -%}
+
+	{%- else -%}
+		<div class="product-detail_popup-handle" id="product-detail_fomo-handle{{fomoSectionID}}">
+			<div id="fomo-country-target{{fomoSectionID}}" class="hide"></div>
+			<div class="product-detail_fomo-content">
+				{%- assign fomoCount = 0 -%}
+				{%- for block in section.blocks -%}
+					{%- if block.type == 'fomo_shipping' -%}
+						{%- include 'fomo-notify', type: 'shipping' -%}
+					{%- endif -%}
+					{%- if block.type == 'fomo_popup' or block.type == 'fomo_inline' -%}
+
+						{%- if block.type == 'fomo_popup' -%}
+							{%- include 'fomo-notify' ,type: 'trigger' -%}
+						{%- endif -%}
+
+						{%- assign fomoCount               = fomoCount | plus: 1 -%}
+						{%- assign f_position              = block.settings.position -%}
+						{%- assign f_position_arr 		   = f_position_arr | append: '+++' | append: f_position -%}
+						{%- assign f_first_show_time       = block.settings.first_show_time | strip | default: 0 -%}
+						{%- assign f_show_time             = block.settings.show_time | strip | default: 5 -%}
+						{%- assign f_loop_time             = block.settings.loop_time | strip | default: 5 -%}
+						{%- assign f_head_alignment        = block.settings.head_alignment -%}
+						{%- assign f_body_alignment        = block.settings.body_alignment -%}
+						{%- assign f_cookie_history        = block.settings.cookie_history -%}
+						{%- assign f_deviation_value       = block.settings.deviation_value -%}
+						{%- assign f_count_min_max         = block.settings.count_min_max | split: ';' -%}
+						{%- assign f_min 	               = f_count_min_max[1] | strip | default: 0 -%}
+						{%- assign f_max 	               = f_count_min_max[0] | strip | default: 99 -%}
+						{%- assign f_text_head             = block.settings.text_header -%}
+						{%- assign f_text_body             = block.settings.text_body -%}
+						{%- assign f_noti_image            = block.settings.noti_image -%}
+						{%- assign f_use_image     		   = block.settings.use_product_image -%}
+						{%- assign f_city_manual       	   = block.settings.city_manual -%}
+						{%- assign f_img_position     	   = block.settings.image_pos | default: 'left' -%}
+						{%- assign f_img_margin       	   = block.settings.image_margin -%}
+						{%- assign f_img_radius       	   = block.settings.image_radius -%}
+						{%- assign f_img_size       	   = block.settings.image_size | default: 'other' -%}
+						{%- assign f_animation       	   = block.settings.fomo_animation -%}
+						{%- assign f_icon_name       	   = block.settings.icon_name  -%}
+						{%- assign f_ic_fs		       	   = block.settings.ic_fs  -%}
+						{%- assign f_ic_cl		       	   = block.settings.ic_cl | default: 'rgba(0,0,0,0)' -%}
+
+						{%- case f_img_size -%}
+						  {%- when 'small' 	-%}{%- assign f_img_s = '50x' -%}
+						  {%- when 'medium' -%}{%- assign f_img_s = '100x' -%}
+						  {%- when 'large' 	-%}{%- assign f_img_s = 'master' -%}
+						  {%- else 			-%}{%- assign f_img_s = '70x'  -%}
+						{%- endcase -%}
+
+						{%- capture f_icon 		-%}{%- unless f_icon_name == blank -%}<span class="demo-icon {{f_icon_name}}"></span>{%- endunless -%}{%- endcapture -%}
+						{%- capture noti_image 	-%}{%- unless f_noti_image == blank -%}<a href="javascript:void(0);" class="w-100"><img src="{{f_noti_image | img_url: f_img_s }}"></a>{%- endunless -%}{%- endcapture -%}
+						{%- capture f_content 	-%}{{f_text_head}}{{f_text_body}}{%- endcapture -%}
+						{%- capture noti_icon 	-%}{%- unless f_content contains '[icon]' -%}{{f_icon}}{%- endunless -%}{%- endcapture -%}
+						{%- capture fomoID 		-%}#fomo-{{block.id}}{%- endcapture -%}
+						{%- capture f_anim 		-%}{% unless f_animation == blank %} animated hide {{f_animation}}{%- endunless -%}{%- endcapture -%}
+
+						{%- include 'fomo-notify', type: block.type -%}
+
+						{%- unless block.settings.collection == blank -%}
+							{%- assign collectionFomo = collections[block.settings.collection] -%}
+							{%- assign min            = 0 -%}
+							{%- assign max            = collectionFomo.all_products_count | minus: 1 -%}
+
+							{%- if collectionFomo.all_products_count > 0 -%}
+								{%- capture fomo_productArray -%}
+									{%- for i in (1..50) -%}
+										{%- assign diff         = max | minus: min -%}
+										{%- assign tempRandom   = "now" | date: "%N" | plus: i -%}
+										{%- assign randomNumber = tempRandom | modulo: diff | plus: min -%}
+										{%- assign _productJSON = collectionFomo.products[randomNumber] | default: collectionFomo.products[i] -%}
+										{%- if _productJSON.id != null -%}
+											{"id":{{ _productJSON.id | json }},"title":{{ _productJSON.title | json }},"url":{{ _productJSON.url | json }},"image":{{ _productJSON.images[0] | json }}}{%- unless forloop.last -%}+++{%- endunless -%}
+										{%- endif -%}
+									{%- endfor -%}
+								{%- endcapture -%}
+								<script id="fomo-{{block.id}}-relatedJSON" type="application/json">[{{fomo_productArray | split: '+++' | uniq | join: ',' }}]</script>
+							{%- endif -%}
+						{%- endunless -%}
+						{%- assign fomo_bg 			= block.settings.fomo_bg | default: 'rgba(0,0,0,0)' -%}
+						{%- assign fomo_bg_opacity 	= block.settings.fomo_bg_opacity | times: 0.01 -%}
+
+						{%- if fomo_bg != 'rgba(0,0,0,0)' -%}
+							{%- assign fomo_bg_color = fomo_bg | color_modify: 'alpha', fomo_bg_opacity -%}
+						{%- else -%}
+							{%- assign fomo_bg_color = fomo_bg -%}
+						{%- endif -%}
+
+						{%- capture fomo_block_css -%}
+							{%- unless fomo_bg_color == 'rgba(0,0,0,0)' -%}
+								{{- fomoID }}:not(.toast-img-margin){background-color: {{fomo_bg_color}};}
+								{{- fomoID }}.toast-img-margin .toast-content{background-color: {{fomo_bg_color}};}
+							{%- endunless -%}
+							{%- include 'css-responsive', classID: fomoID ,css_value: block.settings.popup_w ,css_property: 'width' -%}
+							{%- include 'css-responsive', classID: fomoID ,css_value: block.settings.fomo_margin ,css_property: 'margin' -%}
+
+							{%- include 'css-responsive', classID: fomoID ,nextClassID: ' .fomo-img-container' ,css_value: f_img_radius ,css_property: 'border-radius' -%}
+							{%- include 'css-responsive', classID: fomoID ,nextClassID: ' .fomo-img-container' ,css_value: f_img_margin ,css_property: 'margin' -%}
+							{%- if f_img_margin != blank -%}
+								{%- include 'css-responsive', classID: fomoID ,nextClassID: ' .toast-content',css_value: block.settings.fomo_padding -%}
+								{%- include 'css-responsive', classID: fomoID ,nextClassID: ' .toast-content',css_value: block.settings.fomo_radius ,css_property: 'border-radius' -%}
+							{%- else -%}
+								{%- include 'css-responsive', classID: fomoID ,css_value: block.settings.fomo_padding -%}
+								{%- include 'css-responsive', classID: fomoID ,css_value: block.settings.fomo_radius ,css_property: 'border-radius' -%}
+							{%- endif -%}
+
+							{%- if f_icon_name != blank -%}
+								{%- unless f_content contains '[icon]' -%}
+									{%- include 'css-responsive', classID: fomoID ,nextClassID: ' .toast-products-icon span.demo-icon' ,css_value: f_ic_fs ,css_property: 'font-size' -%}
+									{%- unless f_ic_cl == 'rgba(0,0,0,0)' -%}{{- fomoID}} .toast-products-icon span.demo-icon{color: {{f_ic_cl}};}{%- endunless -%}
+								{%- endunless -%}
+							{%- endif -%}
+
+							{%- for i in (1..2) -%}
+								{%- assign tempo_fomo_pa = 'fomo_content_padding_' | append: i -%}
+								{%- assign tempo_fomo_lh = 'fomo_content_lh_' | append: i -%}
+								{%- assign tempo_text_fs = 'text_fs_' | append: i -%}
+								{%- assign tempo_link_fs = 'link_fs_' | append: i -%}
+								{%- assign tempo_text_fw = 'text_fw_' | append: i -%}
+								{%- assign tempo_link_fw = 'link_fw_' | append: i -%}
+								{%- assign tempo_text_cl = 'text_color_' | append: i -%}
+								{%- assign tempo_link_cl = 'link_color_' | append: i -%}
+								{%- assign fomo_text_color = block.settings[tempo_text_cl] | default: 'rgba(0,0,0,0)' -%}
+								{%- assign fomo_link_color = block.settings[tempo_link_cl] | default: 'rgba(0,0,0,0)' -%}
+
+								{%- capture fomo_contentID -%}{%- if i == 1 -%}{{fomoID}} .fomo-header{%- else -%}{{fomoID}} .fomo-body{%- endif -%}{%- endcapture -%}
+
+								{%- unless fomo_text_color == 'rgba(0,0,0,0)' -%}{{fomo_contentID}} .fomo-content{color: {{fomo_text_color}};}{%- endunless -%}
+								{%- unless fomo_text_color == 'rgba(0,0,0,0)' -%}{{fomo_contentID}} .fomo-content a{color: {{fomo_link_color}};}{%- endunless -%}
+								{%- include 'css-responsive', classID: fomo_contentID, nextClassID: ' .fomo-content', css_value: block.settings[tempo_fomo_pa] -%}
+								{%- include 'css-responsive', classID: fomo_contentID, nextClassID: ' .fomo-content', css_value: block.settings[tempo_fomo_lh] ,css_property: 'line-height' -%}
+								{%- include 'css-responsive', classID: fomo_contentID, nextClassID: ' .fomo-content' 	,css_value: block.settings[tempo_text_fs] ,css_property: 'font-size' -%}
+								{%- include 'css-responsive', classID: fomo_contentID, nextClassID: ' .fomo-content a' 	,css_value: block.settings[tempo_link_fs] ,css_property: 'font-size' -%}
+								{%- include 'css-responsive', classID: fomo_contentID, nextClassID: ' .fomo-content '  	,css_value: block.settings[tempo_text_fw] ,css_property: 'font-weight' -%}
+								{%- include 'css-responsive', classID: fomo_contentID, nextClassID: ' .fomo-content a' 	,css_value: block.settings[tempo_link_fw] ,css_property: 'font-weight' -%}
+							{%- endfor -%}
+						{%- endcapture -%}
+						{%- assign fomo_css = fomo_css | append: fomo_block_css -%}
+
+					{%- endif -%}
+				{%- endfor -%}
+
+				{%- assign f_position_arr = f_position_arr | remove_first: '+++' | split: '+++' | uniq -%}
+				{%- for p in f_position_arr -%}
+					<div class="toast-container-position {{p}}"></div>
+				{%- endfor -%}
+			</div>
+			<div class="product-detail_fomo-script">
+				<style>{{fomo_css}}</style>
+				{%- include 'fomo-notify', type: 'init' -%}
+			</div>
+		</div>
+{%- endcase -%}

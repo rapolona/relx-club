@@ -1,0 +1,13 @@
+<div class="page-compare container">
+	<h1 class="page-title">{{ page_title }}</h1>
+	<div class="compare-table pending">	
+	</div>
+	<p class="no-compare-msg">You have no products to compare!</p>
+</div>
+
+<script type="text/javascript">
+	if (!bc_wl_cp_config.enable_compare) {
+		window.location = '/'
+	}
+	$('body').addClass('bc-page-compare');
+</script>

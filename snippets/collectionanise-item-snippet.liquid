@@ -1,0 +1,199 @@
+{%- case type -%}
+  {%- when 'product-item' -%}
+    {%- assign _text_align    = _text_align | default: settings.text_align_product_item -%}
+    {%- assign product_label  = settings.product_label_style -%}
+    {%- assign hover_effect   = settings.product_item_hover_effect -%}
+    {%- assign card_padding   = settings.card_padding -%}
+    {%- assign card_border    = settings.card_border -%}
+    {%- assign show_divided   = settings.show_divide_price -%}
+    {%- assign compare_price  = bold_compare_at_price -%}
+    {%- assign price          = bold_price -%}
+    {%- assign available      = product.available -%}
+
+    <div class="product-wrapper effect-{{ hover_effect }} product-item-style-1 product-button-style-1 product-label-style-{{product_label}}{% if card_padding %} card-padding{% endif %}{% if card_border %} card-border{% endif %}{% if show_divided %} divided-price{% endif %}">
+      <div class="product-head">
+        <div class="product-image">
+          <div class="featured-img{% unless product.available %} soldout{% endunless%}">
+            <a href="{{ product.url}}">
+              {% include 'image-style' with image: product.featured_image, image_size: '390x', image_class: 'featured-image front', _type: 'product' %}
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-content text-{{ _text_align }}">
+        <div class="pc-inner">
+          <div class="prod-name">
+            <h5 class="product-name{% if settings.product_title_string != 'none' %} max-{{settings.product_title_string}}-str{% endif %}">
+              <a href="{{ product.url | within: collection }}" title="{{ product.title }}">{{ product.title }}</a>
+            </h5>
+          </div>
+          <div class="product-price notranslate">
+            {% if available %}
+              {% if bold_price_varies and settings.show_range_price %}
+                {{ bold_price_min | money }} <span>{{'products.product.price_to_price'|t}}</span> {{ bold_price_max | money }}
+              {% elsif compare_price > price %}
+                <span class="price-compare">{{ compare_price | money }}</span>
+                <span class="price-sale">{{ price | money }}</span>
+              {% else %}
+                <span class="price-sale">{{ price | money }}</span>
+              {% endif %}
+            {% else %}
+              <span class="price-sale price-sold-out">{{- 'products.product.sold_out' | t -}}</span>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+  {%- when 'product-template' -%}
+
+      {%- assign _text_align    = _text_align | default: settings.text_align_product_item -%}
+      {%- assign hover_effect   = settings.product_item_hover_effect -%}
+      {%- assign card_padding   = settings.card_padding -%}
+      {%- assign card_border    = settings.card_border -%}
+      {%- assign show_divided   = settings.show_divide_price -%}
+
+      <div class="mode-view-item products-grid-item number-{{section.settings.number_product_per_row}}">
+        <div class="product-wrapper effect-{{ hover_effect }} product-item-style-1 product-button-style-1{% if card_padding %} card-padding{% endif %}{% if card_border %} card-border{% endif %}{% if show_divided %} divided-price{% endif %}">
+          <div class="product-head">
+            <div class="product-image">
+              <div class="featured-img">
+                <a href="{{ product.url}}">
+                  {% include 'image-style' with image: product.featured_image, image_size: '390x', image_class: 'featured-image front', _type: 'product' %}
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div class="product-content text-{{ _text_align }}">
+            <div class="pc-inner">
+              <div class="prod-name">
+                <h5 class="product-name{% if settings.product_title_string != 'none' %} max-{{settings.product_title_string}}-str{% endif %}">
+                  <a href="{{ product.url | within: collection }}" title="{{ product.title }}">{{ product.title }}</a>
+                </h5>
+              </div>
+              <div class="product-price notranslate">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+  {%- when 'filter' -%}
+    {% if collection.all_tags.size > 0 and _filter_pos != 'none' %}
+      {% assign file_extension  = 'png' %}
+      {% assign i_fil           = i_fil | plus: 1 %}
+      {% assign _prefix_filter  = block.settings.filter_prefix | strip | downcase %}
+      {% assign _arr_prop       = block.settings.filter_prefix_prop | split: ',' %}
+      {% assign _two_columns    = block.settings.two_columns %}
+      {% assign _show_color     = section.settings.color_filter_show_color %}
+      {% assign _sidebar_style  = section.settings.sidebar_style %}
+      {% if _font_size == blank %}{% assign _font_size = 'h4' %}{% endif %}
+
+      {% unless _prefix_filter == blank %}
+        {% capture ci %}{{ _prefix_filter }}{% endcapture %}
+        <div class="sbw-filter {{ _filters_style }}{% if _filters_style == 'toggle' or _filters_style == 'select' %} width-col-{{block.settings.toggle_width}}{% endif %} filter-nth-{{i_fil}}"{{block.shopify_attributes}}data-test="collectionanise">
+          <div class="collectionanise-filter grid-uniform{% if _two_columns %} two-columns{% endif %}" data-prefix="{{_prefix_filter}}">
+
+            <div id="filter-{{ i_fil }}" class="sb-filter {{_prefix_filter}}" data-type="{{_prefix_filter}}">
+              <div class="sbf-title">
+                <span class="{{_font_size}}">{{ _prefix_filter | capitalize }}</span>
+                <a id="clear-filter-{{ i_fil }}" class="clear-filter hidden" style="float: right;" href="javascript:void(0);">{{'collections.general.clear' | t }}</a>
+              </div>
+
+              <ul class="advanced-filters{% if _show_color and _sidebar_style != 3 and ci == 'color' and _filters_style != 'select' %} list-inline{% endif %}">
+                {% for cus_tag in _arr_prop %}
+                  {% capture af_tag %}{{ cus_tag | strip | downcase | prepend: '+++' | append: '+++' }}{% endcapture %}
+                  {% assign custom_tag = cus_tag | strip | downcase %}
+
+                  {% if _all_tags contains af_tag %}
+                    {% assign value = custom_tag %}
+                    {% capture in_current_tag %}
+                    {% for tag in current_tags %}{% capture cur_tag %}{{ tag | strip | downcase | prepend: '+++' | append: '+++' }}{% endcapture %}{{cur_tag}}{% endfor %}
+                    {% endcapture %}
+
+                    {% if in_current_tag contains af_tag %}
+                      {% for tag in collection.all_tags %}
+                        {% capture t %}{{ tag | strip | downcase }}{% endcapture %}
+
+                        {% if t == custom_tag  %}
+                          {% if ci == 'color' %}
+                            <li class="advanced-filter color-{{ value | handle }}{% if _show_color  and _filters_style != 'select'%} af-color cf-{{ value }}{% endif %} active-filter"
+                                data-group="{{ _prefix_filter }}"
+                                data-handle="{{ custom_tag | handleize }}">
+                              {% if _show_color and _sidebar_style != 3 and _filters_style != 'select'%}
+                                {% assign _title = custom_tag | capitalize %}
+                                {% assign new_title = 'title="' | append: _title | append: '" data-unnecessary' %}
+                                {{ '' | link_to_remove_tag: tag | replace: 'title', new_title }}
+                              {% else %}
+                                {{ custom_tag | capitalize | link_to_remove_tag: tag | replace: 'Remove tag ','' }}
+                              {% endif %}
+                            </li>
+                          {% else %}
+                            <li data-group="{{ _prefix_filter }}" class="advanced-filter rt active-filter" data-handle="{{ custom_tag | handleize }}">
+                              {{ custom_tag | capitalize | link_to_remove_tag: tag | replace: 'Remove tag ','' }}
+                            </li>
+                          {% endif %}
+
+                        {% endif %}
+                      {% endfor %}
+                    {% else %}
+
+                      {% if ci == 'color' %}
+
+                        <li data-group="{{ _prefix_filter }}" class="advanced-filter color-{{ value | handle }}{% if _show_color  and _filters_style != 'select'%} af-color cf-{{ value }}{% endif %}">
+                          {% if _show_color and _sidebar_style != 3 and _filters_style != 'select' %}
+                          {% assign _title = custom_tag | capitalize %}
+                          {% assign new_title = 'title="' | append: _title | append: '" data-unnecessary' %}
+                            {{ '' | link_to_add_tag: custom_tag | replace: 'title', new_title }}
+                          {% else %}
+                            <a href="javascript:void(0);" data-filter-e="{{custom_tag}}">{{ custom_tag | capitalize }}</a>
+                          {% endif %}
+                        </li>
+
+                      {% else %}
+                        <li data-group="{{ _prefix_filter }}" class="advanced-filter rt">
+                          <a href="javascript:void(0);" data-filter-e="{{custom_tag}}">{{ custom_tag | capitalize }}</a>
+                        </li>
+
+                      {% endif %}
+                    {% endif %}
+                  {% endif %}
+                {% endfor %}
+              </ul>
+            </div>
+          </div>
+        </div>
+      {% endunless %}
+    {% endif %}
+
+  {%- when 'script' -%}
+
+    <script>
+      $(function(){
+        console.log('Ready~!: ', (new Date()).getSeconds());
+
+        $('.collectionanise-filter ').on("click", ".advanced-filter a", function(e){
+          if ($(this).attr('href') != 'javascript:void(0);') {return;}
+          let _this = $(this);
+          prefix = _this.parents('.advanced-filter').data('group');
+          collectionaniseFilter.getData();
+        })
+      })
+
+      var collectionaniseFilter = {
+        getData: function(){
+          let aniseURL = 'http://www.searchanise.com/getwidgets?api_key=2I5I8J3C5p&restrictBy%5Bprice%5D=500,';
+          jQuery.ajax({
+            type: 'GET',
+            url: aniseURL,
+            success: function ( json_reponse ) {
+              console.log('SUCCESS',json_reponse);
+            },
+            error: function(e) {console.log('ERROR~! ',e);}
+          })
+        }
+      }
+    </script>
+  {%- else -%}
+{%- endcase -%}

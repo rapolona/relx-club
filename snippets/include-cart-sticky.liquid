@@ -1,0 +1,70 @@
+<div class="add-to-cart-sticky cart-sticky-{{section.settings.sticky_cart_position}}" data-pos="{{section.settings.sticky_cart_position}}">
+  <form action="/cart/add" method="post" class="product-action variants" enctype="multipart/form-data">
+    <div class="sticky-image">
+        <img {% if _lazyload %} class="lazyload" data-{% endif %}src="{{product.featured_image | img_url: '300x'}}">
+        <div class="sticky-info">
+          <div class="sticky-name">{{product.title}}</div>
+          <div class="sticky-review">{% include 'include-reviews' with type: 'preview_badge' %}</div>
+        </div>
+    </div>
+
+    <div class="sticky-content">
+      <div class="sticky-variant-wrapper">
+        {% if bold_variants_size > 1 %}
+          {% for product_option in product.options_with_values %}
+            <div class="sticky-option">
+              <label for="sticky--variant-{{product_option.name|handle}}">{{ product_option.name }}</label>
+              <select id="sticky--variant-{{product_option.name|handle}}" class="sticky-select-option">
+                {% for value in product_option.values %}
+                <option {% if product_option.selected_value == value %}selected{% endif %}>
+                  {{ value }}
+                </option>
+                {% endfor %}
+              </select>
+            </div>
+          {% endfor %}
+        {% endif %}
+
+        <select id="product-sticky-select-{{ product.id }}" name="id" class="sticky-select{% unless bold_variants_size > 1 %} hide{% endunless %}">
+          {% for variant in product.variants %}
+{%- include 'bold-variant' with variant, hide_action: 'skip' -%}
+            {% if variant.available %}
+            <option data-check="{{ variant.title | downcase | replace: ' / ','/'}}" data-price="{{bold_variant_price}}"
+            {% if variant == bold_selected_or_first_available_variant %} selected="selected" {% endif %} value="{{ variant.id }}">{{ variant.title }}</option>
+            {% else %}
+            <option disabled="disabled">{{ variant.title }} - {{'products.product.sold_out' | t }}</option>
+            {% endif %}
+          {% endfor %}
+        </select>
+      </div>      
+
+      <div class="sticky-action">
+        <ul class="wrap-quantity-add-cart">
+          <li class="quantity-product">
+            <label>{{ 'products.product.quantity' | t }}</label>
+            <div class="qty-wrapper">
+              <span class="qty-inner">
+                <span class="qty-down" title="Decrease" data-src="#quantity">
+                  <i class="demo-icon icon-minus5"></i>
+                </span>
+              </span>
+              <input type="number" id="sticky-quantity" class="item-quantity" name="quantity" value="1" />
+              <span class="qty-inner">
+                <span class="qty-up" title="Increase" data-src="#quantity">
+                  <i class="demo-icon icon-plus06"></i>
+                </span>
+              </span>
+            </div>
+          </li>
+        </ul>
+        <div class="sticky-add-to-cart">
+          <div class="sticky-price">{{'products.product.price' | t }}: {{bold_price | money }}</div>
+          <button class="add-to-cart btn btn-2" type="button"{% unless product.available %} disabled="disabled"{% endunless %}>{{ 'products.product.add_to_cart' | t }}</button>
+        </div>
+      </div>
+    </div>
+  </form>
+
+{%- render 'shappify-bdl-load-bundle' -%}
+
+</div>

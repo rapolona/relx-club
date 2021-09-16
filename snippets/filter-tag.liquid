@@ -1,0 +1,24 @@
+{% if collection.all_tags.size > 0 and _filter_pos != 'none' %}
+  {% if _font_size == blank %}{% assign _font_size = 'h4' %}{% endif %} 
+  
+  <div class="sbw-filter sb-filter-tag {{ _filters_style }}">
+    <div class="grid-uniform" data-prefix="tag">
+
+      <div id="filter-{{ i_fil }}" class="sb-filter tag" data-type="tag">
+        <div class="sbf-title">
+          <span class="sb-title {{_font_size}}">{{ 'collections.general.filter' | t }}</span>
+          <a id="clear-filter-{{ i_fil }}" class="clear-filter hidden" style="float: right;" href="javascript:void(0);">Clear</a>
+        </div>
+        <ul class="advanced-filters">
+          {% for tag in collection.all_tags %}
+            {% if current_tags contains tag %}
+              <li class="advanced-tag-filter active-filter">{{ tag | capitalize | link_to_remove_tag: tag | replace: 'Remove tag ','' }}</li>
+            {% else %}
+              <li class="advanced-tag-filter">{{ tag | link_to_add_tag: tag | replace: 'Narrow selection to products matching tag ', '' }}</li>
+            {% endif %}
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+{% endif %} 

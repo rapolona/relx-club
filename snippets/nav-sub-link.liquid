@@ -1,0 +1,44 @@
+<!--nav sub link-->
+{% assign submenu = l.title | handleize %}
+{% assign _flyout_class = "" %}
+
+{% if linklists[submenu].links.size > 0 %}
+{% capture _flyout %}{{ 'flyout-left' }}{% endcapture %}
+  {% assign _flyout_class = _flyout %}
+  {% assign _flyout_handles = section.settings.nav_flyout_menu_handle | split: ';' | uniq %}
+
+  {% assign _flyout_work_handles = "" %}
+
+  {% for _handle in _flyout_handles %}
+      {% capture _striped_flyout_handle %}{{  _handle }}{% endcapture %}
+      {% if _flyout_work_handles == blank %}
+          {% assign _flyout_work_handles = _striped_flyout_handle %}
+      {% else %}
+          {% assign _flyout_work_handles = _flyout_work_handles | append: '[|||]' | append: _striped_flyout_handle %}
+      {% endif %}
+  {% endfor %}
+  {% assign _flyout_handles = _flyout_work_handles | split: '[|||]' %}
+
+  {% capture _flyout_position %}{%  if _flyout_handles contains l.title %}{{_flyout_class}}{% endif %}{% endcapture %}
+
+  <li class="dropdown dropdown-submenu{% if _flyout_position != blank %} {{ _flyout_position }}{% endif %}">
+    <a href="{{ l.url }}" class="dropdown-link">
+      <span>{{ l.title }}</span>      
+    </a>
+
+    <span class="expand"></span>
+
+    <ul class="dropdown-menu">
+      <li class="back-prev-menu"><span class="expand">Back</span></li>
+      {% for l in linklists[submenu].links %}
+        {% include 'nav-sub-link' %}
+      {% endfor %}
+    </ul>
+  </li>
+{% else %}
+  <li>
+    <a tabindex="-1" href="{{ l.url }}">
+      <span>{{ l.title }}</span>
+    </a>
+</li>
+{% endif %}

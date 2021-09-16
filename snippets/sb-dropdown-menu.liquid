@@ -1,0 +1,24 @@
+<li class="dropdown{% if l.active or l.child_active %} match active{% endif %}">
+  {% include 'include-list-icons' ,type: 'sidebar-icon', c: n_col  %}
+
+  <a href="{{ l.url }}" class="dropdown-link">{{- l.title -}}
+    {%- if l.type == 'collection_link' or l.type == 'catalog_link' -%}
+  	{%- unless n_collection == blank and n_collection.products_count == 0 -%}<span>({{ n_collection.products_count }})</span>{%- endunless -%}
+    {%- endif -%}
+  </a>
+  <span class="expand"></span>
+
+  <ul class="dropdown-menu">
+    {% for l in linklists[submenu].links %}
+    	<li {% if l.active %}class="match"{% endif %}>
+    		<a href="{{ l.url }}">{{ l.title }}
+          {%- if l.type == 'collection_link' or l.type == 'catalog_link' -%}
+            {% assign col_handle  = l.url | split: 'collections/' | last | handleize %}
+            {% assign n_col       = collections[col_handle] %}
+            {% if n_col.products_count > 0 %}<span>({{ n_col.products_count }})</span>{% endif %}
+          {%- endif -%}
+    		</a>
+    	</li>
+    {% endfor %}
+  </ul>
+</li>

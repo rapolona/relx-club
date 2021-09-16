@@ -1,0 +1,17 @@
+{% assign compare_price = bold_compare_at_price %}
+{% assign price         = bold_price -%}
+{% assign available     = product.available %}
+<div class="product-price notranslate">
+  {% if available %}
+      {% if bold_price_varies and settings.show_range_price %}
+        {{ bold_price_min | money }} <span>{{'products.product.price_to_price'|t}}</span> {{ bold_price_max | money }}
+      {% elsif compare_price > price %}
+        <span class="price-compare">{{ compare_price | money }}</span>
+        <span class="price-sale">{{ price | money }}</span>
+      {% else %}
+        <span class="price-sale">{{ price | money }}</span>
+      {% endif %}
+  {% else %}
+    <span class="price-sale price-sold-out">{{- 'products.product.sold_out' | t -}}</span>
+  {% endif %}
+</div>

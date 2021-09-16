@@ -1,0 +1,517 @@
+<style>
+  ul.relx-packages{
+    width:60%;
+  	list-style:none;
+  	text-align:center;
+  	overflow:auto; 
+  	margin-left: 20%;
+  	margin-right: 20%;
+  }
+  
+  ul.relx-packages > li{
+  	margin-bottom:15px;
+  	float: left;
+  	width:100%;
+  	padding: 8px;
+    overflow:auto; 
+  }
+  
+  ul.relx-packages > li div.relx-pkg-50p{
+	float:left;
+    width:50%;
+  }
+  
+  ul.relx-packages > li div.essential{
+    height: 390px;
+  }
+  
+  ul.relx-packages > li div.essential div.product-title{
+  	margin-top: 100px;
+  }
+  
+  ul.relx-packages > li div.infinity{
+    height: 275px;
+  }
+  
+   ul.relx-packages > li div.infinity div.product-title{
+  	margin-top: 20px;
+  }
+  
+  ul.relx-packages > li div.relx-pkg-50p div.product-title{
+	font-size: 28px;
+    font-weight: bold;
+  }
+  
+  ul.relx-packages > li div.relx-pkg-50p div.product-description{
+	font-size: 24px;
+    color: gray;
+  }
+  
+  ul.relx-packages > li div.relx-pkg-50p div.relx-product-price-2{
+	font-size: 25px;
+  }
+
+  ul.relx-packages > li div.relx-pkg-50p span{
+	margin-left: 10px;
+    font-size: 16px;
+    padding: 4px;
+    padding-left: 12px;
+    padding-right: 12px;
+    background-color: #000;
+    color: #FFF;
+  }
+
+  ul.relx-packages > li.collection-header{
+  	margin-top:50px;
+  	margin-bottom:40px;
+  	float: left;
+  	width:100%;
+  	font-size: 35px;
+  	font-weight: bold;
+  }
+
+@media only screen and (max-width: 48em) {
+    
+	ul.relx-packages{
+    	width:90%;
+  		list-style:none;
+  		text-align:center;
+  		overflow:auto; 
+  		margin-left: 5%;
+  		margin-right: 5%;
+  	}
+  
+  ul.relx-packages > li{
+  	margin-bottom:15px;
+  	float: left;
+  	width:100%;
+  	padding: 8px;
+    overflow:auto; 
+  }
+  
+  ul.relx-packages > li div.relx-pkg-50p{
+		float:left;
+    	width:50%;
+  }
+  
+  ul.relx-packages > li div.essential{
+    height: 200px;
+  }
+  
+  ul.relx-packages > li div.essential div.product-title{
+  	margin-top: 0px;
+  }
+  
+  ul.relx-packages > li div.infinity{
+    height: 175px;
+  }
+  
+   ul.relx-packages > li div.infinity div.product-title{
+  	margin-top: 0px;
+  }
+  
+  ul.relx-packages > li div.relx-pkg-50p div.product-title{
+	font-size: 1.2em;
+    font-weight: bold;
+  }
+  
+  ul.relx-packages > li div.relx-pkg-50p div.product-description{
+	font-size: 1em;
+    color: gray;
+  }
+  
+  ul.relx-packages > li div.relx-pkg-50p div.relx-product-price-2{
+	font-size: 25px;
+  }
+
+  ul.relx-packages > li div.relx-pkg-50p span{
+	margin-left: 10px;
+    font-size: 12px;
+    padding: 4px;
+    padding-left: 12px;
+    padding-right: 12px;
+    background-color: #000;
+    color: #FFF;
+  }
+
+  	ul.relx-packages > li.collection-header{
+  		margin-top:20px;
+  		margin-bottom:10px;
+  		float: left;
+  		width:100%;
+  		font-size: 1.6em;
+  		font-weight: bold;
+  	}
+    
+}
+</style>
+
+{% if collection.image %}<img src="{{ collection.image | img_url: '1200x600' }}" width="100%" />{% endif %}
+{% assign type_name   = 0 %}
+
+<ul class="relx-packages">
+  {%- for product in collection.products -%}
+  
+    {%- assign button_text="Pick Your Flavor" -%}
+  	{%- assign device_class="infinity" -%}
+    {%- if product.type == "Taster's Pack" -%}
+    {%- assign button_text="Pick Your Device" -%}
+  	{%- assign device_class="essential" -%}
+  	{%- endif -%}
+  
+  
+  
+  {%- if product.type != "RELX FOREVER" -%}
+    {%- if product.type != type_name -%}
+  	<li class="collection-header">{{ product.type }}</li>
+  	{% assign type_name   = product.type %}
+    {% assign img_txt_order = 1 %}
+    {%- endif -%}
+    
+    <li>
+        {%- if img_txt_order == 0 -%}
+        <div class="relx-pkg-50p {{ device_class }}">
+        	<img src="{{ product.featured_image.src | img_url: '1024x' }}" alt="">
+        </div>
+        <div class="relx-pkg-50p  {{ device_class }}" style="text-align: left; ">
+          	<a class="product-card" href="{{ product.url | within: collection }}" style="margin-left: 50px;">
+              	<div style="text-align: left" class="product-title">{{ product.title }}</div>
+              	<div style="text-align: left" class="product-description">{{ product.description }}</div>
+              	<div style="text-align: left" class="relx-product-price-2">{{ product.price | money }} <span>{{ button_text }}</span> </div>
+          	</a>
+        </div>
+      	{% assign img_txt_order = 1 %}
+        {%- else -%}
+        {% assign img_txt_order = 0 %}
+      	<div class="relx-pkg-50p  {{ device_class }}" style="text-align: right; " >
+          	<a class="product-card" href="{{ product.url | within: collection }}" style="margin-right: 50px">
+              	<div style="text-align: right" class="product-title">{{ product.title }}</div>
+              	<div style="text-align: right" class="product-description">{{ product.description }}</div>
+              	<div style="text-align: right" class="relx-product-price-2">{{ product.price | money }} <span>{{ button_text }}</span> </div>
+                
+          	</a>
+        </div>
+      	<div class="relx-pkg-50p  {{ device_class }}">
+        	<img src="{{ product.featured_image.src | img_url: '1024x' }}" alt="">
+        </div>
+        {%- endif -%}
+    </li>
+  {%- else -%}
+  <li>
+    <div class="relx-pkg-50p" style="text-align: left; ">
+    	<a class="product-card" href="{{ product.url | within: collection }}" style="margin-left: 50px;">
+             <div style="text-align: left" class="product-title">{{ product.title }}</div>
+             <div style="text-align: left" class="product-description">
+               <b>A Club Exclusive</b>
+               <br />
+               {{ product.description }}
+               <br />
+             </div>
+         </a>
+     </div>
+    <div class="relx-pkg-50p">
+       	<img src="{{ product.images[0].src | img_url: '1024x' }}" alt="">
+    </div>
+    
+  </li>
+  <li>
+    <div class="relx-pkg-50p">
+       	<img src="{{ product.images[1].src | img_url: '1024x' }}" alt="">
+    </div>
+    <div class="relx-pkg-50p" style="text-align: left; ">
+    	<a class="product-card" href="{{ product.url | within: collection }}" style="margin-left: 50px;">
+             <div style="text-align: left" class="product-description-2">
+               <p>For Month 2 onwards, member will get 10% discount.</p>
+               <p>Consecutive monthly purchase is required to maintain the monthly discount.</p>
+               <p>The program will reset to month 1 if the member fails to make consecutive orders.</p>
+               <p>All retail orders made every month while in the program also qualifies for the discount.</p>
+             </div>
+          <div style="text-align: left" class="relx-product-price-2"> <span>Pick Your Flavors</span> </div>
+         </a>
+     </div>
+  </li>
+  {%- endif -%}
+  
+  {%- endfor -%}
+</ul>
+
+{% for block in section.blocks %}
+                {% assign alignment = block.settings.alignment %}
+                {% case block.type %}
+              
+              
+              {% when 'image' %}
+	{%- assign _image = block.settings.image -%}
+        {% unless _image == blank %} 
+          <div class="type-image" {{ block.shopify_attributes }}>
+            {% include 'image-style' with image: _image, image_size: '1920x' %}
+          </div>
+        {% endunless %}
+ {%- endcase -%}
+ {%- endfor -%}
+
+
+{% schema %}
+{
+  "name": "Collection Package",
+  "settings": [
+    {
+      "type": "select",
+      "id": "layout",
+      "label": {
+        "da": "Layout",
+        "de": "Layout",
+        "en": "Layout",
+        "es": "Diseño",
+        "fi": "Asettelu",
+        "fr": "Mise en page",
+        "hi": "लेआउट",
+        "it": "Layout",
+        "ja": "レイアウト",
+        "ko": "레이아웃",
+        "ms": "Susun atur",
+        "nb": "Oppsett",
+        "nl": "Indeling",
+        "pt-BR": "Layout",
+        "pt-PT": "Esquema",
+        "sv": "Layout",
+        "th": "เลย์เอาต์",
+        "zh-CN": "布局",
+        "zh-TW": "版面配置"
+      },
+      "default": "grid",
+      "options": [
+        {
+          "value": "grid",
+          "label": {
+            "da": "Gitter",
+            "de": "Raster",
+            "en": "Grid",
+            "es": "Cuadrícula",
+            "fi": "Ruudukko",
+            "fr": "Grille",
+            "hi": "ग्रिड",
+            "it": "Griglia",
+            "ja": "グリッド",
+            "ko": "그리드",
+            "ms": "Grid",
+            "nb": "Rutenett",
+            "nl": "Raster",
+            "pt-BR": "Grade",
+            "pt-PT": "Grelha",
+            "sv": "Rutnät",
+            "th": "กริด",
+            "zh-CN": "网格",
+            "zh-TW": "網格"
+          }
+        },
+        {
+          "value": "list",
+          "label": {
+            "da": "Liste",
+            "de": "Liste",
+            "en": "List",
+            "es": "Lista",
+            "fi": "Luettelo",
+            "fr": "Liste",
+            "hi": "सूची",
+            "it": "Elenco",
+            "ja": "リスト",
+            "ko": "목록",
+            "ms": "Senarai",
+            "nb": "Liste",
+            "nl": "Lijst",
+            "pt-BR": "Lista",
+            "pt-PT": "Lista",
+            "sv": "Lista",
+            "th": "รายการ",
+            "zh-CN": "列表",
+            "zh-TW": "清單"
+          }
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "grid",
+      "label": {
+        "da": "Produkter pr. række (kun gitter)",
+        "de": "Produkte per Reihe (nur Raster)",
+        "en": "Products per row (grid only)",
+        "es": "Productos por fila (solo cuadrícula)",
+        "fi": "Tuotteita per rivi (vain ruudukko)",
+        "fr": "Produits par rangée (grille uniquement)",
+        "hi": "उत्पाद प्रति पंक्ति (केवल ग्रिड)",
+        "it": "Prodotti per riga (solo griglia)",
+        "ja": "行あたりの商品数（グリッドのみ）",
+        "ko": "열 별 제품 (그리드 전용)",
+        "ms": "Produk setiap baris (grid sahaja)",
+        "nb": "Produkter per rad (kun rutenett)",
+        "nl": "Producten per rij (alleen raster)",
+        "pt-BR": "Produtos por linha (somente grade)",
+        "pt-PT": "Produtos por linha (somente grelha)",
+        "sv": "Produkter per rad (endast rutnät)",
+        "th": "สินค้าต่อแถว (กริดเท่านั้น)",
+        "zh-CN": "每行产品数（仅限网格）",
+        "zh-TW": "每列產品數 (僅限網格)"
+      },
+      "default": 4,
+      "min": 2,
+      "max": 5,
+      "step": 1
+    },
+    {
+      "type": "range",
+      "id": "rows",
+      "label": {
+        "da": "Rækker pr. side (kun gitter)",
+        "de": "Reihen per Seite (nur Raster)",
+        "en": "Rows per page (grid only)",
+        "es": "Filas por página (solo cuadrícula)",
+        "fi": "Rivejä per sivu (vain ruudukko)",
+        "fr": "Rangées par page (grille uniquement)",
+        "hi": "प्रति पृष्ठ पंक्तियां (केवल ग्रिड)",
+        "it": "Righe per pagina (solo griglia)",
+        "ja": "ページあたりの行数（グリッドのみ）",
+        "ko": "페이지 별 열 (그리드 전용)",
+        "ms": "Baris setiap halaman (grid sahaja)",
+        "nb": "Rader per side (kun rutenett)",
+        "nl": "Rijen per pagina (alleen raster)",
+        "pt-BR": "Linhas por página (somente grade)",
+        "pt-PT": "Linhas por página (somente grelha)",
+        "sv": "Rader per sida (endast rutnät)",
+        "th": "แถวต่อหน้า (กริดเท่านั้น)",
+        "zh-CN": "每行产品数（仅限网格）",
+        "zh-TW": "每頁列數 (僅限網格)"
+      },
+      "default": 2,
+      "min": 2,
+      "max": 8,
+      "step": 1
+    },
+    {
+      "type": "checkbox",
+      "id": "show_collection_image",
+      "label": {
+        "da": "Vis kollektionsbillede",
+        "de": "Kategorie-Foto anzeigen",
+        "en": "Show collection image",
+        "es": "Mostrar imagen de la colección",
+        "fi": "Näytä kokoelman kuva",
+        "fr": "Afficher l'image de la collection",
+        "hi": "कलेक्शन इमेज दिखाएं",
+        "it": "Mostra immagine collezione",
+        "ja": "コレクションの画像を表示する",
+        "ko": "컬렉션 이미지 표시",
+        "ms": "Tunjukkan imej koleksi",
+        "nb": "Vis samlingsbilde",
+        "nl": "Collectieafbeelding weergeven",
+        "pt-BR": "Exibir imagem da coleção",
+        "pt-PT": "Mostrar imagem da coleção",
+        "sv": "Visa produktseriebilder",
+        "th": "แสดงรูปภาพคอลเลกชัน",
+        "zh-CN": "显示产品系列图片",
+        "zh-TW": "顯示商品系列圖片"
+      },
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "label": {
+        "da": "Vis produktleverandører",
+        "de": "Produkt-Lieferanten anzeigen",
+        "en": "Show product vendors",
+        "es": "Mostrar proveedores del producto",
+        "fi": "Näytä tuotteen myyjät",
+        "fr": "Afficher les vendeurs",
+        "hi": "उत्पाद विक्रेताओं को दिखाएं",
+        "it": "Mostra fornitori prodotto",
+        "ja": "商品の販売元を表示する",
+        "ko": "제품 공급 업체 표시",
+        "ms": "Tunjukkan vendor produk",
+        "nb": "Vis produktleverandører",
+        "nl": "Productleveranciers weergeven",
+        "pt-BR": "Exibir fornecedores do produto",
+        "pt-PT": "Mostrar fornecedores do produto",
+        "sv": "Visa produktleverantörer",
+        "th": "แสดงผู้ขายสินค้า",
+        "zh-CN": "显示产品厂商",
+        "zh-TW": "顯示產品廠商"
+      },
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "sort_enable",
+      "label": {
+        "da": "Aktivér sortering",
+        "de": "Sortieren erlauben",
+        "en": "Enable sorting",
+        "es": "Habilitar la función ordenar",
+        "fi": "Ota lajittelu käyttöön",
+        "fr": "Activer le tri",
+        "hi": "क्रमबद्ध करना सक्षम करें",
+        "it": "Permetti di ordinare",
+        "ja": "並べ替えを有効にする",
+        "ko": "정렬 사용",
+        "ms": "Dayakan penyusunan",
+        "nb": "Aktiver sortering",
+        "nl": "Sortering inschakelen",
+        "pt-BR": "Ativar classificação",
+        "pt-PT": "Ativar ordenação",
+        "sv": "Aktivera sortering",
+        "th": "เปิดใช้การจัดเรียง",
+        "zh-CN": "启用排序",
+        "zh-TW": "啟用排序"
+      },
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "tags_enable",
+      "label": {
+        "da": "Aktivér tagfiltrering",
+        "de": "Tag-Filtern erlauben",
+        "en": "Enable tag filtering",
+        "es": "Habilitar filtro de etiquetas",
+        "fi": "Ota tunnisteiden suodatus käyttöön",
+        "fr": "Activer le filtrage par balises",
+        "hi": "टैग फ़िल्टर करना सक्षम करें",
+        "it": "Attiva filtro tag",
+        "ja": "タグでの絞り込みを有効にする",
+        "ko": "태그 필터링 사용",
+        "ms": "Dayakan penapisan tag",
+        "nb": "Aktiver taggfiltrering",
+        "nl": "Filteren op tags inschakelen",
+        "pt-BR": "Ativar filtragem de tags",
+        "pt-PT": "Ativar filtragem por etiqueta",
+        "sv": "Aktivera taggfiltrering",
+        "th": "เปิดใช้การกรองแท็ก",
+        "zh-CN": "启用标签筛选",
+        "zh-TW": "啟用標籤篩選功能"
+      },
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "infinite_scroll_enable",
+      "label": "Enable Infinite Scroll",
+      "default": false
+    }
+  ],
+	"blocks":[
+      {
+         "type":"image",
+         "name":"Image",
+         "settings":[
+            {
+               "type":"image_picker",
+               "id":"image",
+               "label":"Image"
+            }
+         ]
+      }
+  ]
+}
+{% endschema %}

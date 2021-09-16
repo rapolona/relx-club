@@ -1,0 +1,94 @@
+{% comment %}
+  Set the extension of your color files below. Use 'png', 'jpeg', 'jpg' or 'gif'.
+{% endcomment %}
+
+{% assign file_extension = 'png' %}
+
+{% if swatch == blank %}
+  <div class="swatch error">
+    <p>You must include the snippet swatch.liquid with the name of a product option.</p>
+    <p>Use: <code>{% raw %}{% include 'swatch' with 'name of your product option here' %}{% endraw %}</code></p>
+    <p>Example: <code>{% raw %}{% include 'swatch' with 'Color' %}{% endraw %}</code></p>
+  </div>
+{% else %}
+
+  {% assign found_option = false %}
+  {% assign option_index = 0 %}
+
+  {% for option in product.options %}
+    {% if option == swatch %}
+      {% assign found_option = true %}
+      {% assign option_index = forloop.index0 %}
+
+      {% comment %}{% if template contains 'product' %}
+        <style>
+          label[for="product-select-option-{{ option_index }}"] { display: none; }
+          #product-select-option-{{ option_index }} { display: none; }
+          #product-select-option-{{ option_index }} + .custom-style-select-box { display: none !important; }
+        </style>
+      {% endif %}{% endcomment %}
+
+    {% endif %}
+  {% endfor %}
+
+  {% unless found_option %}
+
+  {% else %}
+    <div class="swatch swt-type-{{swatch_type}} clearfix" data-option-index="{{ option_index }}" data-value="{{swatch | downcase}}">
+      <div class="header">{{ swatch }}</div>
+
+      {% assign values = '' %}
+      
+      {% for variant in product.variants %}
+{%- include 'bold-variant' with variant, hide_action: 'skip' -%}
+        {% assign value = variant.options[option_index] | remove: csp_flag_string %}
+
+        {% capture _image_html %}
+        {{ variant.image | img_url: '390x' }}
+        {% endcapture %}
+        {% capture ch_type %}{% if is_color %} colour{% endif %}{% if use_image %} img-true{% endif %}{% endcapture %}
+
+        {% if _image_html contains 'assets/no-image' %}
+          {% capture _image_html %}
+          {{ 'default-image.jpg' | asset_url }}
+          {% endcapture %}
+        {% endif %}
+
+        {% unless values contains value %}
+          {% assign values = values | join: ',' %}
+          {% assign values = values | append: ',' | append: value %}
+          {% assign values = values | split: ',' %}
+          <div class="swatch-element swt-val-{{ value | handle }}{% if variant.available %} available{% else %} soldout{% endif %} {{swt_shape}} {{ch_type}}" data-value="{{ value | escape }}">
+            {% if is_color %}<div class="tooltip">{{ value }}</div>{% endif %}
+
+            <input id="swatch-{{ option_index }}-{{ value | handle }}" type="radio" name="option-{{ option_index }}" value="{{ value | escape }}"{% unless variant.available %}disabled{% endunless %} />
+
+            {% if is_color %}
+              {% if use_image %}
+                <label for="swatch-{{ option_index }}-{{ value | handle }}" style="background-image: url({{ _image_html }})"></label>
+              {% else %}
+                {% assign t_color = settings.color_config | downcase %}
+                {% assign color_temp = value | split: ' ' | last | handle %}
+                  <label {% if settings.use_color_hexcode and t_color contains color_temp %}
+                          class="cf-{{ value | split: ' ' | last | handle }}"
+                         {% else %} style="background-color: {{ value | split: ' ' | last | handle }}; background-image: url({{ value | handle | append: '.' | append: file_extension | asset_url }})"
+                         {% endif %}
+                         for="swatch-{{ option_index }}-{{ value | handle }}"></label>
+              {% endif %}
+
+            {% else %}
+              <label for="swatch-{{ option_index }}-{{ value | handle }}">{{ value }}</label>
+            {% endif %}
+          </div>
+        {% endunless %}
+
+        {% if variant.available %}
+          <script>
+            jQuery('.swatch[data-option-index="{{ option_index }}"] .swatch-element .swt-val-{{ value | handle }}').removeClass('soldout').addClass('available').find(':radio').removeAttr('disabled');
+          </script>
+        {% endif %}
+      {% endfor %}
+      {{swt_extended_content}}
+    </div>
+  {% endunless %}
+{% endif %}

@@ -1,0 +1,177 @@
+{% if _text_align == blank %}   {% assign _text_align    = settings.text_align_product_item %}{% endif %}
+{% if product_button == blank %}{% assign product_button = settings.product_button_style | plus: 0 %} {% endif %}
+{% if product_style == blank %} {% assign product_style  = settings.product_item_style   | plus: 0 %} {% endif %}
+
+{% assign product_label       = settings.product_label_style %}
+{% assign hover_effect        = settings.product_item_hover_effect %}
+{% assign card_padding        = settings.card_padding %}
+{% assign card_border         = settings.card_border %}
+{% assign show_divided        = settings.show_divide_price %}
+
+{% include 'product-item-component' %}
+{% if product.available and settings.show_swatch_type_circle != blank or product.available and settings.show_swatch_type_rectangle != blank %}
+          {% assign show_swt = true %}
+{% else %}{% assign show_swt = false %}{% endif %}
+
+<div class="product-wrapper effect-{{ hover_effect }} product-item-style-{{product_style}} product-button-style-{{product_button}} product-label-style-{{product_label}}{% if card_padding %} card-padding{% endif %}{% if card_border %} card-border{% endif %}{% if show_divided %} divided-price{% endif %}">
+  
+  {% capture the_snippet_fave_icon %}{% render 'ssw-widget-faveicon' with product.id %}{% endcapture %}
+  {% unless the_snippet_fave_icon contains 'Liquid error' %}
+  {{ the_snippet_fave_icon }}
+  {% endunless %}    
+  <div class="product-head">
+    <div class="product-image">
+      <div class="featured-img{% unless product.available %} soldout{% endunless%}">
+        <a href="{{ product.url | within: collection }}">
+          {{p_image}}
+          {% include 'product-label' %}
+        </a>
+      </div>
+
+      <div class="product-button">
+        {% if product_style == 1 and product_button == 5  %}
+          {% if show_swt %}
+            <div class="swatch-wrapper">
+              {% assign swt_circle     = settings.show_swatch_type_circle    | downcase %}
+              {% assign swt_rectangle  = settings.show_swatch_type_rectangle | downcase %}
+              {% for option in product.options %}
+              {%- assign swt_count = product.options_with_values[forloop.index0].values.size -%}
+              {%- if swt_count > 1 -%}
+                
+                {% assign op = option | downcase %}
+                {% if swt_circle contains op %}
+                  <div class="wrap-swatch-{{op}}">{% include 'swatch_item' with option, swt_shape: 'circle' %}</div>
+                {% elsif swt_rectangle contains op %}
+                  <div class="wrap-swatch-{{op}}">{% include 'swatch_item' with option, swt_shape: 'rectangle' %}</div>
+                {% endif %} 
+              {%- endif -%}
+              {% endfor %}
+            </div>
+          {% endif %}
+          <div class="button-items">
+        {% endif %}
+          {% if product_style != 2 and product_style != 6 %}{% if product.available %}{{p_cart}}{%endif%}{% endif %}
+          {% if product_style != 4 and product_style != 5 %} {{p_wishlist}}{% endif %}
+          {{p_quick_view}}
+          {{p_compare}}
+        {% if product_style == 1 and product_button == 5  %}</div>{% endif %}
+      </div>
+
+      {% include 'product-countdown' %}
+    </div>
+  </div>
+
+
+  <div class="product-content text-{{ _text_align }}">
+    <div class="pc-inner">
+      {% case product_style %}
+        {% when 1 %}
+          {{p_name}}
+          {% include 'product-price' %}
+          {{p_review}}
+        {% when 2 %}
+          {{p_name}}
+          {{p_review}}
+          {% include 'product-price' %}
+          {% if product.available %}{{p_cart}}{%endif%}
+        {% when 3 %}
+          {{p_name}}
+          <div class="row-content">
+            {% include 'product-price' %}
+            {{p_review}}
+          </div>   
+        {% when 4 %}
+          <div class="row-content">
+            {{p_name}}
+            {{p_wishlist}}
+          </div>
+          <div class="row-content">
+            {% include 'product-price' %}
+            {{p_review}}
+          </div>
+        {% when 5 %}
+          <div class="row-content">
+            {{p_name}}
+            {% include 'product-price' %}
+          </div>
+          <div class="row-content">
+            {{p_review}}
+            {{p_wishlist}}
+          </div>
+        {% when 6 %}
+          <div class="row-content">
+            {{p_name}}
+            {{p_cart}}
+          </div>
+          <div class="row-content">
+            {{p_review}}
+            {% include 'product-price' %}
+          </div>          
+        {% else %}
+      {% endcase %}
+      
+      {% capture the_snippet_review_avg %}{% render 'ssw-widget-avg-rate-listing', product: product %}{% endcapture %}
+      {% unless the_snippet_review_avg contains 'Liquid error' %}
+      {{ the_snippet_review_avg }}
+      {% endunless %}    
+    </div>
+
+    {% unless product_style < 3 and product_button == 5 %}
+      {% if show_swt %}
+        <div class="swatch-wrapper">
+          {% assign swt_circle     = settings.show_swatch_type_circle    | downcase %}
+          {% assign swt_rectangle  = settings.show_swatch_type_rectangle | downcase %}
+          {% for option in product.options %}
+          {%- assign swt_count = product.options_with_values[forloop.index0].values.size -%}
+          {%- if swt_count > 1 -%}
+            
+            {% assign op = option | downcase %}
+            {% if swt_circle contains op %}
+              <div class="wrap-swatch-{{op}}">{% include 'swatch_item' with option, swt_shape: 'circle' %}</div>
+            {% elsif swt_rectangle contains op %}
+              <div class="wrap-swatch-{{op}}">{% include 'swatch_item' with option, swt_shape: 'rectangle' %}</div>
+            {% endif %} 
+          {%- endif -%}
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endunless %}
+  </div>
+  
+  {% if template contains 'collection' %}
+    <div class="product-list-content hide">
+      <div class="content-left">
+        {{p_name}}
+        {{p_review}}
+        {{p_sh_description}}
+        {% if show_swt %}
+          <div class="swatch-wrapper">
+            {% assign swt_circle     = settings.show_swatch_type_circle    | downcase %}
+            {% assign swt_rectangle  = settings.show_swatch_type_rectangle | downcase %}
+            {% for option in product.options %}
+              {% assign op = option | downcase %}
+              {% if swt_circle contains op %}
+                <div class="wrap-swatch-{{op}}">{% include 'swatch_item' with option, swt_shape: 'circle' %}</div>
+              {% elsif swt_rectangle contains op %}
+                <div class="wrap-swatch-{{op}}">{% include 'swatch_item' with option, swt_shape: 'rectangle' %}</div>
+              {% endif %}
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+      <div class="content-right">
+        {% include 'product-price' %}
+        {% comment %}{% if product.available %}{{p_cart}}{%endif%}{% endcomment %}
+        <div class="product-button-list">
+          {% comment %}{{p_wishlist}}
+          {{p_compare}}{% endcomment %}
+          {%- if settings.use_quick_view -%}
+            <div data-target="#quick-shop-popup" data-handle="{{product.handle}}" class="quick_shop btn btn-1" data-toggle="modal" title="{{ 'products.product.quick_shop' | t }}">     
+              <i class="demo-icon icon-eye-1"></i><span class="qs_text">{{ 'products.product.quick_shop' | t }}</span>
+            </div>
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+  {% endif %}
+</div>

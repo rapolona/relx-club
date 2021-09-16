@@ -1,0 +1,527 @@
+{% if section.settings.boxed_layout %}{% assign _layout = 'boxed' %}{% else %}{% assign _layout = 'full' %}{% endif %}
+{%- assign section_type          = 'image-gallery' -%}
+{%- assign _lazyload             = settings.use_lazyload -%}
+{%- assign _type                 = section.settings.type -%}
+{%- assign _effect               = section.settings.effect -%}
+{%- assign _padding_item         = section.settings.padding_item -%}
+{%- assign _wrapper_padding      = section.settings.wrapper_padding -%}
+{%- assign _margin_top           = section.settings.margin_top -%}
+{%- assign _reverse_margin       = section.settings.reverse_margin -%}
+{%- assign _adapt_first          = section.settings.adapt_first -%}
+{%- assign _text_on_same_line    = section.settings.text_on_same_line -%}
+{%- include 'include-item-per-row' -%}
+
+{% capture emptyImage %}<div class="image">{{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}</div>{% endcapture %}
+{%- if _adapt_first -%}
+  {%- assign first_block = section.blocks[0] -%}
+
+  {%- if first_block.settings.image.aspect_ratio == blank -%}
+    {%- assign min_aspect_ratio = 2.0 -%}
+  {%- else -%}
+    {%- assign min_aspect_ratio = first_block.settings.image.aspect_ratio -%}
+  {%- endif -%}
+
+  {%- assign image_padding_adapt = 100 | divided_by: min_aspect_ratio | append: '%' -%}
+{%- endif -%}
+
+<div class="home-banner effect-{{ _effect }} layout-{{_layout }} section-show-{{section.id}}{% if section.settings.hide_mobile %} d-none d-md-block{% endif %}"
+     data-section-type="{{section_type}}" data-section-id="{{section.id}}" {% unless section.settings.background_color == blank %} style="background: {{section.settings.background_color}}"{% endunless %}>
+
+  {% if _layout == 'boxed' %}<div class="container">{% endif %}
+    {% include 'head-title' %}
+    <div class="home-banner-items{% if _adapt_first %} adapt-first-image{% endif %}{% if _text_on_same_line %} content-same-line{% endif %}">
+      {% if section.blocks.size > 0 %}
+
+        {% include 'image-gallery-layout' %}
+
+      {% else %}
+        <div class="row">
+          {% for i in (1..2) %}
+            <div class="col-6">
+              <div class="banner-item">{{ emptyImage }}</div>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+
+  {% if _layout == 'boxed' %}</div>{% endif %}
+</div>
+<script>
+  var _adapt_first = function(){
+    let banners = $('.home-banner');
+    for (var i = 0; i < banners.length; i++) {
+      let bn_item = $(banners[i]);
+      if (bn_item.find('.adapt-first-image').length) {
+        let first = bn_item.find('.banner-item').first();
+        first.nextAll('.banner-item').css('max-height', first.innerHeight()+'px');
+      }
+    }    
+  }
+  jQuery(document).on('ready',_adapt_first);
+  $(window).on('resize',_adapt_first);
+</script>
+{% if _margin_top > 0%}
+  <style>
+    @media (min-width: 768px){
+      .home-banner.section-show-{{section.id}} .home-banner-items{
+        margin-top: {% if _reverse_margin %}-{% endif %}{{_margin_top|append:'px'}};
+      }
+    }
+  </style>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Image Gallery",
+  "max_blocks": 20,
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Created by 'Image gallery' section"
+    },
+    {
+      "id": "title",
+      "type": "text",
+      "label": "Section Label",
+      "default": "Image Gallery"
+    },
+    {
+      "type": "header",
+      "content": "LAYOUT"
+    },
+    {
+      "type": "checkbox",
+      "id": "boxed_layout",
+      "label": "Boxed layout",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_mobile",
+      "label": "Hide on Mobile"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color"
+    },
+    {
+      "type": "checkbox",
+      "id": "padding_item",
+      "label": "Padding items",
+      "default": true
+    },
+    {
+       "type":"checkbox",
+       "id"   :"adapt_first",
+       "label":"Adapt to first image"
+    },
+    {
+      "type": "checkbox",
+      "id": "reverse_margin",
+      "label": "Reverse margin top",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "margin_top",
+      "label": "Margin top:",
+      "min": 0,
+      "max": 100,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "select",
+      "id": "type",
+      "label": "Type",
+      "options": [
+        {"value":"row","label":"Row"},
+        {"value":"carousel","label":"Carousel"},
+        {"value":"masonry","label":"Masonry"}
+      ],
+      "default": "row"
+    },
+    {
+      "type": "select",
+      "id": "effect",
+      "label": "Image Hover effect",
+      "default": "1",
+      "options": [
+        {"value":"1","label":"None"},
+        {"value":"2","label":"Effect image"},
+        {"value":"3","label":"Zoom in image"},
+        {"value":"4","label":"Zoom out image"},
+        {"value":"5","label":"Zoom Fade"},
+        {"value":"6","label":"Blur"},
+        {"value":"7","label":"Glow"},
+        {"value":"8","label":"Color"},
+        {"value":"9","label":"Grayscale"}
+      ]
+    },
+    {
+       "type":"checkbox",
+       "id"   :"text_on_same_line",
+       "label":"Content on same line"
+    },
+    {
+      "type" :"text",
+      "id" :"items_resp",
+      "label":"Responsive number of items",
+      "placeholder": "xl,lg,md,sm,xs",
+      "info": "You can define the number of slides to display for various breakpoint settings. e.g. 4 items on desktop, 3 items on tablet and 2 items on mobile. Input: 4,3,2. [Read more](https:\/\/help.arenacommerce.com\/customization\/grid.html)",
+      "default": "2,1"
+    },
+    {
+      "type": "header",
+      "content": "Heading content",
+      "info": "Blank to hide."
+    },
+    {
+      "type": "select",
+      "id": "heading_content_align",
+      "label": "Heading alignment",
+      "options": [
+        {"value":"left","label":"Left"},
+        {"value":"center","label":"Center"},
+        {"value":"right","label":"Right"}
+      ],
+      "default": "center"
+    },
+    {
+      "type": "text",
+      "id": "heading_text",
+      "label": "Heading"
+    },
+    {
+      "type": "text",
+      "id": "subheading_text",
+      "label": "Subheading"
+    },
+    {
+      "type": "header",
+      "content": "Carousel settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay",
+      "label": "Enable Autoplay"
+    },
+    {
+      "type": "checkbox",
+      "id": "loop",
+      "label": "Enable Loop"
+    },
+    {
+      "type": "checkbox",
+      "id": "nav",
+      "label": "Show Navigator Next Prev",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "dot",
+      "label": "Show Bullet",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "image",
+      "name": "Image",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "url",
+          "id": "img_link",
+          "label": "Image link",
+          "default": "/collections"
+        },
+        {
+          "type": "range",
+          "id": "image_width_desk",
+          "label": "Desktop item Width",
+          "min": 1,
+          "max": 12,
+          "unit": "/12",
+          "default": 3,
+          "info": "Only for Masonry"
+        },
+        {
+          "type": "range",
+          "id": "image_width_mobile",
+          "label": "Mobile item Width",
+          "min": 1,
+          "max": 12,
+          "unit": "/12",
+          "default": 4,
+          "info": "Only for Masonry"
+        },
+        {
+          "type": "header",
+          "content": "Text content"
+        },
+        {
+          "type": "select",
+          "id": "text_content_style",
+          "label": "Text content style",
+          "default": "default",
+          "options": [
+            {"value":"default","label":"Default"},
+            {"value":"next_to_image","label":"Next to Image"},
+            {"value":"prev_to_image","label":"Prev to Image"},
+            {"value":"overlay","label":"Overlay"},
+            {"value":"hidden","label":"Hidden"}
+          ]
+        },
+        {
+          "type": "range",
+          "id": "content_with",
+          "label": "Content width",
+          "min": 0,
+          "max": 100,
+          "unit": "%",
+          "default": 0,
+          "info": "0 is Auto. Only for Style Overlay"
+        },
+        {
+          "type": "range",
+          "id": "position_top",
+          "label": "Vertical position",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "unit": "%",
+          "default": 50,
+          "info": "Use for Content style is 'Overlay'"
+        },
+        {
+          "type": "range",
+          "id": "position_left",
+          "label": "Horizontal position",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "unit": "%",
+          "default": 50,
+          "info": "Use for Content style is 'Overlay'"
+        },
+        {
+          "type": "checkbox",
+          "id": "border",
+          "label": "Show Border"
+        },
+        {
+          "type": "color",
+          "id": "border_color",
+          "label": "Border color"
+        },
+        {
+          "type": "color",
+          "id": "background_text",
+          "label": "Background text content"
+        },
+        {
+          "type": "range",
+          "id": "opacity",
+          "label": "Background text content opacity",
+          "default": 100,
+          "min": 0,
+          "max": 100,
+          "step": 10,
+          "unit": "%"
+        },
+        {
+          "type": "header",
+          "content": "Text"
+        },
+        {
+          "type": "paragraph",
+          "content": "Use <b></b>, <i></i>, <u></u> tags to wrap the content which you want to have more styles (b = Bold, i = Italic, u = Underline) E.g: <b>Title</b>, this is a<br>paragraph."
+        },
+        {
+          "type": "select",
+          "id": "text_align",
+          "label": "Text align",
+          "options": [
+            {"value":"left","label":"Left"},
+            {"value":"center","label":"Center"},
+            {"value":"right","label":"Right"}
+          ],
+          "default": "left"
+        },
+        {
+          "type": "text",
+          "id": "title_text",
+          "label": "Title"
+        },
+        {
+          "type": "textarea",
+          "id": "subtitle_text",
+          "label": "Subtitle"
+        },
+        {
+          "type": "text",
+          "id": "offer_text",
+          "label": "Offer"
+        },
+        {
+          "type": "text",
+          "id": "expire_text",
+          "label": "Expire offer",
+          "placeholder": "MM/DD/YYYY"
+        },
+        {
+          "type": "text",
+          "id": "button_text",
+          "label": "Button"
+        },
+        {
+          "type": "url",
+          "id": "button_link",
+          "label": "Button link"
+        },
+        {
+          "type": "checkbox",
+          "id": "button_rounded",
+          "label": "Button Rounded Corners"
+        },
+        {
+           "type":"range",
+           "id"   :"button_style",
+           "label":"Button style",
+           "min"   :0,
+           "max"   :3,
+           "default":1
+        },
+        {
+          "type": "header",
+          "content": "Background & Text color"
+        },
+        {
+          "type": "color",
+          "id": "title_text_color",
+          "label": "Title text color",
+          "default": "#000"
+        },
+        {
+          "type": "color",
+          "id": "subtitle_text_color",
+          "label": "Subtitle text color",
+          "default": "#000"
+        },
+        {
+          "type": "color",
+          "id": "offer_text_color",
+          "label": "Offer text color",
+          "default": "#000"
+        },
+        {
+          "type": "color",
+          "id": "button_text_color",
+          "label": "Button text color",
+          "default": "#000000"
+        },
+        {
+          "type": "color",
+          "id": "button_text_bg_color",
+          "label": "Button background color"
+        },
+        {
+          "type": "header",
+          "content": "Text font size"
+        },
+        {
+          "type": "range",
+          "id": "title_font_size",
+          "label": "Title font size",
+          "min": 10,
+          "max": 40,
+          "step": 1,
+          "default": 36,
+          "unit": "px"
+        },
+        {
+          "type": "range",
+          "id": "subtitle_font_size",
+          "label": "Subtitle font size",
+          "min": 10,
+          "max": 40,
+          "step": 1,
+          "default": 36,
+          "unit": "px"
+        },
+        {
+          "type": "range",
+          "id": "offer_font_size",
+          "label": "Offer font size",
+          "min": 10,
+          "max": 40,
+          "step": 1,
+          "default": 36,
+          "unit": "px"
+        },
+        {
+          "type": "range",
+          "id": "button_font_size",
+          "label": "Button font size",
+          "min": 10,
+          "max": 40,
+          "step": 1,
+          "default": 36,
+          "unit": "px"
+        },
+        {
+          "type": "range",
+          "id": "title_spacing",
+          "label": "Title spacing",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "default": 15,
+          "unit": "px"
+        },
+        {
+          "type": "range",
+          "id": "subtitle_spacing",
+          "label": "Subtitle spacing",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "default": 15,
+          "unit": "px"
+        },
+        {
+          "type": "range",
+          "id": "offer_spacing",
+          "label": "Offer spacing",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "default": 15,
+          "unit": "px"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Image Gallery",
+      "category": "Banner",
+      "blocks": [
+        {
+          "type": "image"
+        },
+        {
+          "type": "image"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

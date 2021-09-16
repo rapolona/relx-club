@@ -1,0 +1,423 @@
+{%- assign _style    = section.settings.newsletter_style -%}
+{%- assign _visitors = section.settings.visitors -%}
+{%- assign _homepage = section.settings.homepage -%}
+
+{%- if _style != 'none' and section.blocks.size > 0 -%}
+  {% if _visitors and _homepage == false %}
+    {% unless customer %}
+      {%- include 'newsletter-template-snippet' -%}
+    {% endunless %}
+  {% endif %}
+
+  {% if _homepage and _visitors == false %}
+    {% if template == 'index' %}
+      {%- include 'newsletter-template-snippet' -%}
+    {% endif %}
+  {% endif %}
+
+  {% if _visitors and _homepage %}
+	{% if template == 'index' %}
+      {%- include 'newsletter-template-snippet' -%}
+    {% else %}
+      {% unless customer %}
+        {%- include 'newsletter-template-snippet' -%}
+      {% endunless %}
+    {% endif %}
+  {% endif %}
+
+  {% if _visitors == false and _homepage == false %}
+    {%- include 'newsletter-template-snippet' -%}
+  {% endif %}
+   <script crossorigin="anonymous" src="{{ 'ouibounce.min.js' | asset_url  }}" defer></script>
+{%- endif -%}
+
+{% schema %}
+{
+   "name":"Newsletter",
+   "settings":[
+      {
+         "type":"select",
+         "id":"newsletter_style",
+         "label":"Style",
+         "options":[
+            {
+               "value":"delay",
+               "label":"Time on page"
+            },
+            {
+               "value":"exit-intent",
+               "label":"Exit Intent - Triggered Popups"
+            },
+            {
+               "value":"scroll",
+               "label":"Scroll-Triggered Popups"
+            },
+            {
+               "value":"none",
+               "label":"None"
+            }
+         ],
+         "default":"delay"
+      },
+      {
+         "type":"checkbox",
+         "id":"visitors",
+         "label":"Show only for visitors"
+      },
+      {
+         "type":"checkbox",
+         "id":"homepage",
+         "label":"Show only on home page"
+      },
+      {
+         "type":"range",
+         "id":"delay_time",
+         "label":"Delay time",
+         "default":10,
+         "min":1,
+         "max":10,
+         "unit":"Sec"
+      },
+      {
+         "type":"range",
+         "id":"scroll_position",
+         "label":"Scroll position",
+         "default":500,
+         "min":100,
+         "max":1000,
+         "step":10,
+         "unit":"px",
+         "info":"Calculated from top of site"
+      },
+      {
+         "type":"range",
+         "id":"expires",
+         "label":"Expires",
+         "default":3,
+         "min":1,
+         "max":7,
+         "unit":"Day"
+      },
+      {
+         "type":"header",
+         "content":"Text box"
+      },
+      {
+         "type"  :"range",
+         "id"     :"width",
+         "label" :"Textbox Width:",
+         "min"    :10,
+         "max"    :100,
+         "step"   :1,
+         "unit"   :"%",
+         "default":50
+      },
+      {
+         "type":"select",
+         "id":"text_box_position",
+         "label":"Position",
+         "options":[
+            {
+               "value":"top",
+               "label":"Top"
+            },
+            {
+               "value":"right",
+               "label":"Right"
+            },
+            {
+               "value":"middle",
+               "label":"Middle"
+            },
+            {
+               "value":"bottom",
+               "label":"Bottom"
+            },
+            {
+               "value":"left",
+               "label":"Left"
+            }
+         ],
+         "default":"right"
+      },
+      {
+         "type":"select",
+         "id":"text_box_backgound",
+         "label":"Background style",
+         "options":[
+            {
+               "value":"color",
+               "label":"Color"
+            },
+            {
+               "value":"image",
+               "label":"Image"
+            }
+         ],
+         "default":"color"
+      },
+      {
+         "type":"color",
+         "id":"bg_color",
+         "label":"Background color",
+         "default":"#ffffff"
+      },
+      {
+         "type":"image_picker",
+         "id":"bg_image",
+         "label":"Background image (pixels)"
+      },
+      {
+         "type":"text",
+         "id":"image_size",
+         "label":"Image size (pixels)",
+         "default":"20x",
+         "info":"Default is 20x20"
+      }
+   ],
+   "blocks":[
+      {
+         "type":"image",
+         "name":"Image",
+         "limit":1,
+         "settings":[
+            {
+               "type"  :"range",
+               "id"     :"width",
+               "label" :"Textbox Width:",
+               "min"    :10,
+               "max"    :100,
+               "step"   :1,
+               "unit"   :"%",
+               "default":50
+            },
+            {
+               "type":"image_picker",
+               "id":"image",
+               "label":"Image"
+            },
+            {
+               "type":"text",
+               "id":"image_size",
+               "label":"Image size (pixels)",
+               "default":"474x",
+               "info":"Default is 474x479"
+            }
+         ]
+      },
+      {
+         "type":"form",
+         "name":"Form",
+         "limit":1,
+         "settings":[
+            {
+               "type"  :"select",
+               "id"    :"action_type",
+               "label" :"Form Type:",
+               "options":[
+               {
+                  "value": "mailchimp",
+                  "label": "Mailchimp"
+               },
+               {
+                  "value": "klaviyo",
+                  "label": "Klaviyo"
+               }
+               ],
+               "default":"mailchimp"
+            },
+            {
+               "type":"textarea",
+               "id":"action",
+               "label":"Form Action"
+            },
+            {
+               "type"  :"paragraph",
+               "content":"Mailchimp: [Where do I get my MailChimp Form Action](http:\/\/shopify.barrelny.com\/where-do-i-find-the-mailchimp-signup-url)"
+            },
+            {
+               "type"  :"paragraph",
+               "content":"KLAVIYO: Please copy the hidden input[name='g'] value from the KLAVIYO form and paste here."
+            },
+            {
+               "type":"text",
+               "id":"placeholder",
+               "label":"Placeholder input",
+               "default":"Yourname@email.com"
+            },
+            {
+               "type":"text",
+               "id":"button_text",
+               "label":"Button text",
+               "default":"Subscribe"
+            },
+            {
+               "type":"select",
+               "id":"button_position",
+               "label":"Button position",
+               "options":[
+                  {
+                     "value":"right",
+                     "label":"Right"
+                  },
+                  {
+                     "value":"bottom",
+                     "label":"Bottom"
+                  }
+               ],
+               "default":"right"
+            }
+         ]
+      },
+      {
+         "type":"text",
+         "name":"Text",
+         "settings":[
+            {
+               "type"  :"checkbox",
+               "id"    :"hide_mobile",
+               "label" :"Hide on Mobile"
+            },
+            {
+               "type":"textarea",
+               "id":"text",
+               "label":"Text"
+            },
+            {
+               "type":"color",
+               "id":"color",
+               "label":"Color",
+               "default":"#000000"
+            },
+            {
+               "type":"range",
+               "id":"font_size",
+               "label":"Font size",
+               "min":10,
+               "max":80,
+               "default":23,
+               "unit":"px"
+            },
+            {
+               "type":"checkbox",
+               "id":"bold_text",
+               "label":"Bold text"
+            }
+         ]
+      },
+      {
+         "type":"countdown",
+         "name":"Countdown",
+         "limit":1,
+         "settings":[
+            {
+               "type":"color",
+               "id":"bg_color",
+               "label":"Background",
+               "default":"#000000"
+            },
+            {
+               "type":"color",
+               "id":"color",
+               "label":"Text color",
+               "default":"#ffffff"
+            },
+            {
+               "type":"textarea",
+               "id":"text",
+               "label":"Text",
+               "default":"Hurryup ! Offer end in"
+            },
+            {
+               "type":"text",
+               "id":"expire",
+               "label":"Expire",
+               "placeholder":"mm/dd/yyyy.Eg: 12/20/2019"
+            }
+         ]
+      },
+      {
+         "type":"coupon",
+         "name":"Coupon placeholder",
+         "limit":1,
+         "settings":[
+            {
+               "type":"header",
+               "content":"Coupon image"
+            },
+            {
+               "type":"image_picker",
+               "id":"image",
+               "label":"Image"
+            },
+            {
+               "type":"text",
+               "id":"image_size",
+               "label":"Image size (pixels)",
+               "default":"336x",
+               "info":"Default is 336x70"
+            },
+            {
+               "type":"header",
+               "content":"Text box"
+            },
+            {
+               "type":"text",
+               "id":"text_1",
+               "label":"Text 1",
+               "default":"Thank you, you got the offer!"
+            },
+            {
+               "type":"text",
+               "id":"text_2",
+               "label":"Text 2",
+               "default":"Your coupon code"
+            },
+            {
+               "type":"text",
+               "id":"coupon_code",
+               "label":"Coupon code"
+            },
+            {
+               "type":"text",
+               "id":"button_text",
+               "label":"Button text",
+               "default":"Copy"
+            }
+         ]
+      },
+      {
+         "type":"social",
+         "name":"Social follows",
+         "limit":1,
+         "settings":[
+            {
+               "type":"paragraph",
+               "content":"Use settings in Icon > Social icon 01, Social icon 02, Social icon 03, Social icon 04"
+            },
+            {
+               "type":"checkbox",
+               "id":"border_top",
+               "label":"Border top"
+            }
+         ]
+      }
+   ],
+   "presets":[
+      {
+         "name":"Newsletter",
+         "blocks":[
+            {
+               "type":"image"
+            },
+            {
+               "type":"text"
+            },
+            {
+               "type":"coupon"
+            }
+         ]
+      }
+   ]
+}
+{% endschema %}

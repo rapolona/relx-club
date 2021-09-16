@@ -1,0 +1,169 @@
+{% if settings.show_breabcrumb and section.settings.show_breabcrumb %}{% include 'breadcrumb' %}{% endif %}
+{% assign _lazyload    = settings.use_lazyload %}
+{% assign boxed_layout = section.settings.boxed_layout %}
+<div class="page-contact" data-section-type="contact" data-section-id="{{section.id}}"{% unless section.settings.background_color == blank %} style="background: {{section.settings.background_color}}"{% endunless %}>
+{%- if boxed_layout -%}<div class="container">{%- endif -%}
+  <div id="col-main" class="page-contact-content">
+    {% include 'head-title' %}
+
+    <div class="contact-content">
+      <div class="row">
+      {%- for block in section.blocks -%}
+        {% assign _width = block.settings.width %}
+        {% assign width = 'col-md-' | append: _width | append: ' col-12' %}
+
+        {%- case block.type -%}
+
+          {%- when 'map' -%}
+            <div class="contact-type-map {{width}}" {{ block.shopify_attributes }}>
+              <div class="map-wrapper"><div id="page-contact-map" class="map"></div></div>
+
+              {%- if block.settings.custom_content -%}
+                <div class="map-content">
+                  {% assign heading = block.settings.heading %}
+                  {%- unless heading == blank -%}<p class="h5">{{ heading }}</p>{%- endunless -%}
+                  <div class="row">
+                    {% for i in (1..3) %}
+                      {% assign _type       = 'type_'      | append: i %}
+                      {% assign _icon       = 'af_icon_'   | append: i %}
+                      {% assign _image      = 'image_'     | append: i %}
+                      {% assign _image_size = 'image_size_'| append: i %}
+                      {% assign _text       = 'text_'      | append: i %}
+                      {%- if forloop.first -%}
+                      <div class="col-md-6 col-12">
+                        {%- endif -%}
+                        <div class="contact-info d-flex">
+                          {% if block.settings[_type] == 'icon' %}
+                            <div class="contact-icon"><i class="demo-icon {{block.settings[_icon]}}"></i></div>
+                          {% else %}
+                            <div class="contact-image"><img {% if _lazyload %}class="lazyload" data-{% endif %}src="{{ block.settings[_image] | img_url: block.settings[_image_size] }}"></div>
+                          {% endif %}
+
+                          <div class="text">{{ block.settings[_text] }}</div>
+                        </div>
+                        {%- if forloop.first -%}
+                      </div>
+                      <div class="col-md-6 col-12">
+                        {%- endif -%}
+                        {%- if forloop.last -%}
+                      </div>
+                      {%- endif -%}
+                    {% endfor %}
+                  </div>
+                </div>
+              {%- endif -%}
+              <script src="//maps.googleapis.com/maps/api/js?key=AIzaSyCmqy8wIh9KCnj_WKXqaskSCM-AUpXd01Q"></script>
+              <script>
+                jQuery(document).ready(function($) {
+                  let sections = new theme.Sections();
+                  sections.register('contact', function(){
+                    /*---- Google map -----*/
+                    (function () {
+                      "use strict";
+
+                      if (jQuery("#page-contact-map")) {
+                        var locations = [
+                          ['<div class="map-info-box"><p>{{ shop.address.street }}, {{ shop.address.city }}, {{ shop.address.country }}</p></div>', {{ block.settings.contact_latlong }}, 9]
+                        ];
+
+                        var map = new google.maps.Map(jQuery("#page-contact-map")[0], {
+                          zoom: {{block.settings.contact_zoom_lv}},
+                          scrollwheel: {{block.settings.contact_scroll}},
+                          center: new google.maps.LatLng({{ block.settings.contact_latlong }}),
+                          mapTypeId: google.maps.MapTypeId.ROADMAP
+                        });
+
+                        var infowindow = new google.maps.InfoWindow();
+
+                        var marker, i;
+
+                        for (i = 0; i < locations.length; i++) {
+                          marker = new google.maps.Marker({
+                            position: new google.maps.LatLng(locations[i][1], locations[i][2]),
+                            map: map,
+                            animation: google.maps.Animation.DROP,
+                            icon: '{{"pin.png" | asset_url}}',
+                          });
+
+                          google.maps.event.addListener(marker, 'click', (function(marker, i) {
+                            return function() {
+                              infowindow.setContent(locations[i][0]);
+                              infowindow.open(map, marker);
+                            }
+                          })(marker, i));
+                        }
+                      }
+                    }());
+                  });
+                });
+
+              </script>
+            </div>
+
+          {%- when 'form' -%}
+            {% assign f_align = block.settings.form_align %}
+            <div class="contact-type-form contact-form-wrapper {{width}}" {{ block.shopify_attributes }}>
+              {%- assign heading    = block.settings.heading -%}
+              {%- assign subheading = block.settings.subheading -%}              
+              <div class="heading-form text-{{block.settings.head_align}}">
+                {%- unless heading == blank -%}<h2>{{ heading }}</h2>{%- endunless -%}
+                {%- unless subheading == blank -%}<p>{{ subheading }}</p>{%- endunless -%}
+              </div>
+              <div class="contact-form">
+                {% form 'contact' %}
+
+                {% if form.posted_successfully? %}
+                <div class="alert alert-success">
+                  <button type="button" class="close" data-dismiss="alert">×</button>
+                  {{'contact.form.post_success' | t }}
+                </div>
+                {% endif %}
+
+                {% if form.errors %}
+                <div class="alert alert-error">
+                  <button type="button" class="close" data-dismiss="alert">×</button>
+                  {{ form.errors | default_errors }}
+                </div>
+                {% endif %}
+
+                <div id="contact-form" class="grid-form">
+                  <div class="form-group">
+                    <input type="text" id="name" class="text-{{f_align}} form-control form-contact-us" value="{% if form.name %}{{ form.name }}{% elsif customer %}{{ customer.first_name }} {{ customer.last_name }}{% endif %}" name="contact[name]" placeholder="{{ 'contact.form.name' | t }}"/>
+                  </div>
+
+                  <div class="form-group{% if form.errors contains 'email' %} error{% endif %}">
+                    <input required type="email" id="email" class="text-{{f_align}} form-control form-contact-us" value="{% if form.email %}{{ form.email }}{% elsif customer %}{{ customer.email }}{% endif %}" name="contact[email]" placeholder="{{ 'contact.form.email' | t }}"/>
+                  </div>
+
+                  <div class="form-group{% if form.errors contains 'body' %} error{% endif %}">
+                    <textarea required id="message" class="text-{{f_align}} form-control form-contact-us" cols="40" rows="7" name="contact[body]" placeholder="{{ 'contact.form.message' | t }}">{{ form.body }}</textarea>
+                  </div>
+
+                  <div class="form-actions text-{{block.settings.btn_align}}">
+                    <button type="submit" class="btn btn-1 btn-contact-us">{{'contact.form.submit_button' | t }}</button>
+                  </div>
+                </div>
+
+                {% endform %}
+              </div>
+            </div>
+
+          {%- when 'text' -%}
+            <div class="contact-type-text {{width}}" {{ block.shopify_attributes }}>
+              <div class="d-md-flex">
+                {%- for i in (1..4) -%}
+                  {% assign text = 'text_' | append: i %}
+                  {% unless block.settings[text] == blank %}
+                    <div class="text flex-fill">{{block.settings[text]}}</div>
+                  {% endunless %}
+                {%- endfor -%}
+              </div>
+            </div>
+          {%- else -%}
+        {%- endcase -%}
+      {%- endfor -%}
+      </div>
+    </div>
+  </div>
+{%- if boxed_layout -%}</div>{%- endif -%}
+</div>

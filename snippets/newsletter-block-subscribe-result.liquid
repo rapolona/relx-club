@@ -1,0 +1,28 @@
+{% for block in section.blocks %}
+  {% if block.type == 'coupon' %}
+
+    {%- assign _coupon_code = block.settings.coupon_code -%}
+    {%- assign _text_1 = block.settings.text_1 -%}
+    {%- assign _text_2 = block.settings.text_2 -%}
+    {%- assign _button_text = block.settings.button_text -%}
+
+    <div class="subscribe-result" style="display: none;">
+      <div class="result-inner" style="{% if _text_box_backgound == 'color' %}background-color: {{ _text_box_bg_color }}{% else %}background-image:url({{ _text_box_bg_image | img_url: _text_box_bg_size }};{% endif %}">
+        {% unless _text_1 == blank %}<div class="text-1">{{ _text_1 }}</div>{% endunless %}
+
+        <div class="coupon-code">
+          {% unless _text_2 == blank %}<div class="text-2">{{ _text_2 }}</div>{% endunless %}
+
+          {% unless _coupon_code == 'blank' %}
+          <div id="mycode" class="code">{{ _coupon_code }}</div>
+          {% endunless %}
+        </div>
+
+        {% unless _coupon_code == 'blank' %}<button type="button" class="btn btn-1 btn-copy">{{ _button_text }}</button>{% endunless %}
+      </div>
+    </div>
+
+    {% break %}
+
+  {% endif %}
+{% endfor %}

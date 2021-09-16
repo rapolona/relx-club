@@ -1,0 +1,504 @@
+{%- if settings.left_column_homepage -%}
+<div class="left-column-container" data-section-type="home-left" data-section-id="{{ section.id }}">
+  {% assign _lazyload = settings.use_lazyload %}
+
+  {% for block in section.blocks %}
+
+    {% case block.type %}
+
+      {% when 'collections' %}
+
+  		  {% assign _heading = block.settings.heading %}
+
+        <div class="sb-widget">
+          <div class="sb-caterogies">
+
+            {% unless _heading == blank %}<h4 class="sb-title">{{ _heading }}</h4>{% endunless %}
+
+            <ul class="caterogies-list">
+              {% if block.settings.display_type == 'all' %}
+                {% for collection in collections %}
+                  <li data-test>
+                    {% unless block.settings.icon == 'none' %}
+                      {% assign col_handle = collection.handle %}
+                      {%- capture cf_menu_icon -%}{%- include 'include-label-handle',l_title: collection.title, metafields_icon: true -%}{%- endcapture -%}
+                    {%- unless cf_menu_icon == nil -%}
+                      {{cf_menu_icon}}
+                    {%- else -%}
+                      
+                      <span class="icon">
+                        {% if block.settings.icon == 'collection-image' %}
+                          <img {% if _lazyload %}class="lazyload" data-{% endif %}src="{{ collection.image.src | collection_img_url: 'icon' }}" alt="{{ collection.title | escape }}" />
+
+                        {% elsif block.settings.icon == 'upload-svg' %}
+                          <img {% if _lazyload %}class="lazyload" data-{% endif %}src = "{{ col_handle | append: '.svg' | asset_url }}" alt="" />
+
+                        {% else %}
+                          <img {% if _lazyload %}class="lazyload" data-{% endif %}src = "{{ col_handle | append: '.png' | asset_url }}" alt="" />
+
+                        {% endif %}
+                      </span>
+                    {%- endunless -%}
+                    {% endunless %}
+
+                    <a href="{{ collection.url }}">{{ collection.title }}</a>
+                    <span>({{ collection.products_count }})</span>
+                  </li>
+
+                {% endfor %}
+
+              {% else %}
+                {% for l in linklists[block.settings.collection_menu ].links %}
+                  {%- assign col_handle  = l.url | split: 'collections/' | last -%}
+                  {%- assign _collection = collections[col_handle] -%}
+                  <li>
+                    {% unless block.settings.icon == 'none' %}
+                      {% assign col_handle = _collection.handle %}
+                      {%- capture cf_menu_icon -%}{%- include 'include-label-handle',l_title: l.handle, metafields_icon: true -%}{%- endcapture -%}
+                    
+                      <span class="icon">
+                        {%- unless cf_menu_icon == blank -%}
+                          {{cf_menu_icon}}
+                        {%- else -%}
+                            
+                        {%- case block.settings.icon -%}
+                          {%- when 'collection-image' -%}
+                            <img {% if _lazyload %}class="lazyload" data-{% endif %}src="{{ _collection.image.src | collection_img_url: 'icon' }}" alt="{{ _collection.title | escape }}" />
+                          {%- when 'upload-setting' -%}
+                            {% assign _image = 'image_' | append : i %}
+                            {% unless block.settings[_image] == blank %}
+                              <img {% if _lazyload %}class="lazyload" data-{% endif %}src = "{{ block.settings[_image] | img_url: '25x' }}" alt="" />
+                            {% endunless %}
+                          {%- when 'upload-svg' -%}
+                            <img {% if _lazyload %}class="lazyload" data-{% endif %}src = "{{ col_handle | append: '.svg' | asset_url }}" alt="" />
+                          {%- else -%}
+                            <img {% if _lazyload %}class="lazyload" data-{% endif %}src = "{{ col_handle | append: '.png' | asset_url }}" alt="" />
+                        {%- endcase -%}
+                        {%- endunless -%}
+                      </span>
+                    {% endunless %}
+
+                    <a href="{{ _collection.url }}">{%- if block.settings.collection_title -%}{{ _collection.title }}{%- else -%}{{l.title}}{%- endif -%}</a>
+                    <span>({{ _collection.products_count }})</span>
+                  </li>
+                {% endfor %}
+              {% endif %}
+            </ul>
+
+          </div>
+        </div>
+
+      {% when 'banner' %}
+
+        {% assign _image       = block.settings.image %}
+        {% assign _link        = block.settings.link %}
+        {% assign _text        = block.settings.image_text %}
+        {% assign _button_text = block.settings.button_text %}
+
+        <div class="sb-widget">
+          <div class="sb-banner">
+
+              {% unless _image == blank %}
+                <a href="{{ _link }}">
+                  <img {% if _lazyload %}class="lazyload" data-{% endif %}src = "{{ _image | img_url: '270x' }}" alt="" />
+                </a>
+
+              {% else %}
+                {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+
+              {% endunless %}
+
+              <div class="block-text">
+                {% unless _text == blank %}<span class="text" style="color: {{ block.settings.title_color }};">{{ _text }}</span>{% endunless %}
+                {% unless _button_text == blank %}<a class="btn btn-1" href="{{ _link }}">{{ _button_text }}</a>{% endunless %}
+              </div>
+          </div>
+        </div>
+
+      {% when 'banner-carousel' %}
+
+        <div class="sb-widget">
+          <div class="sb-banner">
+
+            <div class="sb-banner-list sb-banner-carousel" data-owl-xs="1" data-dot="true">
+              {% for i in (1..3) %}
+                {% assign _image       = 'image_'       | append: i %}
+                {% assign _heading     = 'heading_'     | append: i %}
+                {% assign _subheading  = 'subheading_'  | append: i %}
+                {% assign _link        = 'link_'        | append: i %}
+                {% assign _button_text = 'button_text_' | append: i %}
+
+                <div class="item">
+                  <div class="block-text">
+                    {% unless block.settings[_heading] == blank %}<h4 style="color: {{ block.settings.heading_color }};">{{ block.settings[_heading] }}</h4>{% endunless %}
+                    {% unless block.settings[_subheading] == blank %}<span style="color: {{ block.settings.subheading_color }};">{{ block.settings[_subheading] }}</span>{% endunless %}
+                  </div>
+
+                  {% unless block.settings[_image] == blank %}
+                    <a href="{{ block.settings[_link] }}"{% if _lazyload %} class="lazyload waiting"{% endif %}>
+                      <noscript><img src="{{ block.settings[_image] | img_url: '270x' }}"/></noscript>
+                      <img {% if _lazyload %}class="lazyload" data-{% endif %}src = "{{ block.settings[_image] | img_url: '270x' }}" alt="" />
+                    </a>
+
+                  {% else %}
+                  {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+
+                  {% endunless %}
+
+                  {% unless block.settings[_button_text] == blank %}<a class="btn btn-3" href="{{ block.settings[_link] }}">{{ block.settings[_button_text] }}</a>{% endunless %}
+                </div>
+
+              {% endfor %}
+            </div>
+
+          </div>
+        </div>
+
+      {% when 'products-listing' %}
+
+        {% assign _listing_col        = block.settings.listing_collection %}
+        {% assign _listing_collection = collections[_listing_col] %}
+  		  {% assign _listing_type       = block.settings.type %}
+        {% assign _limit              = block.settings.limited_item %}
+        {% assign _listing_title      = block.settings.heading %}
+
+        {% unless _listing_col == blank %}
+          <div class="sb-widget">
+            <div class="sb-product">
+
+              {% unless _listing_title == blank %}<h4 class="sb-title">{{ _listing_title }}</h4>{% endunless %}
+
+              <div class="sb-product-list {% if _listing_type == 'carousel' %} sb-product-carousel{% endif %}" data-owl-xs="1">
+                {% for product in _listing_collection.products limit: _limit %}
+  {% if product.object_type == 'product' and product.type == 'SHOPSTORM_HIDDEN_PRODUCT' %}{% continue %}{% endif %}
+
+  {% if product.object_type == 'product' and product.type == 'SHOPSTORM_HIDDEN_PRODUCT' %}{% continue %}{% endif %}
+
+                  {% include 'sb-product-item' %}
+                {% endfor %}
+              </div>
+
+            </div>
+          </div>
+        {% endunless %}
+
+      {% else %}
+
+        {% assign _limit = block.settings.limited_item %}
+        {% assign _title = block.settings.heading %}
+
+        <div class="sb-widget">
+          <div class="sb-brands">
+            {% unless _title == blank %}<h4 class="sb-title">{{ _title }}</h4>{% endunless %}
+
+            <div class="brands-list">
+              {% for product_vendor in shop.vendors limit: _limit %}
+                {{ product_vendor | link_to_vendor }}
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+
+    {% endcase %}
+
+  {% endfor %}
+</div>
+{%- endif -%}
+
+{% schema %}
+{
+   "name":"Left column - Homepage",
+   "settings":[
+   {
+      "type"    :"paragraph",
+      "content" :"Make sure Left column is Enabled. Go to Theme Settings > General Settings > Left Column - Homepage"
+   }
+   ],
+   "blocks":[
+      {
+         "type":"banner",
+         "name":"Banner",
+         "settings":[
+            {
+               "type":"image_picker",
+               "id":"image",
+               "label":"Image",
+               "info":"The default image size is 270x400 pixels"
+            },
+            {
+               "type":"url",
+               "id":"link",
+               "label":"Link to"
+            },
+            {
+               "type":"text",
+               "id":"image_text",
+               "label":"Text",
+               "default":"Wooden kitchen tools"
+            },
+            {
+               "type":"color",
+               "id":"title_color",
+               "label":"Text color",
+               "default":"#ffffff"
+            },
+            {
+               "type":"text",
+               "id":"button_text",
+               "label":"Button text",
+               "default":"shop now"
+            }
+         ]
+      },
+      {
+         "type":"products-listing",
+         "name":"Products Listing",
+         "settings":[
+            {
+               "type":"select",
+               "id":"type",
+               "label":"Type",
+               "options":[
+                  {
+                     "value":"row",
+                     "label":"Row"
+                  },
+                  {
+                     "value":"carousel",
+                     "label":"Carousel"
+                  }
+               ],
+               "default":"row"
+            },
+            {
+               "type":"text",
+               "id":"heading",
+               "label":"Heading",
+               "default":"Latest Products"
+            },
+            {
+               "id":"listing_collection",
+               "type":"collection",
+               "label":"Collection"
+            },
+            {
+               "type"  :"range",
+               "id"    :"limited_item",
+               "label":"Total items",
+               "min"   :2,
+               "max"   :10,
+               "step"  :1,
+               "default":3
+            }
+         ]
+      },
+      {
+         "type":"collections",
+         "name":"Categories",
+         "limit":1,
+         "settings":[
+            {
+               "type":"text",
+               "id":"heading",
+               "label":"Heading",
+               "default":"Categories"
+            },
+            {
+               "type":"paragraph",
+               "content":"All of your collections are listed by default. To customize your list, choose 'Selected' and add collection menu."
+            },
+            {
+               "type":"radio",
+               "id":"display_type",
+               "label":"Select collections to show",
+               "default":"all",
+               "options":[
+                  {
+                     "value":"all",
+                     "label":"All"
+                  },
+                  {
+                     "value":"selected",
+                     "label":"Selected"
+                  }
+               ]
+            },
+            {
+               "type":"checkbox",
+               "id":"collection_title",
+               "label":"Use Collection title",
+               "default": true,
+               "info": "Only for Collection selected"
+            },
+            {
+               "type":"select",
+               "id":"icon",
+               "label":"Thumbnail icon",
+               "options":[
+                  {
+                     "value":"collection-image",
+                     "label":"Use collection image"
+                  },
+                  {
+                     "value":"upload",
+                     "label":"Upload from Assets - png format"
+                  },
+                  {
+                     "value":"upload-svg",
+                     "label":"Upload from Assets - svg format"
+                  },
+                  {
+                     "value":"none",
+                     "label":"None"
+                  }
+               ],
+               "default":"collection-image",
+               "info":"If you select 'Upload from Assets', please go to Assets folder, then click 'Add a new asset' to upload the image. The image size is 25x25 pixels, syntax is xxx.png. 'xxx' is collection handle.([?](https:\/\/help.arenacommerce.com\/handy4\/howto.html))"
+            },
+            {
+               "type":"link_list",
+               "id":"collection_menu",
+               "label":"Collection Menu"
+            }
+         ]
+      },
+      {
+         "type":"banner-carousel",
+         "name":"Banner Carousel",
+         "limit":1,
+         "settings":[
+            {
+               "type":"color",
+               "id":"heading_color",
+               "label":"Heading color",
+               "default":"#f0f0f0"
+            },
+            {
+               "type":"color",
+               "id":"subheading_color",
+               "label":"Subheading color",
+               "default":"#b1b1b1"
+            },
+            {
+               "type":"header",
+               "content":"Banner 01"
+            },
+            {
+               "type":"image_picker",
+               "id":"image_1",
+               "label":"Image"
+            },
+            {
+               "type":"url",
+               "id":"link_1",
+               "label":"Link to"
+            },
+            {
+               "type":"text",
+               "id":"heading_1",
+               "label":"Heading",
+               "default":"Citchen Goods"
+            },
+            {
+               "type":"text",
+               "id":"subheading_1",
+               "label":"Subheading",
+               "default":"Fincidunt eu, mattis a libero. Pelletequ"
+            },
+            {
+               "type":"text",
+               "id":"button_text_1",
+               "label":"Button text",
+               "default":"check it out"
+            },
+            {
+               "type":"header",
+               "content":"Banner 02"
+            },
+            {
+               "type":"image_picker",
+               "id":"image_2",
+               "label":"Image"
+            },
+            {
+               "type":"url",
+               "id":"link_2",
+               "label":"Link to"
+            },
+            {
+               "type":"text",
+               "id":"heading_2",
+               "label":"Heading",
+               "default":"Bronze Cups"
+            },
+            {
+               "type":"text",
+               "id":"subheading_2",
+               "label":"Subheading",
+               "default":"Fincidunt eu, mattis a libero. Pelletequ"
+            },
+            {
+               "type":"text",
+               "id":"button_text_2",
+               "label":"Button text",
+               "default":"shop now"
+            },
+            {
+               "type":"header",
+               "content":"Banner 03"
+            },
+            {
+               "type":"image_picker",
+               "id":"image_3",
+               "label":"Image"
+            },
+            {
+               "type":"url",
+               "id":"link_3",
+               "label":"Link to"
+            },
+            {
+               "type":"text",
+               "id":"heading_3",
+               "label":"Heading",
+               "default":"Handmade Cups"
+            },
+            {
+               "type":"text",
+               "id":"subheading_3",
+               "label":"Subheading",
+               "default":"Fincidunt eu, mattis a libero. Pelletequ"
+            },
+            {
+               "type":"text",
+               "id":"button_text_3",
+               "label":"Button text",
+               "default":"check it out"
+            }
+         ]
+      },
+      {
+         "type":"brand",
+         "name":"Brands",
+         "limit":1,
+         "settings":[
+            {
+               "type":"text",
+               "id":"heading",
+               "label":"Heading",
+               "default":"Brands"
+            },
+            {
+               "type"  :"range",
+               "id"    :"limited_item",
+               "label":"Total items",
+               "min"   :5,
+               "max"   :20,
+               "step"  :1,
+               "default":10
+            }
+         ]
+      }
+   ]
+}
+{% endschema %}

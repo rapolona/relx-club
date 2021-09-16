@@ -1,0 +1,1422 @@
+{% if section.settings.boxed_layout %}{% assign _layout = 'boxed' %}{% else %}{% assign _layout = 'full' %}{% endif %}
+{% assign _lazyload       = settings.use_lazyload %}
+{% assign _opacity        = section.settings.opacity | times: 0.01 %}
+{% if section.settings.overlay %}
+          {% assign _color = settings.header_bg_color | color_modify: 'alpha',  _opacity %}
+{% else %}{% assign _color = settings.header_bg_color | color_to_rgb  %}
+{% endif %}
+{% assign _color_mobile   = settings.header_bg_color_mobile %}
+{% assign _header_style   = section.settings.header_style %}
+{% assign _header_mobile  = section.settings.header_mobile_style %}
+{% assign _sticky         = section.settings.show_sticky_bar %}
+{% assign _sticky_mobile  = section.settings.mobile_show_sticky_bar %}
+{% assign _menu_hover     = section.settings.nav_link_hover %}
+
+{%- capture header_class -%}
+style-{{ _header_style }}{% if section.settings.overlay and template == 'index' %} h-desk-absolute{% endif %} nav-style-{{_menu_hover}}
+{%- endcapture -%}
+
+<div class="header-content layout-{{ _layout }}">
+  <div  id="header-style"
+        class="header-container {{header_class}}"
+        data-overlay="{{section.settings.overlay}}"
+        data-style="{{_header_style}}"
+        data-section-type="header"
+        data-section-id="{{section.id}}">
+
+    <div class="header-desktop d-none d-lg-block" data-color="{{_color}}" data-opacity="{{_opacity}}" data-sticky="{{_sticky}}">
+      {% if _layout == 'boxed' %}<div class="container">{% endif %}
+        {% case _header_style %}
+          {% when 1 %}{% include 'header-style-1' %}
+          {% when 2 %}{% include 'header-style-2' %}
+          {% when 3 %}{% include 'header-style-3' %}
+          {% when 4 %}{% include 'header-style-4' %}
+          {% when 5 %}{% include 'header-style-5' %}
+          {% when 6 %}{% include 'header-style-6' %}
+          {% else %}
+        {% endcase %}
+      {% if _layout == 'boxed' %}</div>{% endif %}
+    </div>
+
+    <div class="header-mobile d-lg-none header-mobile-{{_header_mobile}}" data-color="{{_color_mobile}}" data-sticky="{{_sticky_mobile}}">
+      {% if _layout == 'boxed' and _header_mobile != 2 %}<div class="container">{% endif %}
+        {% include 'header-mobile' with header_style: _header_mobile %}
+      {% if _layout == 'boxed' and _header_mobile != 2 %}</div>{% endif %}
+    </div>
+  </div>
+
+  <div class="header-navigation-mobile">
+    {% include 'navigation-mobile' with header_style: _header_mobile %}
+    {%- unless template contains 'customer' -%}
+    {% if shop.customer_accounts_enabled or settings.enable_product_wishlist %}
+      <div class="popup-icons popup-icons-mobile hide">
+        {% include 'include-popup', type: 'account' %}
+      </div>
+    {% endif %}
+    {%- endunless -%}
+  </div>
+  {%- if settings.lang_type == 'google' -%}
+  <div id="google_translate_element" class="gg-translate hide"></div>
+  {%- endif -%}
+  {% if section.settings.overlay %}
+    <style>@media (min-width: 992px) {.templateIndex header{position: absolute;width: 100%;z-index: 9;}.templateIndex #header-style .header-desktop{background: {{_color}};}}</style>
+  {% endif %}
+</div>
+{% schema %}
+{
+   "name":"Header",
+   "settings":[
+      {
+        "type":"header",
+        "content":"Layout"
+      },
+      {
+        "type": "paragraph",
+        "content": "More settings available at Theme Settings > Header"
+        },
+      {
+         "type":"checkbox",
+         "id":"boxed_layout",
+         "label":"Boxed layout",
+         "default":true
+      },
+      {
+         "type":"checkbox",
+         "id":"use_super_megamenu",
+         "label":"Enable Mega Navigation",
+         "default":true,
+         "info":"To add Mega navigation, click Add content."
+      },
+      {
+         "type":"range",
+         "id":"header_style",
+         "label":"Desktop: Header Style",
+         "min":1,
+         "max":6,
+         "default":1
+      },
+      {
+         "type":"range",
+         "id":"header_mobile_style",
+         "label":"Mobile: Header Style",
+         "min":1,
+         "max":3,
+         "default":1
+      },
+      {
+         "type":"header",
+         "content":"Desktop settings"
+      },
+      {
+         "type":"checkbox",
+         "id":"show_sticky_bar",
+         "label":"Sticky Desktop Navigation",
+         "default":true
+      },
+      {
+         "type":"image_picker",
+         "id":"logo",
+         "label":"Logo image",
+         "info":"Retina Displays require double the pixels to display the same image."
+      },
+      {
+        "type": "range",
+        "id": "logo_max_width",
+        "min": 100,
+        "max": 1180,
+        "step": 20,
+        "unit": "px",
+        "label": "Logo maximum width",
+        "default": 280
+      },
+      {
+        "type":      "paragraph",
+        "content":   "Change icons in Theme Settings > Header"
+      },
+      {
+         "type":"checkbox",
+         "id":"search",
+         "label":"Show Icon Search"
+      },
+      {
+         "type":"checkbox",
+         "id":"account",
+         "label":"Show Icon Account"
+      },
+      {
+        "type":"checkbox",
+        "id":"show_popup",
+        "label":"Show Icon Currencies & Languages",
+        "default":true
+      },
+      {
+         "type":"checkbox",
+         "id":"cart",
+         "label":"Show Icon Cart"
+      },
+      {
+         "type":"checkbox",
+         "id":"overlay",
+         "label":"Enable Header overlay",
+         "default":true
+      },
+      {
+         "type":"range",
+         "id":"opacity",
+         "label":"Overlay Transparency level",
+         "default":100,
+         "info":"Header overlay must Enable",
+         "min":0,
+         "max":100,
+         "step":10,
+         "unit":"%"
+      },
+      {
+         "type"  :"range",
+         "id"    :"nav_link_hover",
+         "label" :"Menu Hover Style:",
+         "min"   :1,
+         "max"   :6,
+         "default":1
+      },
+      {
+         "type":"select",
+         "id":"menu_align",
+         "label":"Menu alignment",
+         "options":[
+            {
+              "value":"text-left",
+              "label":"Left"
+            },
+            {
+              "value":"text-center",
+              "label":"Center"
+            },
+            {
+              "value":"text-right",
+              "label":"Right"
+            }
+          ],
+          "default":"text-center",
+          "info":"Not apply to Header style 03"
+      },
+      {
+         "type":"link_list",
+         "id":"nav_linklist",
+         "label":"Main menu",
+         "default":"main-menu"
+      },
+      {
+         "type":"link_list",
+         "id":"left_nav_linklist",
+         "label":"Left menu",
+         "info":"Not apply to Header style 03"
+      },
+      {
+         "type":"link_list",
+         "id":"right_nav_linklist",
+         "label":"Right menu",
+         "info":"Only apply to Header style 03"
+      },
+      {
+        "type":"header",
+        "content":"Custom Text",
+        "info" :"Only apply to Header style 04 & 06"
+      },
+      {
+         "type":"text",
+         "id":"icon_custom",
+         "label":"Icon name",
+         "default":"icon-phone",
+         "info":"Blank to hide. Default is icon-phone. [Icon list](https:\/\/font.arenacommerce.com\/handy4\/)"
+      },
+      {
+         "type":"richtext",
+         "id":"custom_text",
+         "label":"Text",
+         "info":"Blank to hide."
+      },
+      {
+         "type":"header",
+         "content":"Mobile settings"
+      },
+      {
+         "type":"checkbox",
+         "id":"mobile_show_sticky_bar",
+         "label":"Sticky Mobile Navigation",
+         "default":true
+      },
+      {
+         "type":"image_picker",
+         "id":"logo_mobile",
+         "label":"Logo image",
+         "info":"Retina Displays require double the pixels to display the same image."
+      },
+      {
+        "type": "range",
+        "id": "mobile_logo_max_width",
+        "min": 100,
+        "max": 1180,
+        "step": 20,
+        "unit": "px",
+        "label": "Logo maximum width",
+        "default": 100
+      },
+      {
+         "type"  :"checkbox",
+         "id"    :"mobile_show_popup",
+         "label" :"Show Popup",
+         "default":true
+      },
+      {
+         "type"  :"checkbox",
+         "id"    :"mobile_curr_lang",
+         "label" :"Show Currencies & Languages"
+      },
+      {
+         "type":"link_list",
+         "id":"mobile_linklist",
+         "label":"Mobile Menu",
+         "default":"main-menu"
+      },
+      {
+         "type"  :"header",
+         "content" :"Contact Box",
+         "info" :"Only for Header Mobile 3"
+      },
+      {
+         "type"  :"text",
+         "id"    :"ctb_phone",
+         "label" :"Phone Number",
+         "default":"(+800) 123 456 7890"
+      },
+      {
+         "type"  :"text",
+         "id"    :"ctb_email",
+         "label" :"Email",
+         "default":"sample@email.com"
+      },
+      {
+         "type"  :"textarea",
+         "id"    :"ctb_store_info",
+         "label" :"Store Info",
+         "default":"632 SW Pine Street"
+      },
+      {
+         "type"  :"url",
+         "id"    :"ctb_direct",
+         "label" :"Directions"
+      },
+      {
+         "type":"header",
+         "content":"Menu Flyout LEFT"
+      },
+      {
+         "type":"textarea",
+         "id":"nav_flyout_menu_handle",
+         "label":"Menu Flyout Left",
+         "placeholder":"Input menu titles, add a separator ; for each title. E.g: Flyout Left;Blog"
+      },
+      {
+        "type": "header",
+        "content": "Navigation Label"
+      },
+      {
+        "type":"paragraph",
+        "content": "You can change label's text by going to theme's Language > Menu > Labels"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_menu_sal_label",
+        "label": "Enable Sale Label ",
+        "default": true
+      },
+      {
+        "type": "textarea",
+        "id": "menu_sal_label_title",
+        "label": "Sale's title",
+        "placeholder": "Input menu titles,each title per line"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_menu_new_label",
+        "label": "Enable New Label ",
+        "default": true
+      },
+      {
+        "type": "textarea",
+        "id": "menu_new_label_title",
+        "label": "New's title",
+        "placeholder": "Input menu titles,each title per line"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_menu_hot_label",
+        "label": "Enable Hot Label ",
+        "default": true
+      },
+      {
+        "type": "textarea",
+        "id": "menu_hot_label_title",
+        "label": "Hot's title",
+        "placeholder": "Input menu titles,each title per line"
+      },
+      {
+        "type": "paragraph",
+        "content": "More settings available at Theme Settings > Navigation"
+        }
+   ],
+   "blocks":[
+      {
+         "type":"mega-menu",
+         "name":"Mega Navigation",
+         "settings":[
+            {
+               "type"  :"text",
+               "id"    :"title",
+               "label" :"Block Label"
+            },
+            {
+               "type":"header",
+               "content":"Layout"
+            },
+            {
+               "type":"text",
+               "id":"mega_navigation",
+               "label":"Mega navigation trigger",
+               "info":"Add the title of the menu that you want to turn into a mega-nav"
+            },
+            {
+               "type":"select",
+               "id":"position",
+               "label":"Submenu Position",
+               "options":[
+                  {
+                     "value":"left",
+                     "label":"Left"
+                  },
+                  {
+                     "value":"right",
+                     "label":"Right"
+                  },
+                  {
+                     "value":"center",
+                     "label":"Center"
+                  }
+               ],
+               "default":"left"
+            },
+            {
+               "type":"range",
+               "id":"manually_width",
+               "label":"Width",
+               "default":100,
+               "min":20,
+               "max":100,
+               "step":1,
+               "unit":"%"
+            },
+            {
+               "type":"select",
+               "id":"mega_menu_bg",
+               "label":"Background style",
+               "options":[
+                  {
+                     "value":"bg_image",
+                     "label":"Background image"
+                  },
+                  {
+                     "value":"bg_color",
+                     "label":"Background color"
+                  }
+               ],
+               "default":"bg_color"
+            },
+            {
+               "type":"image_picker",
+               "id":"mega_menu_bg_img",
+               "label":"Background image"
+            },
+            {
+               "type":"text",
+               "id":"mega_menu_bg_img_size",
+               "label":"Image size",
+               "default":"292x270",
+               "info":"WidthxHeight (pixels). E.g 292x270 ~ w:292px, h: 270px"
+            },
+            {
+              "type":"select",
+              "id"   :"bg_size",
+              "label":"Background Size",
+              "default": "auto",
+              "options":[
+              {"value":"auto","label":"Auto"},
+              {"value":"cover","label":"Cover"},
+              {"value":"contain","label":"Contain"}
+              ]
+            },
+            {
+              "type": "select",
+              "id": "bg_repeat",
+              "label": "Background Image Repeat:",
+              "default": "no-repeat",
+              "options": [
+              {"value":"no-repeat","label":"No Repeat"},
+              {"value":"repeat","label":"Repeat"},
+              {"value":"repeat-x","label":"Repeat X"},
+              {"value":"repeat-y","label":"Repeat Y"}
+              ]
+            },
+            {
+              "type": "select",
+              "id": "bg_position",
+              "label": "Background Image Position:",
+              "default": "center center",
+              "options": [
+              {"value":"left top","label":"Left Top"},
+              {"value":"center top","label":"Center Top"},
+              {"value":"right top","label":"Right Top"},
+              {"value":"left center","label":"Left Center"},
+              {"value":"center center","label":"Center Center"},
+              {"value":"right center","label":"Right Center"},
+              {"value":"left bottom","label":"Left Bottom"},
+              {"value":"center bottom","label":"Center Bottom"},
+              {"value":"right bottom","label":"Right Bottom"}
+              ]
+            },
+            {
+               "type":"color",
+               "id":"mega_menu_bg_color",
+               "label":"Background color",
+               "default":"#fff"
+            },
+            {
+               "type":"range",
+               "id":"mega_menu_min_height",
+               "label":"Min height",
+               "min":50,
+               "max":500,
+               "step":10,
+               "default":300,
+               "unit":"px",
+               "info":"Default is 300px"
+            },
+
+            {
+               "type":"header",
+               "content":"Column Width",
+               "info":"(0 is Auto width, 12 is 100%)"
+            },
+            {
+               "type":"range",
+               "id":"mega_menu_width_col_1",
+               "label":"Column 1:",
+               "default":3,
+               "min":0,
+               "max":12,
+               "unit":"/12"
+            },
+            {
+               "type":"range",
+               "id":"mega_menu_width_col_2",
+               "label":"Column 2:",
+               "default":3,
+               "min":0,
+               "max":12,
+               "unit":"/12"
+            },
+            {
+               "type":"range",
+               "id":"mega_menu_width_col_3",
+               "label":"Column 3:",
+               "default":3,
+               "min":0,
+               "max":12,
+               "unit":"/12"
+            },
+            {
+               "type":"range",
+               "id":"mega_menu_width_col_4",
+               "label":"Column 4:",
+               "default":3,
+               "min":0,
+               "max":12,
+               "unit":"/12"
+            },
+            {
+               "type":"header",
+               "content":"Column Components"
+            },
+            {
+               "type":"select",
+               "id":"mega_menu_col_1",
+               "label":"Column 1:",
+               "options":[
+                  {
+                     "value":"menu",
+                     "label":"Menu item"
+                  },
+                  {
+                     "value":"multi-menu",
+                     "label":"Multiple menu items"
+                  },
+                  {
+                     "value":"product",
+                     "label":"Product"
+                  },
+                  {
+                     "value":"collection",
+                     "label":"Collection"
+                  },
+                  {
+                     "value":"menu-porduct",
+                     "label":"Menu item & Product"
+                  },
+                  {
+                     "value":"image",
+                     "label":"Image"
+                  },
+                  {
+                     "value":"none",
+                     "label":"None"
+                  }
+               ],
+               "default":"menu"
+            },
+            {
+               "type":"select",
+               "id":"mega_menu_col_2",
+               "label":"Column 2:",
+               "options":[
+                  {
+                     "value":"menu",
+                     "label":"Menu item"
+                  },
+                  {
+                     "value":"multi-menu",
+                     "label":"Multiple menu items"
+                  },
+                  {
+                     "value":"product",
+                     "label":"Product"
+                  },
+                  {
+                     "value":"collection",
+                     "label":"Collection"
+                  },
+                  {
+                     "value":"menu-porduct",
+                     "label":"Menu item & Product"
+                  },
+                  {
+                     "value":"image",
+                     "label":"Image"
+                  },
+                  {
+                     "value":"none",
+                     "label":"None"
+                  }
+               ],
+               "default":"menu"
+            },
+            {
+               "type":"select",
+               "id":"mega_menu_col_3",
+               "label":"Column 3:",
+               "options":[
+                  {
+                     "value":"menu",
+                     "label":"Menu item"
+                  },
+                  {
+                     "value":"multi-menu",
+                     "label":"Multiple menu items"
+                  },
+                  {
+                     "value":"product",
+                     "label":"Product"
+                  },
+                  {
+                     "value":"collection",
+                     "label":"Collection"
+                  },
+                  {
+                     "value":"menu-porduct",
+                     "label":"Menu item & Product"
+                  },
+                  {
+                     "value":"image",
+                     "label":"Image"
+                  },
+                  {
+                     "value":"none",
+                     "label":"None"
+                  }
+               ],
+               "default":"menu"
+            },
+            {
+               "type":"select",
+               "id":"mega_menu_col_4",
+               "label":"Column 4:",
+               "options":[
+                  {
+                     "value":"menu",
+                     "label":"Menu item"
+                  },
+                  {
+                     "value":"multi-menu",
+                     "label":"Multiple menu items"
+                  },
+                  {
+                     "value":"product",
+                     "label":"Product"
+                  },
+                  {
+                     "value":"collection",
+                     "label":"Collection"
+                  },
+                  {
+                     "value":"menu-porduct",
+                     "label":"Menu item & Product"
+                  },
+                  {
+                     "value":"image",
+                     "label":"Image"
+                  },
+                  {
+                     "value":"none",
+                     "label":"None"
+                  }
+               ],
+               "default":"menu"
+            },
+            {
+               "type":"header",
+               "content":"+ Column 01 "
+            },
+            {
+               "type":"text",
+               "id":"mega_menu_title_col_1",
+               "label":"- Heading"
+            },
+            {
+               "type":"checkbox",
+               "id":"mega_menu_image_title_col_1",
+               "label":"Hide Heading on Desktop"
+            },
+            {
+               "type":"url",
+               "id":"mega_menu_link_col_1",
+               "label":"- Link to"
+            },
+            {
+               "type":"link_list",
+               "id":"mega_menu_ll_col_1",
+               "label":"- Menu item"
+            },
+            {
+               "type":"product",
+               "id":"mega_menu_product_1_col_1",
+               "label":"- Product item 01"
+            },
+            {
+               "type":"product",
+               "id":"mega_menu_product_2_col_1",
+               "label":"- Product item 02"
+            },
+            {
+               "type":"collection",
+               "id":"mega_menu_collection_col_1",
+               "label":"- Collection item"
+            },
+            {
+               "type":"range",
+               "id":"mega_menu_collection_limit_col_1",
+               "label":"- Total items",
+               "min":1,
+               "max":10,
+               "step":1,
+               "default":4
+            },
+            {
+               "type":"image_picker",
+               "id":"mega_menu_image_col_1",
+               "label":"- Image"
+            },
+            {
+               "type":"text",
+               "id":"mega_menu_image_size_col_1",
+               "label":"- Image size",
+               "default":"460x240",
+               "info":"E.g 460x240"
+            },
+            {
+               "type":"url",
+               "id":"mega_menu_image_link_col_1",
+               "label":"- Image link"
+            },
+            {
+               "type":"header",
+               "content":"+ Column 02 "
+            },
+            {
+               "type":"text",
+               "id":"mega_menu_title_col_2",
+               "label":"- Heading"
+            },
+            {
+               "type":"checkbox",
+               "id":"mega_menu_image_title_col_2",
+               "label":"Hide Heading on Desktop"
+            },
+            {
+               "type":"url",
+               "id":"mega_menu_link_col_2",
+               "label":"- Link to"
+            },
+            {
+               "type":"link_list",
+               "id":"mega_menu_ll_col_2",
+               "label":"- Menu item"
+            },
+            {
+               "type":"product",
+               "id":"mega_menu_product_1_col_2",
+               "label":"- Product item 01"
+            },
+            {
+               "type":"product",
+               "id":"mega_menu_product_2_col_2",
+               "label":"- Product item 02"
+            },
+            {
+               "type":"collection",
+               "id":"mega_menu_collection_col_2",
+               "label":"- Collection item"
+            },
+            {
+               "type":"range",
+               "id":"mega_menu_collection_limit_col_2",
+               "label":"- Total items",
+               "min":1,
+               "max":10,
+               "step":1,
+               "default":4
+            },
+            {
+               "type":"image_picker",
+               "id":"mega_menu_image_col_2",
+               "label":"- Image"
+            },
+            {
+               "type":"text",
+               "id":"mega_menu_image_size_col_2",
+               "label":"- Image size",
+               "default":"460x240",
+               "info":"E.g 460x240"
+            },
+            {
+               "type":"url",
+               "id":"mega_menu_image_link_col_2",
+               "label":"- Image link"
+            },
+            {
+               "type":"header",
+               "content":"+ Column 03 "
+            },
+            {
+               "type":"text",
+               "id":"mega_menu_title_col_3",
+               "label":"- Heading"
+            },
+            {
+               "type":"checkbox",
+               "id":"mega_menu_image_title_col_3",
+               "label":"Hide Heading on Desktop"
+            },
+            {
+               "type":"url",
+               "id":"mega_menu_link_col_3",
+               "label":"- Link to"
+            },
+            {
+               "type":"link_list",
+               "id":"mega_menu_ll_col_3",
+               "label":"- Menu item"
+            },
+            {
+               "type":"product",
+               "id":"mega_menu_product_1_col_3",
+               "label":"- Product item 01"
+            },
+            {
+               "type":"product",
+               "id":"mega_menu_product_2_col_3",
+               "label":"- Product item 02"
+            },
+            {
+               "type":"collection",
+               "id":"mega_menu_collection_col_3",
+               "label":"- Collection item"
+            },
+            {
+               "type":"range",
+               "id":"mega_menu_collection_limit_col_3",
+               "label":"- Total items",
+               "min":1,
+               "max":10,
+               "step":1,
+               "default":4
+            },
+            {
+               "type":"image_picker",
+               "id":"mega_menu_image_col_3",
+               "label":"- Image"
+            },
+            {
+               "type":"text",
+               "id":"mega_menu_image_size_col_3",
+               "label":"- Image size",
+               "default":"460x240",
+               "info":"E.g 460x240"
+            },
+            {
+               "type":"url",
+               "id":"mega_menu_image_link_col_3",
+               "label":"- Image link"
+            },
+            {
+               "type":"header",
+               "content":"+ Column 04 "
+            },
+            {
+               "type":"text",
+               "id":"mega_menu_title_col_4",
+               "label":"- Heading"
+            },
+            {
+               "type":"checkbox",
+               "id":"mega_menu_image_title_col_4",
+               "label":"Hide Heading on Desktop"
+            },
+            {
+               "type":"url",
+               "id":"mega_menu_link_col_4",
+               "label":"- Link to"
+            },
+            {
+               "type":"link_list",
+               "id":"mega_menu_ll_col_4",
+               "label":"- Menu item"
+            },
+            {
+               "type":"product",
+               "id":"mega_menu_product_1_col_4",
+               "label":"- Product item 01"
+            },
+            {
+               "type":"product",
+               "id":"mega_menu_product_2_col_4",
+               "label":"- Product item 02"
+            },
+            {
+               "type":"collection",
+               "id":"mega_menu_collection_col_4",
+               "label":"- Collection item"
+            },
+            {
+               "type":"range",
+               "id":"mega_menu_collection_limit_col_4",
+               "label":"- Total items",
+               "min":1,
+               "max":10,
+               "step":1,
+               "default":4
+            },
+            {
+               "type":"image_picker",
+               "id":"mega_menu_image_col_4",
+               "label":"- Image"
+            },
+            {
+               "type":"text",
+               "id":"mega_menu_image_size_col_4",
+               "label":"- Image size",
+               "default":"460x240",
+               "info":"E.g 460x240"
+            },
+            {
+               "type":"url",
+               "id":"mega_menu_image_link_col_4",
+               "label":"- Image link"
+            }
+         ]
+      },
+      {
+         "type":"mega-menu-tab",
+         "name":"Mega Navigation with Tabs",
+         "settings":[
+            {
+               "type"  :"text",
+               "id"    :"title",
+               "label" :"Block Label"
+            },
+            {
+               "type":"header",
+               "content":"Layout"
+            },
+            {
+               "type":"text",
+               "id":"mega_navigation",
+               "label":"Mega navigation trigger",
+               "info":"Add the title of the menu that you want to turn into a mega-nav"
+            },
+            {
+               "type":"color",
+               "id":"mega_menu_bg_color",
+               "label":"Background color",
+               "default":"#fff"
+            },
+            {
+               "type":"range",
+               "id":"mega_menu_min_height",
+               "label":"Min height",
+               "min":50,
+               "max":500,
+               "step":10,
+               "default":300,
+               "unit":"px",
+               "info":"Default is 300px"
+            },
+            {
+              "type":"header",
+              "content":"Menu Content",
+              "info":"Please add the '+Tab Menu' block right below this block"
+            },
+            {
+               "type":"text",
+               "id"   :"heading_menu",
+               "label":"Heading menu tab",
+               "default": "Heading Menu"
+            },
+            {
+               "type":"text",
+               "id"   :"heading_menu_icon",
+               "label":"Heading menu icon name",
+               "default": "icon-right"
+            },
+            {
+               "type":"select",
+               "id"   :"heading_menu_display",
+               "label":"How's Heading menu to showing?",
+               "default": "text_icon",
+               "options":[
+                 {
+                   "value": "text_icon",
+                   "label": "Text - Icon"
+                 },
+                 {
+                   "value": "icon_text",
+                   "label": "Icon - Text"
+                 },
+                 {
+                   "value": "text",
+                   "label": "Only Text"
+                 },
+                 {
+                   "value": "icon",
+                   "label": "Only Icon"
+                 }
+               ]
+            }
+         ]
+      },
+      {
+         "type":"tab-menu",
+         "name":"+Tab Menu",
+         "settings":[
+            {
+               "type":"header",
+               "content":"Tab Menu"
+            },
+            {
+               "type":"text",
+               "id":"title",
+               "label":"Block Label",
+               "default":"+Mega navigation trigger - Tab Heading"
+            },
+            {
+               "type":"text",
+               "id":"tab_title",
+               "label":"Tab Heading",
+               "default":"Tab Heading"
+            },
+            {
+               "type":"header",
+               "content":"Column Width",
+               "info":"(0 is Auto width, 12 is 100%)"
+            },
+            {
+               "type":"range",
+               "id":"mega_menu_tab_width_col_1",
+               "label":"Column 1:",
+               "default":4,
+               "min":0,
+               "max":12,
+               "unit":"/12"
+            },
+            {
+               "type":"range",
+               "id":"mega_menu_tab_width_col_2",
+               "label":"Column 2:",
+               "default":4,
+               "min":0,
+               "max":12,
+               "unit":"/12"
+            },
+            {
+               "type":"range",
+               "id":"mega_menu_tab_width_col_3",
+               "label":"Column 3:",
+               "default":4,
+               "min":0,
+               "max":12,
+               "unit":"/12"
+            },
+            {
+               "type":"range",
+               "id":"mega_menu_tab_width_col_4",
+               "label":"Column 4:",
+               "default":4,
+               "min":0,
+               "max":12,
+               "unit":"/12"
+            },
+
+            {
+               "type":"header",
+               "content":"Column Components"
+            },
+            {
+               "type":"select",
+               "id":"mega_menu_tab_col_1",
+               "label":"Column 1:",
+               "options":[
+                  {
+                     "value":"menu",
+                     "label":"Menu item"
+                  },
+                  {
+                     "value":"multi-menu",
+                     "label":"Multiple menu items"
+                  },
+                  {
+                     "value":"image",
+                     "label":"Image"
+                  },
+                  {
+                     "value":"product",
+                     "label":"Product"
+                  },
+                  {
+                     "value":"none",
+                     "label":"None"
+                  }
+               ],
+               "default":"menu"
+            },
+            {
+               "type":"select",
+               "id":"mega_menu_tab_col_2",
+               "label":"Column 2:",
+               "options":[
+                  {
+                     "value":"menu",
+                     "label":"Menu item"
+                  },
+                  {
+                     "value":"multi-menu",
+                     "label":"Multiple menu items"
+                  },
+                  {
+                     "value":"image",
+                     "label":"Image"
+                  },
+                  {
+                     "value":"product",
+                     "label":"Product"
+                  },
+                  {
+                     "value":"none",
+                     "label":"None"
+                  }
+               ],
+               "default":"menu"
+            },
+            {
+               "type":"select",
+               "id":"mega_menu_tab_col_3",
+               "label":"Column 3:",
+               "options":[
+                  {
+                     "value":"menu",
+                     "label":"Menu item"
+                  },
+                  {
+                     "value":"multi-menu",
+                     "label":"Multiple menu items"
+                  },
+                  {
+                     "value":"image",
+                     "label":"Image"
+                  },
+                  {
+                     "value":"product",
+                     "label":"Product"
+                  },
+                  {
+                     "value":"none",
+                     "label":"None"
+                  }
+               ],
+               "default":"menu"
+            },
+            {
+               "type":"select",
+               "id":"mega_menu_tab_col_4",
+               "label":"Column 4:",
+               "options":[
+                  {
+                     "value":"menu",
+                     "label":"Menu item"
+                  },
+                  {
+                     "value":"multi-menu",
+                     "label":"Multiple menu items"
+                  },
+                  {
+                     "value":"image",
+                     "label":"Image"
+                  },
+                  {
+                     "value":"product",
+                     "label":"Product"
+                  },
+                  {
+                     "value":"none",
+                     "label":"None"
+                  }
+               ],
+               "default":"menu"
+            },
+            {
+               "type":"header",
+               "content":"+ Column 01"
+            },
+            {
+               "type":"text",
+               "id":"mega_menu_tab_title_col_1",
+               "label":"- Heading"
+            },
+            {
+               "type":"checkbox",
+               "id":"mega_menu_tab_image_title_col_1",
+               "label":"Hide Heading on Desktop"
+            },
+            {
+               "type":"url",
+               "id":"mega_menu_tab_link_col_1",
+               "label":"- Link to"
+            },
+            {
+               "type":"link_list",
+               "id":"mega_menu_tab_ll_col_1",
+               "label":"- Menu item"
+            },
+            {
+               "type":"image_picker",
+               "id":"mega_menu_tab_image_col_1",
+               "label":"- Image"
+            },
+            {
+               "type":"text",
+               "id":"mega_menu_tab_image_size_col_1",
+               "label":"- Image size",
+               "default":"460x240",
+               "info":"E.g 460x240"
+            },
+            {
+               "type":"url",
+               "id":"mega_menu_tab_image_link_col_1",
+               "label":"- Image link"
+            },
+            {
+              "type": "product",
+              "id":"mega_menu_tab_product_col_1_1",
+              "label":"- Product #1"
+            },
+            {
+              "type": "product",
+              "id":"mega_menu_tab_product_col_1_2",
+              "label":"- Product #2"
+            },
+            {
+               "type":"header",
+               "content":"+ Column 02"
+            },
+            {
+               "type":"text",
+               "id":"mega_menu_tab_title_col_2",
+               "label":"- Heading"
+            },
+            {
+               "type":"checkbox",
+               "id":"mega_menu_tab_image_title_col_2",
+               "label":"Hide Heading on Desktop"
+            },
+            {
+               "type":"url",
+               "id":"mega_menu_tab_link_col_2",
+               "label":"- Link to"
+            },
+            {
+               "type":"link_list",
+               "id":"mega_menu_tab_ll_col_2",
+               "label":"- Menu item"
+            },
+            {
+               "type":"image_picker",
+               "id":"mega_menu_tab_image_col_2",
+               "label":"- Image"
+            },
+            {
+               "type":"text",
+               "id":"mega_menu_tab_image_size_col_2",
+               "label":"- Image size",
+               "default":"460x240",
+               "info":"E.g 460x240"
+            },
+            {
+               "type":"url",
+               "id":"mega_menu_tab_image_link_col_2",
+               "label":"- Image link"
+            },
+            {
+              "type": "product",
+              "id":"mega_menu_tab_product_col_2_1",
+              "label":"- Product #1"
+            },
+            {
+              "type": "product",
+              "id":"mega_menu_tab_product_col_2_2",
+              "label":"- Product #2"
+            },
+            {
+               "type":"header",
+               "content":"+ Column 03"
+            },
+            {
+               "type":"text",
+               "id":"mega_menu_tab_title_col_3",
+               "label":"- Heading"
+            },
+            {
+               "type":"checkbox",
+               "id":"mega_menu_tab_image_title_col_3",
+               "label":"Hide Heading on Desktop"
+            },
+            {
+               "type":"url",
+               "id":"mega_menu_tab_link_col_3",
+               "label":"- Link to"
+            },
+            {
+               "type":"link_list",
+               "id":"mega_menu_tab_ll_col_3",
+               "label":"- Menu item"
+            },
+            {
+               "type":"image_picker",
+               "id":"mega_menu_tab_image_col_3",
+               "label":"- Image"
+            },
+            {
+               "type":"text",
+               "id":"mega_menu_tab_image_size_col_3",
+               "label":"- Image size",
+               "default":"460x240",
+               "info":"E.g 460x240"
+            },
+            {
+               "type":"url",
+               "id":"mega_menu_tab_image_link_col_3",
+               "label":"- Image link"
+            },
+            {
+              "type": "product",
+              "id":"mega_menu_tab_product_col_3_1",
+              "label":"- Product #1"
+            },
+            {
+              "type": "product",
+              "id":"mega_menu_tab_product_col_3_2",
+              "label":"- Product #2"
+            },
+            {
+               "type":"header",
+               "content":"+ Column 04"
+            },
+            {
+               "type":"text",
+               "id":"mega_menu_tab_title_col_4",
+               "label":"- Heading"
+            },
+            {
+               "type":"checkbox",
+               "id":"mega_menu_tab_image_title_col_4",
+               "label":"Only enable the column's heading on Mobile"
+            },
+            {
+               "type":"url",
+               "id":"mega_menu_tab_link_col_4",
+               "label":"- Link to"
+            },
+            {
+               "type":"link_list",
+               "id":"mega_menu_tab_ll_col_4",
+               "label":"- Menu item"
+            },
+            {
+               "type":"image_picker",
+               "id":"mega_menu_tab_image_col_4",
+               "label":"- Image"
+            },
+            {
+               "type":"text",
+               "id":"mega_menu_tab_image_size_col_4",
+               "label":"- Image size",
+               "default":"460x240",
+               "info":"E.g 460x240"
+            },
+            {
+               "type":"url",
+               "id":"mega_menu_tab_image_link_col_4",
+               "label":"- Image link"
+            },
+            {
+              "type": "product",
+              "id":"mega_menu_tab_product_col_4_1",
+              "label":"- Product #1"
+            },
+            {
+              "type": "product",
+              "id":"mega_menu_tab_product_col_4_2",
+              "label":"- Product #2"
+            }
+         ]
+      }
+
+   ]
+}
+{% endschema %}

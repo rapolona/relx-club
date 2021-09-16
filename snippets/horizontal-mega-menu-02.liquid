@@ -1,0 +1,178 @@
+{% comment %}
+=================
+  Mega Menu Tab
+=================
+{% endcomment %}
+
+{% assign min_height    = block.settings.mega_menu_min_height %}
+{% assign menu_bg_color = block.settings.mega_menu_bg_color %}
+{%- assign _hm_text     = block.settings.heading_menu -%}
+{%- assign _hm_icon     = block.settings.heading_menu_icon -%}
+{%- assign _hm_display  = block.settings.heading_menu_display -%}
+
+<div data-expand="10" class="dropdown-menu dropdown-menu-tabs column-4" style="background: {{ menu_bg_color }};">
+  <div class="row">
+
+    <div class="mm-tab-col-title col-lg-3">
+      <ul class="tab-title">
+        {% assign j = 0 %}
+        {% assign tab_pos = 0 %}
+        <li class="title-item heading-tab-menu">
+          {%- case _hm_display -%}
+            {%- when 'icon_text' -%}<span class="icon"><i class="demo-icon {{_hm_icon}}"></i></span><span class="text">{{_hm_text}}</span>
+            {%- when 'text_icon' -%}<span class="text">{{_hm_text}}</span><span class="icon"><i class="demo-icon {{_hm_icon}}"></i></span>
+            {%- when 'text' -%}<span class="text">{{_hm_text}}</span>
+            {%- when 'icon' -%}<span class="icon"><i class="demo-icon {{_hm_icon}}"></i></span>
+          {%- endcase -%}
+          
+        </li>
+        {% for block in section.blocks %}
+          {% assign tab_pos = tab_pos | plus: 1 %}          
+          {% if block.type == 'tab-menu' and tab_pos >= number %}
+              {% assign j = j | plus: 1 %}
+              <li data-id="mm-tabs-{{j}}" class="title-item{% if j == 1 %} active{% endif %} title-item-{{ j }}" {{ block.shopify_attributes }}>
+              {{ block.settings.tab_title }}
+              </li>
+          {% endif %}          
+
+          {% if block.type != 'tab-menu' and tab_pos >= number %}
+            {% break %}
+          {% endif %}          
+        {% endfor %}
+      </ul>
+    </div>
+
+    <div class="mm-tab-col-content col-lg-9" style="min-height: {{min_height}}px;">
+      {% assign j       = 0 %}
+      {% assign tab_pos = 0 %}
+
+      {% for block in section.blocks %}
+        {% assign tab_pos = tab_pos | plus: 1 %}
+
+        {% if block.type == 'tab-menu' and tab_pos >= number %}
+          {% assign j = j | plus: 1 %}
+
+          <div class="tab-content-inner{% if j == 1 %} active{% endif %} mm-tabs-{{j}}" id="mm-tabs-{{j}}" {{ block.shopify_attributes }}>
+            <div class="row">
+              {% for k in (1..4) %}
+                {% assign _colTab            = 'mega_menu_tab' | append: '_col_'             | append: k %}
+                {% assign _colTabWidth       = 'mega_menu_tab' | append: '_width_col_'       | append: k %}
+                {% assign _colTabTitle       = 'mega_menu_tab' | append: '_title_col_'       | append: k %}
+                {% assign _enableColTabTitle = 'mega_menu_tab' | append: '_image_title_col_' | append: k %}
+                {% assign _colTabLink        = 'mega_menu_tab' | append: '_link_col_'        | append: k %}
+
+                {% if block.settings[_colTab] != 'none' %}
+                  <div class="col-item {% if block.settings[_colTabWidth] == 0 %}col{% else %}col-lg-{{ block.settings[_colTabWidth] }}{% endif %}">
+                    {% case block.settings[_colTab] %}
+
+                      {% when 'menu' %}
+                        {% assign _colTabLL = 'mega_menu_tab' | append: '_ll_col_' | append: k %}
+
+                        <div class="dropdown mega-sub-link{% if block.settings[_colTabTitle] == blank %} no-title-0{% endif %}">
+                          <a href="{{ block.settings[_colTabLink] | default:'javascript:void(0);' }}"{% if block.settings[_enableColTabTitle] %} class="d-lg-none"{% endif %}>
+                            <span>{{ block.settings[_colTabTitle] }}</span>
+                          </a>
+                          <span class="expand"></span>
+
+                          <ul class="m-list dropdown-menu dropdown-menu-sub">
+                            {% for ml in linklists[block.settings[_colTabLL]].links %}
+                            <li>
+                              <a href="{{ ml.url }}">{{ ml.title }}
+                              {% capture n_title %}{{ linklists[block.settings[_colTabLL]].title}}-{{ml.title}}{% endcapture %}
+                              {% include 'include-label-handle' with l_title:n_title %}</a>
+                            </li>
+                            {% endfor %}
+                          </ul>
+                        </div>
+                      
+                      {% when 'multi-menu' %}
+                        {% assign _colTabLL     = 'mega_menu_tab' | append: '_ll_col_' | append: k %}
+                        {% assign _mutiple_menu = linklists[block.settings[_colTabLL]] %}
+                        {% assign _colTitle     = block.settings[_colTabTitle] %}
+
+                        <div class="dropdown mega-sub-link mega-mutiple-link{% if _colTitle == blank %} no-title-0{% endif %}">
+                          <a href="{{ block.settings[_colTabLink] | default:'javascript:void(0);' }}"{% if block.settings[_enableColTabTitle] %} class="d-lg-none"{% endif %}>
+                            <span>{{ _colTitle }}</span>
+                          </a>
+
+                          {% for ml in _mutiple_menu.links %}
+                            {% assign submenu = ml.title | handleize %}
+
+                            {% if linklists[submenu].links.size > 0 %}
+                              <div class="dropdown mega-sub-link">
+                                <a href="{{ ml.url }}" class="dropdown-link"><span>{{ ml.title }}</span>
+                                {% capture n_title %}{{ _mutiple_menu.title}}-{{ml.title}}{% endcapture %}
+                                {% include 'include-label-handle' with l_title:n_title %}</a>
+
+                                <ul class="dropdown-menu dropdown-menu-sub">
+                                  {% for l in linklists[submenu].links %}
+                                    <li>
+                                      <a href="{{ l.url }}">{{ l.title }}
+                                      {% capture n_title %}{{ _mutiple_menu.title}}-{{l.title}}{% endcapture %}
+                                      {% include 'include-label-handle' with l_title:n_title %}</a>
+                                    </li>                                
+                                  {% endfor %}
+                                </ul>
+                              </div>
+
+                            {% else %}
+                              <div class="mega-sub-link">
+                                <a href="{{ ml.url }}"><span>{{ ml.title }}</span>
+                                {% capture n_title %}{{ _mutiple_menu.title}}-{{ml.title}}{% endcapture %}
+                                {% include 'include-label-handle' with l_title:n_title %}</a>
+                              </div>
+                            {% endif %}
+
+                          {% endfor %}
+                        </div>
+
+                      {% when 'image' %}
+
+                        <div class="dropdown banners mega-sub-link{% if block.settings[_colTabTitle] == blank %} no-title-0{% endif %}">
+                          <a href="{{ block.settings[_colTabLink] | default:'javascript:void(0);' }}"{% if block.settings[_enableColTabTitle] %} class="d-lg-none"{% endif %}>
+                            <span>{{ block.settings[_colTabTitle] }}</span>
+                          </a>
+
+                          <span class="expand"></span>
+
+                          <ul class="dropdown-menu dropdown-menu-sub">
+                            {% assign _colTabImage     = 'mega_menu_tab' | append: '_image_col_'      | append: k %}
+                            {% assign _colTabImageSize = 'mega_menu_tab' | append: '_image_size_col_' | append: k %}
+                            {% assign _colTabImageLink = 'mega_menu_tab' | append: '_image_link_col_' | append: k %}
+
+                            <li>
+                              <a href="{{ block.settings[_colTabImageLink] }}">                                  
+                                <img {% if _lazyload %}class="lazyload" data-{% endif %}src="{{ block.settings[_colTabImage] | img_url: block.settings[_colTabImageSize] }}"/>
+                              </a>
+                            </li>
+                          </ul>
+
+                        </div>
+
+                      {% when 'product' %}
+                        <div class="dropdown mega-sub-link dropdown-mega-product{% if block.settings[_colTabTitle] == blank %} no-title-0{% endif %}">
+                          <a href="{{ block.settings[_colTabLink] | default:'javascript:void(0);' }}"{% if block.settings[_enableColTabTitle] %} class="d-lg-none"{% endif %}>
+                            <span>{{ block.settings[_colTabTitle] }}</span>
+                          </a>
+                          {% for j in (1..2)%}
+                            {% assign pHandle = 'mega_menu_tab_product_col_' | append : k | append : '_' | append : j %}
+                            {% assign prod    = all_products[block.settings[pHandle]] %}
+                            {%- unless prod == blank -%}
+                            <div class="mega-tab-product">
+                              {% include 'menu-product-item' %}
+                            </div>
+                            {%- endunless -%}
+                          {% endfor %}
+                        </div>
+                    {% endcase %}
+                  </div>  
+                {% endif %}
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
+        {% if block.type != 'tab-menu' and tab_pos >= number %}{% break %}{% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</div>

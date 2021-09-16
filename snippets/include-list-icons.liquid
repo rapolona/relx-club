@@ -1,0 +1,147 @@
+{%- assign account            = shop.customer_accounts_enabled -%}
+{%- assign wishlist           = settings.enable_product_wishlist -%}
+{%- assign compare            = settings.enable_product_compare -%}
+{%- assign mobile_curr_lang   = section.settings.mobile_curr_lang -%}
+{%- assign mobile_show_popup  = section.settings.mobile_show_popup -%}
+
+{%- case type -%}
+  {%- when 'navbar' -%}
+    <div class="navbar navbar-responsive-menu responsive-menu-mobile ">
+      <div class="responsive-menu">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </div>
+    </div>
+
+  {%- when 'account_popup' -%}
+    {%- unless template contains 'customer' -%}
+      {% if mobile_show_popup %}
+        <div class="m-customer-account">
+          {% include 'include-list-icons', type: 'icon_type', f: 'account' %}
+        </div>
+      {% endif %}
+    {%- endunless -%}
+
+  {%- when 'account' -%}
+    {%- if account -%}
+      <div class="m-customer-account no-popup">
+        <a href="/account/">
+          {%- unless icon_pos == 'right' -%}
+            {% include 'include-list-icons', type: 'icon_type', f: 'account' %}
+          {%- endunless -%}
+          <span class="icon-text">
+          {%- if customer -%}{{ 'general.header.account_with_name' | t: name: customer.first_name }}
+          {%- else -%}{{ 'general.header.signin' | t }}{%- endif -%}
+          </span>
+          {%- if icon_pos == 'right' -%}
+            {% include 'include-list-icons', type: 'icon_type', f: 'account' %}
+          {%- endif -%}
+        </a>
+        {%- if customer -%}
+        <a href="/account/logout" title="{{ 'general.header.logout' | t }}" class="d-none d-lg-inline-block"> | <span>{{ 'general.header.logout' | t }}</span></a>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+  {%- when 'account_logout' -%}
+    {%- if customer -%}
+      <a href="/account/logout" title="{{ 'general.header.logout' | t }}"><span>{{ 'general.header.logout' | t }}</span></a>
+    {%- endif -%}
+
+  {%- when 'wishlist' -%}
+    {%- if wishlist -%}
+      {% assign wishlist_link = '/pages/wishlist-page'%}
+      <div class="wishlist-target" title="{{ 'general.header.wish_list' | t }}">
+        <a href="{{ wishlist_link }}" class="num-items-in-wishlist show-wishlist">
+          {%- unless icon_pos == 'right' -%}
+            {% include 'include-list-icons', type: 'icon_type', f: 'wishlist' %}
+          {%- endunless -%}
+          <span class="icon-text">{%- if text == blank -%}{{'general.header.wish_list' | t }}{%- else -%}{{ text }}{%- endif -%}</span>
+          <span class="number" data-count="0">0</span>
+          {%- if icon_pos == 'right' -%}
+            {% include 'include-list-icons', type: 'icon_type', f: 'wishlist' %}
+          {%- endif -%}
+        </a>
+      </div>
+    {%- endif -%}
+
+  {%- when 'compare' -%}
+    {%- if compare -%}
+      {% assign i = 0 %}
+      {% for tags in customer.tags %}{% if tags contains 'compare--' %}{% assign i = i | plus: 1 %}{% endif %}{% endfor %}
+      {% assign compare_link = '/pages/compare-page'%}
+      <div class="compare-target"  title="{{'general.header.compare' | t }}">
+        <a href="{{compare_link}}" class="num-items-in-compare show-compare">
+          {%- unless icon_pos == 'right' -%}
+            {% include 'include-list-icons', type: 'icon_type', f: 'compare' %}
+          {%- endunless -%}
+          <span class="icon-text">{%- if text == blank -%}{{'general.header.compare' | t }}{%- else -%}{{ text }}{%- endif -%}</span>
+          <span class="number" data-count="0">0</span>
+          {%- if icon_pos == 'right' -%}
+            {% include 'include-list-icons', type: 'icon_type', f: 'compare' %}
+          {%- endif -%}
+        </a>
+      </div>
+    {%- endif -%}
+
+  {%- when 'cart' -%}
+    <div class="m-cart-icon cart-target">
+        <!--<a class="mobile-basket" href="/cart" title="{{ 'general.header.cart_info.title' | t }}">
+          {% include 'include-list-icons', type: 'icon_type', f: 'cart' %}
+          <span class="number"><span class="n-item">{{ cart.item_count }}</span></span>
+        </a>-->
+      <a href="javascript:void(0);" class="mobile-basket cart-toggle" title="My Bag">
+              {% include 'include-list-icons', type: 'icon_type', f: 'cart' %}
+          <span class="number"><span class="n-item">{{ cart.item_count }}</span></span>
+            </a>
+    </div>
+
+  {%- when 'curr_lang' -%}
+    {%- if mobile_curr_lang -%}
+    <div class="topbar-popup currency-{{settings.flag_currency}}">
+      <span class="topbar-config">
+        {% include 'include-list-icons', type: 'icon_type', f: 'currency' %}
+      </span>
+    </div>
+    {%- endif -%}
+
+  {%- when 'sidebar-icon' -%}
+    {%- if block.settings.icon != 'none' and c != blank-%}
+      {% assign col_handle = c.handle %}
+
+      <span class="icon">
+        {%- case block.settings.icon -%}%}
+          {%- when 'upload' -%}    <img {% if _lazyload %}class="lazyload" data-{% endif %}src = "{{ col_handle | append: '.png' | asset_url }}" alt="" />
+          {%- when 'upload-svg' -%}<img {% if _lazyload %}class="lazyload" data-{% endif %}src = "{{ col_handle | append: '.svg' | asset_url }}" alt="" />
+          {%- else -%}<img {% if _lazyload %}class="lazyload" data-{% endif %}src="{{ c.image.src | collection_img_url: 'icon' }}" alt="{{ _collection.title | escape }}" />
+        {%- endcase -%}
+      </span>
+    {%- endif -%}
+
+  {%- when 'icon_type' -%}
+    <span class="icon-type">
+      {%- assign i_type   = f | append: '_icon_type' -%}
+      {%- assign i_image  = f | append: '_icon'      -%}
+      {%- assign i_name   = f | append: '_font_icon' -%}
+      {%- assign i_size   = f | append: '_icon_size' -%}
+      {%- assign i_svg    = f | append: '_icon_svg' -%}
+
+      {%- case settings[i_type] -%}
+        {%- when 'image' -%}
+              {%- assign icon_image = settings[i_image] -%}
+              {%- unless icon_image == blank -%}
+                {% assign _i_size     = settings[i_size] | append: 'x' %}
+                {% assign _i_size_2x  = settings[i_size] | times: 2 | append: 'x' %}
+                {% assign _i_size_max = settings[i_size] | append: 'px' %}
+                <img {% if _lazyload %}class="lazyload" data-srcset="{{ icon_image | img_url: _i_size}} 1x, {{ icon_image | img_url: _i_size_2x}} 2x"{% else %}src="{{ icon_image | img_url: _i_size}}"{% endif %} style="max-width: {{ _i_size_max }};"/>
+              {%- endunless -%}
+        {%- when 'svg' -%}
+          {%- unless settings[i_svg] == blank -%}
+            <i class="icon-svg">{{settings[i_svg]}}</i>
+          {%- endunless -%}
+        {%- else -%}<i class="demo-icon {{ settings[i_name] }}"></i>
+      {%- endcase -%}
+    </span>
+  {%- else -%}
+{%- endcase -%}

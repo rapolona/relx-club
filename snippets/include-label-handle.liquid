@@ -1,0 +1,31 @@
+{%- if metafields_icon -%}
+	{%- assign c_f_menu_arr  = shop.metafields.c_f.icon -%}
+	{%- assign _menu_svg_icon = l_title | strip | handle -%}
+	{%- for i in c_f_menu_arr -%}
+		{%- if i == _menu_svg_icon -%}
+			{%- assign c_f_icon = shop.metafields.c_f.icon_code[forloop.index0] -%}
+			{%- unless c_f_icon == blank -%}
+				{%- capture c_f_icon_menu -%}
+					<span class="c_f-icon">
+						{%- if c_f_icon contains '<svg' -%}
+						{{c_f_icon}}
+						{%- elsif c_f_icon contains '.png' or c_f_icon contains '.jpg' or c_f_icon contains '.jpeg' -%}
+							<img src="{{c_f_icon}}" alt="">
+						{%- else -%}
+						<i class="demo-icon {{c_f_icon}}"></i>
+						{%- endif -%}
+					</span>
+				{%- endcapture -%}
+			{%- endunless -%}
+			{{c_f_icon_menu}}
+			{%- break -%}
+		{%- endif -%}
+	{%- endfor -%}
+{%- endif -%}
+
+{% capture _menu_label %}
+{% if _sal_title contains l_title %}{{_sal_menu_html}}{% endif %}
+{% if _new_title contains l_title %}{{_new_menu_html}}{% endif %}
+{% if _hot_title contains l_title %}{{_hot_menu_html}}{% endif %}
+{% endcapture %}
+{% if _menu_label != blank %}<div class="labels-wrapper notranslate">{{_menu_label}}</div>{% endif %}

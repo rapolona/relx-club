@@ -1,0 +1,3 @@
+{%- if settings.header_font_type == 'google' or settings.body_font_type == 'google' -%}
+	<link href="//fonts.googleapis.com/css?family=.|{% if settings.header_font_type == 'google' and settings.type_header_family contains 'Google' %}{{ settings.type_header_family | replace: 'Google_', '' }}:light,normal,bold|{% endif %}{% if settings.body_font_type == 'google' and settings.type_base_family contains 'Google' %}{{ settings.type_base_family | replace: 'Google_', '' }}:light,normal,bold&&display=swap{% endif %}" rel="stylesheet" type="text/css" />
+{%- endif -%}

@@ -1,0 +1,22 @@
+{%- assign _lazyload = settings.use_lazyload -%}
+{%- assign _style = section.settings.newsletter_style -%}
+{%- assign _scroll_position = section.settings.scroll_position -%}
+{%- assign _delay_time = section.settings.delay_time -%}
+{%- assign _expires = section.settings.expires -%}
+
+{%- assign _text_box_position = section.settings.text_box_position -%}
+{%- assign _text_box_backgound = section.settings.text_box_backgound -%}
+{%- assign _text_box_bg_color = section.settings.bg_color -%}
+{%- assign _text_box_bg_image = section.settings.bg_image -%}
+{%- assign _text_box_bg_size = section.settings.image_size -%}
+
+{%- assign _block_image = false -%}
+
+{% for block in section.blocks %}
+  {% if block.type == 'image' %}
+
+    {%- assign _block_image = true -%}
+    {% break %}
+
+  {% endif %}
+{% endfor %}

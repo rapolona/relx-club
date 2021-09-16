@@ -1,0 +1,17 @@
+{%- assign left_homepage = settings.left_column_homepage -%}
+{% if left_homepage %}
+<div class="container">
+	<div class="row">	
+		<div class="left-homepage d-none d-lg-block col-lg-3">
+			{% section 'homepage-left-column' %}
+		</div> 
+{% endif %}
+	<div id="home-main-content"{% if left_homepage %} class="col-lg-9 col-12"{% endif %}>
+	  {{ content_for_index }}
+	</div>
+{% if left_homepage %}</div></div>{% endif %}
+{%- if settings.enable_product_list -%}	
+{% section 'section-products-listing' %}
+{%- endif -%}
+
+

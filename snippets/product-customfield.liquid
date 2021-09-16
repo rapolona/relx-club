@@ -1,0 +1,38 @@
+<!--===== Include by product-customfield.liquid ===== -->
+{%- case type -%}
+	{%- when 'metafield_description_heading' -%}
+		{%- if product.metafields.c_f.heading.size > 0 -%}
+			{%- for i in product.metafields.c_f.heading -%}
+				{%- assign _ds_heading = i -%}
+				<li class="nav-item">
+				<a class="nav-link" id="metafield--description-heading-{{forloop.index0}}" data-toggle="tab" href="#metafield--description-content-{{forloop.index0}}" role="tab" aria-controls="metafield--description-content-{{forloop.index0}}" aria-selected="false">{{_ds_heading}}</a>
+				</li>
+			{%- endfor -%}
+		{%- endif -%}
+
+	{%- when 'metafield_description_content' -%}
+		{%- if product.metafields.c_f.description.size > 0 -%}
+	      {%- for i in product.metafields.c_f.description -%}
+	        {%- assign _ds_content = i -%}
+	        <div class="tab-pane fade" id="metafield--description-content-{{forloop.index0}}" role="tabpanel" aria-labelledby="metafield--description-content-{{forloop.index0}}">{{ _ds_content }}</div>
+	      {%- endfor -%}
+		{%- endif -%}
+
+	{%- when 'metafield_description_tab_list' -%}
+
+		{%- if product.metafields.c_f.heading.size > 0 -%}
+			{%- for i in product.metafields.c_f.heading -%}
+				{%- assign _ds_heading 		= i -%}
+				{%- assign _ds_description 	= product.metafields.c_f.description[forloop.index0] -%}
+				
+				<li class="nav-item" {{ block.shopify_attributes }}>
+					<a class="nav-link" id="metafield--description-heading-{{forloop.index0}}" href="javascript:void(0);">{{_ds_heading}}
+						<i class="demo-icon icon-des icon-plus"></i>
+					</a>
+					<div class="tab-content">
+						<div class="tab-pane">{{_ds_description}}</div>
+					</div>
+				</li>
+			{%- endfor -%}
+		{%- endif -%}
+{%- endcase -%}

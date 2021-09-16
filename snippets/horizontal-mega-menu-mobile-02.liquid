@@ -1,0 +1,121 @@
+{%- comment -%}
+  ============
+    Mega Menu Tab For Mobile
+  ============
+{%- endcomment-%}
+{% assign min_height = block.settings.mega_menu_min_height %}
+
+<div data-expand="10" class="dropdown-menu dropdown-menu-tabs-mobile">
+  <div class="back-prev-menu"><span class="expand">Back</span></div>
+    <div class="mm-tab-mobile">
+        {% assign tab_pos = 0 %}
+        {% for block in section.blocks %}
+          {% assign tab_pos = tab_pos | plus: 1 %}
+
+          {% if block.type == 'tab-menu' and tab_pos >= number %}
+            <div class="dropdown mega-sub-link">
+              <a href="/collections"><span>{{ block.settings.tab_title }}</span></a>
+              <span class="expand"></span>
+
+              <ul class="dropdown-menu dropdown-menu-sub">
+                <li class="back-prev-menu"><span class="expand">Back</span></li>
+                {% for k in (1..4) %}
+                  {% assign _colTab             = 'mega_menu_tab' | append: '_col_'             | append: k %}
+                  {% assign _colTabWidth        = 'mega_menu_tab' | append: '_width_col_'       | append: k %}
+                  {% assign _colTabTitle        = 'mega_menu_tab' | append: '_title_col_'       | append: k %}
+                  {% assign _enableColTabTitle  = 'mega_menu_tab' | append: '_image_title_col_' | append: k %}
+                  {% assign _colTabLink         = 'mega_menu_tab' | append: '_link_col_'        | append: k %}
+
+                  <li class="col-item">
+                    {% case block.settings[_colTab] %}
+
+                      {% when 'menu' %}
+                        {% assign _colTabLL = 'mega_menu_tab' | append: '_ll_col_' | append: k %}
+                        {% if linklists[block.settings[_colTabLL]].links.size > 0 %}
+
+
+                        <div class="dropdown mega-sub-link{% if block.settings[_colTabTitle] == blank %} no-title-0{% endif %}">
+                          <a href="{{ block.settings[_colTabLink] | default:'javascript:void(0);' }}"{% if block.settings[_enableColTabTitle] %} class="d-lg-none"{% endif %}>
+                            <span>{{ block.settings[_colTabTitle] }}{% if block.settings[_colTabTitle] == blank %}{{ linklists[block.settings[_colTabLL]].title }}{% endif %}</span>
+                          </a>
+
+                          <span class="expand"></span>
+
+                          <ul class="m-list dropdown-menu dropdown-menu-sub">
+                              <li class="back-prev-menu"><span class="expand">Back</span></li>
+                            {% for ml in linklists[block.settings[_colTabLL]].links %}
+                              <li><a href="{{ ml.url }}">
+                                {{ ml.title }}
+                              </a></li>
+                            {% endfor %}
+                          </ul>
+                        </div>
+                        {% endif %}
+                      
+{% comment %}                      {% when 'multi-menu' %}
+                        {% assign _colTabLL = 'mega_menu_tab' | append: '_ll_col_' | append: k %}
+
+                        {% for ml in linklists[block.settings[_colTabLL]].links %}
+                          {% assign submenu = ml.title | handleize %}
+
+                          {% if linklists[submenu].links.size > 0 %}
+                            <div class="dropdown mega-sub-link">
+                              <a href="{{ ml.url }}" class="dropdown-link"><span>{{ ml.title }}</span></a>
+                              <span class="expand"></span>
+
+                              <ul class="dropdown-menu dropdown-menu-sub">
+                                <li class="back-prev-menu"><span class="expand">Back</span></li>
+                                {% for l in linklists[submenu].links %}
+                                <li><a href="{{ l.url }}">{{ l.title }}
+                                </a></li>
+                                {% endfor %}
+                              </ul>
+                            </div>
+
+                          {% else %}
+                            <div class="mega-sub-link"><a href="{{ ml.url }}"><span>{{ ml.title }}</span></a></div>
+                          {% endif %}
+
+                        {% endfor %}{% endcomment %}
+
+                      {% when 'image' %}
+                        {% unless block.settings[_colTabTitle] == blank %}
+                        <div class="dropdown banners mega-sub-link{% if block.settings[_colTabTitle] == blank %} no-title-0{% endif %} mega-sub-image">
+                          <a href="{{ block.settings[_colTabLink] | default:'javascript:void(0);' }}"{% if block.settings[_enableColTabTitle] %} class="d-lg-none"{% endif %}>
+                            <span>{{ block.settings[_colTabTitle] }}</span>
+                          </a>
+                          {% comment %}<span class="expand"></span>{% endcomment %}
+                        </div>    
+                        {% endunless %}
+                        {% assign _colTabImage     = 'mega_menu_tab' | append: '_image_col_'      | append: k %}
+                        {% assign _colTabImageSize = 'mega_menu_tab' | append: '_image_size_col_' | append: k %}
+                        {% assign _colTabImageLink = 'mega_menu_tab' | append: '_image_link_col_' | append: k %}
+
+                        <div class="mega--banner-images">
+                        <a href="{{ block.settings[_colTabImageLink] | default:'javascript:void(0);' }}">
+                          <img {% if _lazyload %}class="lazyload" data-{% endif %}src="{{block.settings[_colTabImage] | img_url: block.settings[_colTabImageSize] }}" />
+                        </a></div>                       
+                      
+                      {% when 'product' %}
+                        {% for j in (1..2)%}
+                          {% assign pHandle = 'mega_menu_tab_product_col_' | append : k | append : '_' | append : j %}
+                          {% assign prod = all_products[block.settings[pHandle]] %}
+                          <div class="mega-tab-product">
+                            {% include 'menu-product-item' %}
+                          </div>
+                        {% endfor %}
+                    {% endcase %}
+
+                  </li>
+
+                {% endfor %}
+              </ul>
+            </div>
+          {% endif %}
+
+          {% if block.type != 'tab-menu' and tab_pos >= number %}
+            {% break %}
+          {% endif %}
+      {% endfor %}
+    </div>
+</div>

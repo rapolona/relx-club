@@ -1,0 +1,655 @@
+{% assign _lazyload = settings.use_lazyload %}
+{% if section.settings.boxed_layout %}{% assign _layout = 'boxed' %}{% else %}{% assign _layout = 'full' %}{% endif %}
+
+<div class="custom-content-wrapper custom-content-wrapper-{{ section.id }} layout-{{_layout}} section-show-{{section.id}}"             
+     data-section-type="custom-content"
+     data-section-id="{{ section.id }}"
+     style="min-height: {{ section.settings.min_height | append: 'px' }};{% unless section.settings.background_color == blank %}background: {{section.settings.background_color}}{% endunless %}">
+  {% if _layout == 'boxed' %}<div class="container">{% endif %}
+    {% include 'head-title' %}
+
+    <div class="custom-content-width">
+      <div class="custom-content row">
+        {% for block in section.blocks %}
+
+          {% case block.settings.width %}
+            {% when 0 %}
+              {%- assign block_width = 'd-md-none' -%}
+            {% when 1 %}
+              {%- assign block_width = 'col-md-1' -%}
+            {% when 2 %}
+              {%- assign block_width = 'col-md-2' -%}
+            {% when 3 %}
+              {%- assign block_width = 'col-md-3' -%}
+            {% when 4 %}
+              {%- assign block_width = 'col-md-4' -%}
+            {% when 5 %}
+              {%- assign block_width = 'col-md-5' -%}
+            {% when 6 %}
+              {%- assign block_width = 'col-md-6' -%}
+            {% when 7 %}
+              {%- assign block_width = 'col-md-7' -%}
+            {% when 8 %}
+              {%- assign block_width = 'col-md-8' -%}
+            {% when 9 %}
+              {%- assign block_width = 'col-md-9' -%}
+            {% when 10 %}
+              {%- assign block_width = 'col-md-10' -%}
+            {% when 11 %}
+              {%- assign block_width = 'col-md-11' -%}
+            {% else %}
+              {%- assign block_width = 'col-md-12' -%}
+          {% endcase %}
+          {% case block.settings.width_mobi %}
+            {% when 0 %}
+              {%- assign block_width_mobi = 'd-none d-md-block' -%}
+            {% when 1 %}
+              {%- assign block_width_mobi = 'col-1' -%}
+            {% when 2 %}
+              {%- assign block_width_mobi = 'col-2' -%}
+            {% when 3 %}
+              {%- assign block_width_mobi = 'col-3' -%}
+            {% when 4 %}
+              {%- assign block_width_mobi = 'col-4' -%}
+            {% when 5 %}
+              {%- assign block_width_mobi = 'col-5' -%}
+            {% when 6 %}
+              {%- assign block_width_mobi = 'col-6' -%}
+            {% when 7 %}
+              {%- assign block_width_mobi = 'col-7' -%}
+            {% when 8 %}
+              {%- assign block_width_mobi = 'col-8' -%}
+            {% when 9 %}
+              {%- assign block_width_mobi = 'col-9' -%}
+            {% when 10 %}
+              {%- assign block_width_mobi = 'col-10' -%}
+            {% when 11 %}
+              {%- assign block_width = 'col-11' -%}
+            {% else %}
+              {%- assign block_width_mobi = 'col-12' -%}
+          {% endcase %}
+
+            <div class="custom-item custom-item-{{ block.id }} {{ block_width }} {{block_width_mobi}} align-{{ block.settings.alignment }}" {{ block.shopify_attributes }}>
+              <div class="custom-item-inner custom-item-inner-{{ block.type }}">
+
+                {% case block.type %}
+                  {% when 'text' %}
+                    {% comment %} Custom Text Block {% endcomment %}
+
+                    <div class="custom-block-text text-{{ block.settings.align_text }}">
+                      {% unless block.settings.heading_text == blank %}
+                        <h2 class="custom-block-heading-text h{{ block.settings.heading_size }}">{{ block.settings.heading_text }}</h2>
+                      {% endunless %}
+
+                      {% unless block.settings.paragraph_text == blank %}
+                        <div class="custom-block-body-text h{{ block.settings.paragraph_size }}">{{ block.settings.paragraph_text }}</div>
+                      {% endunless %}
+                    </div>
+                    <style>
+                      .custom-content-wrapper-{{ section.id }} .custom-item-{{ block.id }} .custom-block-heading-text {color: {{ block.settings.heading_color }};}
+                      .custom-content-wrapper-{{ section.id }} .custom-item-{{ block.id }} .custom-block-body-text {color: {{ block.settings.paragraph_color }};}
+                    </style>
+
+
+                  {% when 'product' %} 
+
+                    {% comment %} Custom Product Block {% endcomment %}
+                    {%- assign product = all_products[block.settings.product] -%}
+
+                    {% if product.title.size > 0 %}
+                      <div class="custom-block-product">
+                        <div class="custom-product-inner text-center">
+
+                          {% if product.featured_image != blank %}
+                            <div class="image{% if _lazyload %} lazyload waiting{% endif %}">
+                              <a href="{{ product.url }}">
+                                <img {% if _lazyload %}class="lazyload" data-{% endif %}src="{{ product.featured_image.src | img_url: '1024x1024' }}" alt="{{ product.featured_image.alt | escape }}">
+                              </a>
+                            </div>
+                          {% endif %}
+
+                          <div class="info">
+                            <div class="product-author">{{ product.vendor }}</div>
+                            <h5 class="product-name">{{ product.title }}</h5>
+
+                            <div class="product-price">
+                              {% if product.available %}
+
+                                {% if product.variants.first.compare_at_price and product.variants.first.price < product.variants.first.compare_at_price %}
+                                <span class="price">{{ product.variants.first.price | money }}</span>
+                                <span class="price-compare"> {{ product.variants.first.compare_at_price | money }}</span>
+
+                                {% else %}
+                                <span class="price">{{ product.variants.first.price | money }}</span>
+
+                                {% endif %}
+
+                              {% else %}
+                                <span class="sold-out">{{'products.product.sold_out' | t }}</span>
+                              {% endif %}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                    {% else %}
+                      <div class="custom-product-inner">
+                        {% capture current %}{% cycle 1, 2, 3, 4, 5, 6 %}{% endcapture %}
+                        {{ 'product-' | append: current | placeholder_svg_tag: 'placeholder-svg' }}
+
+                        <div class="info">
+                          <div class="product-author">Product vendor</div>
+                          <h5 class="product-name">Example Product Title</h5>
+                          <div class="product-price"><span class="price">$19.99</span></div>
+                        </div>
+                      </div>
+                    {% endif %}
+
+                  {% when 'collection' %}
+
+                    {% comment %} Custom Collection Block {% endcomment %}
+                    {%- assign collection = collections[block.settings.collection] -%}
+
+                    {% unless collection == empty %}
+                    <div class="custom-block-collection text-center">
+                      <div class="custom-collection-inner">
+                        <div class="image{% if _lazyload %} lazyload waiting{% endif %}">
+                          {% if block.settings.image != blank %}
+                          <a href="{{ collection.url }}"><img {% if _lazyload %}class="lazyload" data-{% endif %}src="{{ block.settings.image | img_url: '1024x1024' }}" alt="{{ collection_image.alt | escape }}" /></a>
+                          {% else %}
+                          {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+                          {% endif %}
+                        </div>
+
+                        <div class="info">
+                          <a href="{{ collection.url }}">{{ collection.title }}</a>
+                        </div>
+                      </div>
+                    </div>
+
+                    {% else %}
+                    <div class="custom-collection-inner">
+                      {% capture current %}{% cycle 1, 2, 3, 4, 5, 6 %}{% endcapture %}
+                      {{ 'collection-' | append: current | placeholder_svg_tag: 'placeholder-svg' }}
+
+                      <div class="info">
+                        <a href="#">Your collection's name</a>
+                      </div>
+                    </div>
+                    {% endunless %}
+                  {% when 'image' %}
+                    <div class="custom-block-image">
+                      {% assign image_width = block.settings.image_size %}
+                      {% include 'image-style' with image:block.settings.block_image, image_size: block.settings.image_size %}
+                    </div>
+                  {% else %}
+                    {% comment %} Custom HTML Block {% endcomment %}
+                    {% assign button      = block.settings.button %}
+                    {% assign button_link = block.settings.button_link %}
+                    {% assign code        = block.settings.code %}
+                    <div class="wrapper-custom-block-html">
+                      {% unless code == blank %}
+                        <div class="custom-block-html">{{ code }}</div>
+                      {% endunless %}
+                      {% unless button == blank %}
+                        <div class="custom-block-html-button">
+                          <a class="btn custom-block-html-btn" href="{{button_link}}">{{button}}</a>
+                        </div>
+                      {% endunless %}
+                    </div>
+                {% endcase %}
+
+              </div>
+            </div>
+
+        {% endfor %}
+      </div>
+
+    </div>
+  {% if _layout == 'boxed' %}</div>{% endif %}
+</div>
+
+{% schema %}
+{
+   "name":"Custom content",
+   "settings":[
+      {
+         "type":"paragraph",
+         "content":"Created by 'Custom content' section"
+      },
+      {
+         "type":"text",
+         "id":"title",
+         "label":"Section Label",
+         "default":"Custom content"
+      },
+      {
+         "type":"header",
+         "content":"LAYOUT"
+      },
+      {
+         "type":"checkbox",
+         "id":"boxed_layout",
+         "label":"Boxed layout",
+         "default":true
+      }, 
+      {
+         "type":"color",
+         "id":"background_color",
+         "label":"Background color"
+      },
+      {
+         "type":"range",
+         "id":"min_height",
+         "label":"Min height",
+         "min":0,
+         "max":1000,
+         "step":20,
+         "unit":"px",
+         "default":300
+      },
+      {
+         "type":"header",
+         "content":"Heading content",
+         "info":"Blank to hide"
+      },
+      {
+         "type":"select",
+         "id":"heading_content_align",
+         "label":"Heading alignment",
+         "options":[
+            {
+               "value":"left",
+               "label":"Left"
+            },
+            {
+               "value":"center",
+               "label":"Center"
+            },
+            {
+               "value":"right",
+               "label":"Right"
+            }
+         ],
+         "default":"center"
+      },
+      {
+         "type":"text",
+         "id":"heading_text",
+         "label":"Heading"
+      },
+      {
+         "type":"text",
+         "id":"subheading_text",
+         "label":"Subheading"
+      }
+   ],
+   "blocks":[
+      {
+         "type":"text",
+         "name":"Text",
+         "settings":[
+            {
+               "type":"header",
+               "content":"Heading"
+            },
+            {
+               "type":"text",
+               "id":"heading_text",
+               "label":"Text",
+               "default":"Talk about your brand"
+            },
+            {
+               "type":"color",
+               "id":"heading_color",
+               "label":"Color",
+               "default":"#3a3a3a"
+            },
+            {
+               "type":"range",
+               "id":"heading_size",
+               "label":"Font size (h1-> h6)",
+               "min":1,
+               "max":6,
+               "step":1,
+               "default":2
+            },
+            {
+               "type":"header",
+               "content":"Paragraph"
+            },
+            {
+               "type":"richtext",
+               "id":"paragraph_text",
+               "label":"Text",
+               "default":"<p>Use this text to share information about your brand with your customers. Describe a product, share announcements, or welcome customers to your store.</p>"
+            },
+            {
+               "type":"color",
+               "id":"paragraph_color",
+               "label":"Color",
+               "default":"#4a4a4a"
+            },
+            {
+               "type":"range",
+               "id":"paragraph_size",
+               "label":"Font size (h1-> h6)",
+               "min":1,
+               "max":6,
+               "step":1,
+               "default":4
+            },
+            {
+               "type":"header",
+               "content":"Layout"
+            },
+            {
+               "type":"range",
+               "id":"width",
+               "label":"Width on Desktop",
+               "min":0,
+               "max":12,
+               "step":1,
+               "unit":"/12",
+               "info":"0 is Hide",
+               "default":6
+            },
+            {
+               "type":"range",
+               "id":"width_mobi",
+               "label":"Width on Mobile",
+               "min":0,
+               "max":12,
+               "step":1,
+               "unit":"/12",
+               "info":"0 is Hide",
+               "default":6
+            },
+            {
+               "type":"select",
+               "id":"alignment",
+               "label":"Vertical alignment",
+               "info":"Position relative to other content blocks on the same row",
+               "default":"center",
+               "options":[
+                  {
+                     "value":"top",
+                     "label":"Top"
+                  },
+                  {
+                     "value":"center",
+                     "label":"Middle"
+                  },
+                  {
+                     "value":"bottom",
+                     "label":"Bottom"
+                  }
+               ]
+            },
+            {
+               "type":"select",
+               "id":"align_text",
+               "label":"Horizontal alignment",
+               "default":"left",
+               "options":[
+                  {
+                     "value":"left",
+                     "label":"Left"
+                  },
+                  {
+                     "value":"center",
+                     "label":"Center"
+                  },
+                  {
+                     "value":"right",
+                     "label":"Right"
+                  }
+               ]
+            }
+         ]
+      },
+      {
+         "type":"product",
+         "name":"Product",
+         "settings":[
+            {
+               "type":"product",
+               "id":"product",
+               "label":"Product"
+            },
+            {
+               "type":"header",
+               "content":"Layout"
+            },
+            {
+               "type":"range",
+               "id":"width",
+               "label":"Width on Desktop",
+               "min":0,
+               "max":12,
+               "step":1,
+               "unit":"/12",
+               "info":"0 is Hide",
+               "default":6
+            },
+            {
+               "type":"range",
+               "id":"width_mobi",
+               "label":"Width on Mobile",
+               "min":0,
+               "max":12,
+               "step":1,
+               "unit":"/12",
+               "info":"0 is Hide",
+               "default":6
+            },
+            {
+               "type":"select",
+               "id":"alignment",
+               "label":"Vertical alignment",
+               "default":"center",
+               "options":[
+                  {
+                     "value":"top",
+                     "label":"Top"
+                  },
+                  {
+                     "value":"center",
+                     "label":"Middle"
+                  },
+                  {
+                     "value":"bottom",
+                     "label":"Bottom"
+                  }
+               ]
+            }
+         ]
+      },
+      {
+         "type":"collection",
+         "name":"Collection",
+         "settings":[
+            {
+               "type":"collection",
+               "id":"collection",
+               "label":"Collection"
+            },
+            {
+               "type":"image_picker",
+               "id":"image",
+               "label":"Image"
+            },
+            {
+               "type":"header",
+               "content":"Layout"
+            },
+            {
+               "type":"range",
+               "id":"width",
+               "label":"Width on Desktop",
+               "min":0,
+               "max":12,
+               "step":1,
+               "unit":"/12",
+               "info":"0 is Hide",
+               "default":6
+            },
+            {
+               "type":"range",
+               "id":"width_mobi",
+               "label":"Width on Mobile",
+               "min":0,
+               "max":12,
+               "step":1,
+               "unit":"/12",
+               "info":"0 is Hide",
+               "default":6
+            },
+            {
+               "type":"select",
+               "id":"alignment",
+               "label":"Vertical alignment",
+               "info":"Position relative to other content blocks on the same row",
+               "default":"center",
+               "options":[
+                  {
+                     "value":"top",
+                     "label":"Top"
+                  },
+                  {
+                     "value":"center",
+                     "label":"Middle"
+                  },
+                  {
+                     "value":"bottom",
+                     "label":"Bottom"
+                  }
+               ]
+            }
+         ]
+      },
+      {
+         "type":"html",
+         "name":"Custom HTML",
+         "settings":[
+            {
+               "type":"html",
+               "id":"code",
+               "label":"HTML",
+               "default":"<div><p>Write your own custom HTML content.</p></div>"
+            },
+            {
+              "type":"text",
+              "id":"button",
+              "label":"Button text"
+            },
+            {
+              "type":"url",
+              "id":"button_link",
+              "label":"Button link"
+            },
+            {
+               "type":"header",
+               "content":"Layout"
+            },
+            {
+               "type":"range",
+               "id":"width",
+               "label":"Width on Desktop",
+               "min":0,
+               "max":12,
+               "step":1,
+               "unit":"/12",
+               "info":"0 is Hide",
+               "default":6
+            },
+            {
+               "type":"range",
+               "id":"width_mobi",
+               "label":"Width on Mobile",
+               "min":0,
+               "max":12,
+               "step":1,
+               "unit":"/12",
+               "info":"0 is Hide",
+               "default":6
+            },
+            {
+               "type":"select",
+               "id":"alignment",
+               "label":"Vertical alignment",
+               "info":"Position relative to other content blocks on the same row",
+               "default":"center",
+               "options":[
+                  {
+                     "value":"top",
+                     "label":"Top"
+                  },
+                  {
+                     "value":"center",
+                     "label":"Middle"
+                  },
+                  {
+                     "value":"bottom",
+                     "label":"Bottom"
+                  }
+               ]
+            }
+         ]
+      },
+      {
+        "type":"image",
+        "name":"Image",
+        "settings":[
+          {
+            "type":"image_picker",
+            "id":"block_image",
+            "label":"Image"
+          },
+          {
+            "type":"text",
+            "id":"image_size",
+            "label":"Image size"
+          },
+          {
+             "type":"header",
+             "content":"Layout"
+          },
+          {
+             "type":"range",
+             "id":"width",
+             "label":"Width on Desktop",
+             "min":0,
+             "max":12,
+             "step":1,
+             "unit":"/12",
+             "info":"0 is Hide",
+             "default":6
+          },
+          {
+             "type":"range",
+             "id":"width_mobi",
+             "label":"Width on Mobile",
+             "min":0,
+             "max":12,
+             "step":1,
+             "unit":"/12",
+             "info":"0 is Hide",
+             "default":6
+          }
+        ]
+      }
+   ],
+   "presets":[
+      {
+         "name":"Custom Content",
+         "category":"Advanced layout",
+         "blocks":[
+            {
+               "type":"text"
+            }
+         ]
+      }
+   ]
+}
+{% endschema %}

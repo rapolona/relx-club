@@ -1,0 +1,138 @@
+<!-- INCLUDE BY PRODUCT.DETAIL-INFO -->
+{% capture product_reviews %}{% include 'include-reviews' with type: 'preview_badge' %}{% endcapture %}
+
+<div id="product-info" class="product-info{% if product_layout_gallery %} order-md-1{% endif %}" data-stock="{{section.settings.stock_enable}}">
+  <div class="product-info-inner">
+    <div itemprop="offers" itemscope itemtype="http://schema.org/Offer">
+      <meta itemprop='priceValidUntil' content='1/1/1997'>
+      <meta itemprop='url' content="http://schema.org/Offer">
+      {% if product.available %}
+        <link itemprop="availability" href="http://schema.org/InStock" />
+        {% else %}
+        <link itemprop="availability" href="http://schema.org/OutOfStock" />
+      {% endif %}
+      {% if section.settings.enable_pre_order_button %}
+        <div class="pre-order-success hide alert alert-success" role="alert">{{ 'products.product.pre_order_alert' | t }}</div>
+      {% endif %}
+
+      {%- if product_layout_gallery -%}<div class="d-none d-lg-block">{%- endif -%}
+
+      <div class="prod-title">
+        <h1 itemprop="name" content="{{ product.title }}" class="page-heading">{{product.title}}</h1>
+      </div>
+      {% render 'judgeme_widgets', widget_type: 'judgeme_preview_badge', jm_style: '', concierge_install: true, product: product %}
+
+      <meta itemprop="priceCurrency" content="{{ shop.currency }}" />
+      {% if product_layout_gallery == blank %}{{product_reviews | strip }}{% endif %}
+      {% if product.available %}
+        <div class="group-price-sale">
+          <div class="product-price">
+            <div class="detail-price" itemprop="price" content="{{ bold_variant_price | divided_by: 100.00 }}">
+
+              {% if bold_compare_at_price_max > bold_price %}
+               <span class="price">{{ bold_price | money }}</span>
+               <del class="price-compare"> {{ bold_compare_at_price | money }}</del>
+              {% else %}
+                <span class="price">{{ bold_price | money }}</span>
+              {% endif %}
+
+              <span class="t-price hide">{{ bold_price }}</span>
+            </div>
+            <div class="label-wrapper">{% include 'product-label' %}</div>
+          {%- unless section.settings.tax_text == blank -%}
+            <div class="price-tax">
+              {{-section.settings.tax_text-}}
+            </div>
+          {%- endunless -%}
+          </div>
+        </div>
+      {% endif %}
+      {% if product_layout_gallery != blank %}{{product_reviews | strip }}{% endif %}
+
+      {%- if product_layout_gallery -%}</div>{%- endif -%}
+
+      {% if section.settings.meta_description_excerpt %}
+        {% assign meta_shortdes = product.metafields.c_f %}
+        {% unless meta_shortdes.description_excerpt == blank %}
+          <div class="short-description">{{ meta_shortdes.description_excerpt }}</div>
+        {% endunless %}
+      {% endif %}
+
+      {% if section.settings.meta_countdown_timer %}
+        {% include 'product-countdown' with show_offer: true,countdown_style: {{section.settings.countdown_style}} %}
+      {% endif %}
+
+      {% if product_layout_gallery == blank %}
+        {% include 'product.detail-info-form' %}
+      {% endif %}
+
+      {% if section.settings.show_prod_sku or section.settings.show_prod_category or section.settings.show_prod_tags %}
+      {%- if section.settings.pos_product_sku == '2' or section.settings.pos_product_sku == blank -%}
+        <ul class="product-sku-collection">
+          {%- unless product.vendor == blank -%}
+          <li class="product-vendor">
+            {{- 'products.product.vendor' | t -}}: {{product.vendor | link_to_vendor }}
+          </li>
+            
+          {%- endunless -%}
+          {% if section.settings.show_prod_sku %}
+            <li class="product-code {% if bold_selected_or_first_available_variant.sku == blank %}hide{% endif %}">
+              <span>{{ 'products.product.product_code' | t }}:</span>
+              <span class="sku">{{ bold_selected_or_first_available_variant.sku }}</span>
+            </li>
+          {% endif %}
+
+          {% if product.collections.size > 0 and section.settings.show_prod_category %}
+            <li class="category">
+              <span>{{ 'products.product.category' | t }}:</span>
+              {% for p_col in product.collections limit: 4 %}
+                <a href="{{ p_col.url }}"><span>{{ p_col.title }}{% unless forloop.last %}, {% else %} {% if product.collections.size > 4 %}<span>...</span>{% endif %}{% endunless %}</span></a>
+              {% endfor %}
+            </li>
+          {% endif %}
+
+          {% if product.tags.size > 0 and section.settings.show_prod_tags %}
+            <li class="tags">
+              <span>{{'products.product.tag' | t }}: </span>
+              {% for tag in product.tags limit: 4 %}
+                <span>{{ tag | link_to_tag: tag | replace: 'title=', 'class="tags-prd" title=' }} {% unless forloop.last %}, {% else %} {% if product.tags.size > 4 %}<span>...</span>{% endif %}{% endunless %}</span>
+              {% endfor %}
+            </li>
+          {% endif %}
+        </ul>
+        {%- endif -%}
+      {% endif %}
+
+
+      {% if section.settings.product_tab_pos == 'inside_p_info' %}
+        {% case section.settings.product_tab_style %}
+          {% when '1' %}{% include 'product-toggle' %}
+          {% when '2' %}{% include 'product-toggle-v2' %}
+          {% when '3' %}{% include 'product-toggle', border: true %}
+          {% else %}
+        {% endcase %}
+      {% endif %}
+
+      {% if section.settings.thumbnail_pos == 'bottom' %}
+        <div class="share-icons">{% include 'social-sharing' %}</div>
+      {% endif %}
+
+      {% assign _meta_discount_percent = product.metafields.c_f %}
+      {% assign _meta_discount_code = product.metafields.c_f %}
+      {% assign key = 'discount_code' %}
+
+      {% unless _meta_discount_code.discount_code == blank %}
+        <div class="hide">
+          <a href="/discount/{{ _meta_discount_code.discount_code }}?redirect={{ product.url }}" class="btn-discount-code btn btn-1">
+            {% if _meta_discount_percent.discount_percent == blank %}
+            Get my 10% offer now
+            {% else %}
+            Get my {{ _meta_discount_percent.discount_percent }} offer now
+            {% endif %}
+          </a>
+        </div>
+      {% endunless %}
+    </div>
+  </div>
+</div>
+<!-- ========== -->

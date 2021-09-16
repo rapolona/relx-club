@@ -1,0 +1,35 @@
+{%- unless collection == blank -%}  
+  <div class="category text-center">
+    <div class="category-image">
+      <a href="{{ collection.url }}">
+        {%- if _collection_ratio != 'auto' and _collection_ratio != 'fill' -%}
+          {%- assign set_padding = _collection_ratio -%}
+        {%- endif -%}
+
+        {%- if collection.image -%}
+          {%- include 'image-style' with image: collection.image, setPadding: set_padding -%}
+        {%- else -%}
+          {%- assign image = 'default-image.jpg' | asset_url -%}
+          <span class="image--style" style="position:relative;padding-top:{% if set_padding == blank %}{% unless image == blank %}{{ 1 | divided_by: image.aspect_ratio | times: 100}}%{% else %}100%{% endunless %}{% else %}{{set_padding}}{% endif %};">
+            <img src="{{ image }}" class="lazyload img-lazy blur-up" />
+          </span>
+        {%- endif -%}
+      </a>
+    </div>
+    <div class="category-info text-{{section.settings.text_align}}">
+      <a class="category-name" href="{{ collection.url }}" title="{{ collection.title | escape }}">{{ collection.title }}</a>
+      {% if collection.products_count > 0 %}
+        {% capture _item %}{{'collections.general.product' | t }}{% endcapture %}
+        {% capture _items %}{{'collections.general.products' | t }}{% endcapture %}
+        <p>{{ collection.products_count }} {{ collection.products_count | pluralize: _item, _items }}</p>
+      {% endif %}
+    </div>
+  </div>
+  {%- else -%}
+    <div class="category">      
+      {%- assign image = 'default-image.jpg' | asset_url -%}
+      <span class="image--style" style="position:relative;padding-top:{% if set_padding == blank %}{% unless image == blank %}{{ 1 | divided_by: image.aspect_ratio | times: 100}}%{% else %}100%{% endunless %}{% else %}{{set_padding}}{% endif %};">
+        <img src="{{ image }}" class="lazyload img-lazy blur-up" />
+      </span>
+    </div>
+{%- endunless -%}

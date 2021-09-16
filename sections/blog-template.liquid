@@ -1,0 +1,343 @@
+{% if section.settings.boxed_layout %}{% assign _layout = 'boxed' %}{% else %}{% assign _layout = 'full' %}{% endif %}
+{% if section.settings.border_layout %}{% assign _border = ' border-layout' %}{% endif %}
+{% if settings.show_breabcrumb and section.settings.show_breabcrumb %}
+  {% if section.settings.breadcrumb_image == blank %}
+  {% include 'breadcrumb' with hide_breadcrumb_image: true %}
+  {% else %}{% include 'breadcrumb' %}
+  {% endif %}
+{% endif %}
+
+{% assign _lazyload           = settings.use_lazyload %}
+{% assign _sidebar_place      = section.settings.sidebar_placement %}
+{% assign enable_masonry      = section.settings.enable_masonry %}
+{% assign item_per_row        = section.settings.item_per_row %}
+{% assign item_per_row_mobile = section.settings.item_per_row_mobile %}
+
+{% assign _sb_class       = 'col-lg-3 d-none d-lg-block' %}
+{% assign _main_class     = 'col-lg-9 col-12' %}
+
+{% case item_per_row %}
+  {% when 1 %}{% assign class = '12' %}
+  {% when 2 %}{% assign class = '6'  %}
+  {% when 3 %}{% assign class = '4'  %}
+  {% when 4 %}{% assign class = '3'  %}
+  {% else %}
+{% endcase %}
+
+{% case item_per_row_mobile %}
+  {% when 1 %}{% assign class_mob = '12' %}
+  {% when 2 %}{% assign class_mob = '6'  %}
+  {% when 3 %}{% assign class_mob = '4'  %}
+  {% when 4 %}{% assign class_mob = '3'  %}
+  {% else %}
+{% endcase %}
+
+{% if enable_masonry %}
+  {% assign article_class = 'width-col-'| append: class | append: ' width-col-mob-'| append: class_mob %}
+{% else %}
+  {% assign article_class = 'col-md-'| append: class | append: ' col-'| append: class_mob %}
+{% endif %}
+
+<div class="page-blog layout-{{ _layout }}{{_border}}"
+     data-section-type="blog" data-section-id="{{section.id}}"
+     {% unless section.settings.background_color == blank %} style="background: {{section.settings.background_color}}"{% endunless %}>
+  {% if _layout == 'boxed' %}<div class="container">{% endif %}
+
+    {% if _sidebar_place != 'none' %}
+      <div class="row">
+        {% if _sidebar_place == 'left' %}
+        <div class="{{_sb_class}}">{% include 'sidebar-blog' %}</div>{% endif %}
+        <div class="{{_main_class}}">
+    {% endif %}
+
+    {% paginate blog.articles by section.settings.blog_pagination_limit %}
+      <div id="col-main" class="page-blog-content home-banner-items">
+        {% if blog.articles.size > 0 %}
+          {% if enable_masonry %}
+            <div class="home-banner-masonry masonry_{{section.id}}">
+              <div class="bc-masonry padding-true">
+          {% else %}
+            <div class="row">
+          {% endif %}
+          {% for article in blog.articles %}
+            <div class="banner-item {{article_class}} number-item-{{item_per_row}} padding-true">
+              {% include 'article-item' %}
+            </div>
+          {% endfor %}
+          {% if enable_masonry %}
+              </div>
+            </div>
+          {% else %}
+            </div>
+          {% endif %}
+
+        {% else %}
+          <p>{{'blogs.article.no_acticles' | t }}</p>
+        {% endif %}
+      </div>
+
+      {% include 'pagination' %}
+    {% endpaginate %}
+
+    {% if _sidebar_place != 'none' %}
+        </div>
+        {% if _sidebar_place == 'right' %}<div class="{{_sb_class}}">{% include 'sidebar-blog' %}</div>{% endif %}
+      </div>
+    {% endif %}
+
+  {% if  _layout == 'boxed' %}</div>{% endif %}
+</div>
+
+{% schema %}
+{
+   "name":"Blog pages",
+   "settings":[
+      {
+         "type":"checkbox",
+         "id":"show_breabcrumb",
+         "label":"Show Breadcrumb",
+         "default":true
+      },
+      {
+         "type":"image_picker",
+         "id":"breadcrumb_image",
+         "label":"Breadcrumb image"
+      },
+      {
+         "type":"header",
+         "content":"LAYOUT"
+      },
+      {
+         "type":"checkbox",
+         "id":"boxed_layout",
+         "label":"Boxed layout",
+         "default":true
+      },
+      {
+         "type":"checkbox",
+         "id":"border_layout",
+         "label":"Border layout",
+         "default":true
+      },
+      {
+         "type":"color",
+         "id":"background_color",
+         "label":"Background Color"
+      },
+      {
+         "type":"checkbox",
+         "id":"show_excerpt",
+         "label":"Show Excerpt",
+         "default":true
+      },
+      {
+         "type":"checkbox",
+         "id":"enable_masonry",
+         "label":"Enable Masonry layout"
+      },
+      {
+         "type":"range",
+         "id":"item_per_row",
+         "label":"Max number of items per row",
+         "min":1,
+         "max":4,
+         "step":1,
+         "default":3
+      },
+      {
+         "type":"range",
+         "id":"item_per_row_mobile",
+         "label":"Mobile: Number of items per row",
+         "min":1,
+         "max":4,
+         "step":1,
+         "default":2
+      },
+      {
+         "type":"range",
+         "id":"blog_pagination_limit",
+         "label":"Number of articles per page",
+         "min":1,
+         "max":50,
+         "step":1,
+         "default":9
+      },
+      {
+         "type":"header",
+         "content":"Sidebar",
+         "info":"To customize Sidebar content, please click Add content."
+      },
+      {
+         "type":"select",
+         "id":"sidebar_placement",
+         "label":"Sidebar Placement",
+         "options":[
+            {
+               "value":"none",
+               "label":"None"
+            },
+            {
+               "value":"left",
+               "label":"Left"
+            },
+            {
+               "value":"right",
+               "label":"Right"
+            }
+         ],
+         "default":"none"
+      }
+   ],
+   "blocks":[
+      {
+         "type":"categories",
+         "name":"Sidebar - Categories",
+         "limit":1,
+         "settings":[
+            {
+               "type":"text",
+               "id":"sb_categories_title",
+               "label":"Heading",
+               "default":"Categories"
+            },
+            {
+               "type":"select",
+               "id":"sb_categories_type",
+               "label":"Content Components",
+               "options":[
+                  {
+                     "value":"categories",
+                     "label":"Categories"
+                  },
+                  {
+                     "value":"menu",
+                     "label":"Menu"
+                  }
+               ],
+               "default":"categories"
+            },
+            {
+               "type":"select",
+               "id":"icon",
+               "label":"Thumbnail icon",
+               "options":[
+                  {
+                     "value":"collection-image",
+                     "label":"Use collection image"
+                  },
+                  {
+                     "value":"upload",
+                     "label":"Upload from Assets - png format"
+                  },
+                  {
+                     "value":"upload-svg",
+                     "label":"Upload from Assets - svg format"
+                  },
+                  {
+                     "value":"none",
+                     "label":"None"
+                  }
+               ],
+               "default":"collection-image",
+               "info":"If you select 'Upload from Assets', please go to Assets folder, then click 'Add a new asset' to upload the image. The image size is 25x25 pixels, syntax is xxx.png. 'xxx' is collection handle."
+            },
+            {
+               "type":"link_list",
+               "id":"sb_categories_menu",
+               "label":"Menu item",
+               "info":"Only for Content Component is Menu"
+            },
+            {
+               "type":"range",
+               "id":"sb_categories_limit",
+               "label":"Limited items",
+               "min":1,
+               "max":50,
+               "default":6
+            }
+         ]
+      },
+      {
+         "type":"post",
+         "name":"Posts",
+         "limit":1,
+         "settings":[
+            {
+               "type":"header",
+               "content":"Sidebar Posts"
+            },
+            {
+               "type":"text",
+               "id":"sidebar_post_title",
+               "label":"Title",
+               "default":"NEW ARTICLES"
+            },
+            {
+               "type":"blog",
+               "id":"sidebar_post",
+               "label":"Blog item"
+            },
+            {
+               "type":"range",
+               "id":"sidebar_post_limit",
+               "label":"Limited items",
+               "min":1,
+               "max":20,
+               "step":1,
+               "default":5
+            }
+         ]
+      },
+      {
+         "type":"tag",
+         "limit":1,
+         "name":"Tags",
+         "settings":[
+            {
+               "type":"header",
+               "content":"Sidebar Tags"
+            },
+            {
+               "type":"text",
+               "id":"sidebar_tags_title",
+               "label":"Title",
+               "default":"ARTICLES BY TAG"
+            }
+         ]
+      },
+      {
+         "type":"banner",
+         "name":"Banner",
+         "settings":[
+            {
+               "type":"image_picker",
+               "id":"image_banner",
+               "label":"Image",
+               "info":"The default image size is 270x400 pixels"
+            },
+            {
+               "type":"url",
+               "id":"link",
+               "label":"Link to"
+            },
+            {
+               "type":"text",
+               "id":"image_text",
+               "label":"Text"
+            },
+            {
+               "type":"color",
+               "id":"title_color",
+               "label":"Text color",
+               "default":"#ffffff"
+            },
+            {
+               "type":"text",
+               "id":"button_text",
+               "label":"Button text"
+            }
+         ]
+      }
+   ]
+}
+{% endschema %}

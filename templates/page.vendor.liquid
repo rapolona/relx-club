@@ -1,0 +1,60 @@
+{% if settings.show_breabcrumb %}{% include 'breadcrumb' %}{% endif %}
+{%- assign fw = shop.vendors[0] | capitalize | slice: 0  -%}
+{%- assign index = 0 -%}
+<div id="col-main" class="page-vendor">
+	<div class="container">
+
+		<div class="title-wrapper text-center">
+			<a href="#group-{{index}}" class="h3"> {{fw}} </a>
+			{% for product_vendor in shop.vendors %}
+				{%- assign fw_v = product_vendor | capitalize | slice: 0 -%}
+				{% if fw_v != fw %}
+					{%- assign fw = fw_v -%}
+					{%- assign index = index | plus: 1 -%}
+					<a href="#group-{{index}}" class="h3"> {{fw}} </a>
+				{% endif %}
+			{% endfor %}
+		</div>
+
+		<div class="vendor-content">
+			{%- assign fw = shop.vendors[0] | capitalize | slice: 0  -%}
+			{%- assign index = 0 -%}
+			<div class="vendor-group" id="group-{{index}}">
+			<p id="v-{{fw}}" class="h4"> {{fw}} </p>
+			{% for product_vendor in shop.vendors %}
+				{%- assign fw_v = product_vendor | capitalize | slice: 0 -%}
+				{% if fw_v == fw %}
+					<p> {{ product_vendor | capitalize | link_to_vendor }} </p>
+				{% else %}
+					{%- assign fw = fw_v -%}
+					{%- assign index = index | plus: 1 -%}
+					</div>
+					<div class="vendor-group" id="group-{{index}}">
+					<p id="v-{{fw}}" class="h4"> {{fw}} </p>
+					<p> {{ product_vendor | capitalize | link_to_vendor }} </p>
+				{% endif %}
+			{% endfor %}
+			</div>
+		</div>
+	</div>
+</div>
+
+<style>
+	.vendor-group{
+		display: inline-block;
+	}
+</style>
+<script>
+	jQuery(document).ready(function($) {
+		jQuery(document).on('click mouseover','.page-vendor .title-wrapper > a',function(e){
+			jQuery('.vendor-content .vendor-group').removeClass('active');
+			let v_group = jQuery(this).attr('href');
+			jQuery(v_group).addClass('active');
+		});
+		jQuery(document).on('mouseover','.vendor-content .vendor-group',function(e){
+			jQuery('.vendor-content .vendor-group').removeClass('active');
+			jQuery(this).addClass('active');
+		});
+
+	});
+</script>

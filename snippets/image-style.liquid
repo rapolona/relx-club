@@ -1,0 +1,52 @@
+{% if image_size == blank %}{% assign image_size = '1080x' %}{% endif %}
+{%- assign _img_format = settings.image_format -%}
+{% if _lazyload %}
+	{%- unless _img_format == 'none' -%}
+		{% assign image_url = image  | img_url: '1x1', format: _img_format | replace: '_1x1.', '_{width}x.' %}	
+	{%- else -%}		
+		{% assign image_url = image  | img_url: '1x1' | replace: '_1x1.', '_{width}x.' %}
+	{%- endunless -%}
+	{% assign image_ratio = image.aspect_ratio %}
+	{% assign image_width = '[360, 480, 768, 1024, 1440, 2560]' %}
+	{%- if ratio == 'list' -%}
+		{% assign product_ratio = settings.collections_product_list_ratio %}
+	{%- else -%}
+		{% assign product_ratio = settings.collections_product_ratio %}		
+	{%- endif -%}
+	{% assign image_loading = settings.product_image_loading %}
+	{% case image_loading %}
+		{% when 'blur' %} 		{% assign loading_class = 'blur-up' %}
+		{% when 'fade_up' %} 	{% assign loading_class = 'fade-up' %}
+		{% when 'scale_up' %} 	{% assign loading_class = 'scale-up' %}
+		{% when 'slide_up' %} 	{% assign loading_class = 'slide-up' %}
+		{% else %}
+	{% endcase %}
+
+	{% if _type == 'product' %}
+		<span class="image--style" {% if product_ratio == 'false' %} style="position:relative;padding-top:{% unless image == blank %}{{ 1 | divided_by: image.aspect_ratio | times: 100}}%{% else %}100%{% endunless %};"{% endif %}>
+			<noscript><img class="img-lazy {{ image_class }}" src="{{ image | img_url: image_size }}"{% if product_ratio == 'false' %} style="object-fit: unset"{% endif %}/></noscript>
+			<img class="lazyload {{ image_class }} {{ lazy_class }} img-lazy {{loading_class}}"
+				data-src="{{ image_url }}"
+				data-widths="{{ image_width}}"
+				data-aspectratio="{{ image_ratio }}"
+				data-sizes="auto"
+				data-parent-fit="cover"
+				alt="{{ image.alt }}"
+				{% if product_ratio == 'false' %} style="object-fit: unset"{% endif %}/>
+		</span>
+	{% else %}
+	
+		<span class="image--style" style="position:relative;padding-top:{% if setPadding != blank %} {{setPadding}}{% else %}{% unless image == blank %}{{ 1 | divided_by: image.aspect_ratio | times: 100}}%{% else %}100%{% endunless %}{% endif %};">
+			<noscript><img class="img-lazy {{ image_class }}" src="{{ image | img_url: image_size }}"/></noscript>
+			<img class="lazyload {{ image_class }} {{ lazy_class }} img-lazy blur-up"
+				data-src="{{ image_url }}"
+				data-widths="{{ image_width}}"
+				data-aspectratio="{{ image_ratio }}"
+				data-sizes="auto"
+				data-parent-fit="cover"
+				alt="{{ image.alt }}"/>
+		</span>
+	{% endif %}
+{% else %}
+	<div class="image--style"><img class="{{ image_class }}" src="{{ image | img_url: image_size }}" alt="{{ image.alt }}"/></div>
+{% endif %}

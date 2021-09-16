@@ -1,0 +1,45 @@
+{% capture label %}
+  {%- if settings.enable_prod_new_label -%}
+    {% for tag in product.tags %}
+      {% capture t %}{{ tag | downcase }}{% endcapture %}
+      {% if t contains 'label new' %}
+        <span class="label-new"><span class="new-text"> {{ 'products.label.new' | t }}</span></span>
+      {% endif %}
+    {% endfor %}
+  {%- endif -%}
+
+  {%- if settings.enable_prod_hot_label -%}
+    {% for tag in product.tags %}
+      {% capture t %}{{ tag | downcase }}{% endcapture %}
+      {% if t contains 'label hot' %}
+        <span class="label-hot"><span class="hot-text"> {{ 'products.label.hot' | t }}</span></span>
+      {% endif %}
+    {% endfor %}
+  {%- endif -%}
+
+  {%- if settings.enable_prod_sale_label and bold_compare_at_price and bold_price < bold_compare_at_price -%}
+    {%- assign sav_percent = settings.sale_by_percent -%}    
+    <span class="label-sale{% if sav_percent %} sav-percent{% endif %}"><span class="sale-text">
+      {%- unless sav_percent -%}
+        {{- 'products.label.sale' | t -}}
+
+        {%- else -%}
+          {%- if bold_variants_size > 1 and bold_price_varies -%}
+            {% assign max_sav = 0 %}
+            {% for variant in product.variants %}
+{%- include 'bold-variant' with variant, hide_action: 'skip' -%}
+              {%- if bold_variant_price < variant.compare_at_price -%}
+                {% assign saving = variant.compare_at_price | minus: bold_variant_price | times: 100.0 | divided_by: variant.compare_at_price | round %}
+                {%- if saving > max_sav -%}{% assign max_sav = saving %}{%- endif -%}
+              {%- endif -%}
+            {% endfor %}
+          {%- else -%}
+            {% assign max_sav = bold_compare_at_price | minus: bold_price | times: 100.0 | divided_by: bold_compare_at_price | round %}
+          {%- endif -%}
+
+          {{- 'products.label.save' | t: percent: max_sav -}}
+      {%- endunless -%}
+    </span></span>  
+  {%- endif -%}
+{% endcapture %}
+<span class="product-label notranslate">{{-label-}}</span>

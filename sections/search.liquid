@@ -1,0 +1,445 @@
+{%- assign _lazyload             = settings.use_lazyload -%}
+{%- assign limited               = settings.total_items -%}
+{%- assign layout_style          = section.settings.layout_style -%}
+{%- assign suggest_product       = section.settings.show_suggest -%}
+{%- assign suggest_title         = section.settings.heading_suggest -%}
+{%- assign heading_title         = section.settings.heading_title -%}
+{%- assign heading_subtitle      = section.settings.heading_subtitle -%}
+{%- assign heading_title_unf     = section.settings.heading_title_unf -%}
+{%- assign heading_subtitle_unf  = section.settings.heading_subtitle_unf -%}
+{%- assign carousel_layout       = section.settings.carousel_layout -%}
+{%- assign cus_heading_menu      = section.settings.cus_heading_menu -%}
+{%- assign cus_heading           = section.settings.cus_heading -%}
+{%- assign cus_content           = section.settings.cus_content -%}
+{%- assign cus_btn_heading       = section.settings.cus_btn_heading -%}
+{%- assign word_search           = search.terms  | truncate: 2, '' -%}
+
+<div {% unless section.settings.background_color == blank %} style="background: {{section.settings.background_color}}"{% endunless %}>  
+  <div class="{% if layout_style != 3 %}container{% endif %}">
+    <div id="col-main" class="page-search">
+      <div class="search-content search-style-{{layout_style}} text-{{section.settings.text_align}}">
+        {% if search.results_count == 0 or search.performed == false %}
+
+          {% capture search_title %}{{ search.terms | escape }}{% endcapture %}
+          {% capture heading %}
+            <div class="search-title">
+              <p class="h2 title">{{heading_title_unf | replace: '_keyword_',search_title }}</p>
+              <p class="h4">{{heading_subtitle_unf | replace: '_keyword_',search_title }}</p>
+            </div>
+          {% endcapture %}
+          {% case layout_style %}
+            {% when 1 %}
+              <div class="wrapper-left">{{heading}}</div>
+              <div class="wrapper-right">
+                <div class="search-block-button">
+                  {% unless cus_btn_heading == blank %}<p class="h2 title">{{ cus_btn_heading }}</p>{% endunless %}
+                  <div class="search-button-content">
+                    {% for block in section.blocks %}
+                      {% assign button_type = block.settings.button_type %}
+                      {% assign link        = block.settings.link %}
+                      {% assign icon        = block.settings.icon %}
+                      {% assign heading     = block.settings.heading %}
+
+                      <div class="search-button button-style-{{button_type}}" {{block.shopify_attributes}}>
+                        <a href="{{link}}" class="btn btn-1">
+                          {% if button_type == 'icon' %}
+                            <i class="demo-icon {{icon}}"></i>
+                          {% else %}
+                            <span>{{heading}}</span>
+                          {% endif %}
+                        </a>
+                        {% if button_type == 'icon' and heading != blank %}
+                          <p>{{heading}}</p>
+                        {% endif %}
+                      </div>
+                    {% endfor %}
+                  </div>
+                </div>
+              </div>
+
+            {% when 2 %} 
+              {{heading}}
+              
+              <div class="wrapper-bottom">
+                <div class="wrapper-left">
+
+                </div>
+                <div class="wrapper-right">
+                  {% unless cus_heading_menu == blank %}
+                    <p class="h2 title">{{ cus_heading_menu }}</p>
+                  {% endunless %}
+                  <ul class="menu-list">
+                    {% for l in linklists[section.settings.nav_linklist ].links %}
+                    {% include 'nav-link' %}
+                    {% endfor %}
+                  </ul>
+                </div>
+              </div>
+            {% when 3 %}
+              <div class="container">{{heading}}</div>
+
+              <div class="wrapper-bottom"{% unless section.settings.background_content == blank %} style="background: {{section.settings.background_content}}"{% endunless %}>
+                <div class="container">
+                  <div class="search-block-text">
+                    {% unless cus_heading == blank %}<div class="text-heading"><p class="h2 title">{{cus_heading}}</p></div>{% endunless %}
+                    {% unless cus_content == blank %}<div class="text-content">{{cus_content}}</div>{% endunless %}                
+                  </div>
+                  <div class="search-block-menu">
+                    {% unless cus_heading_menu == blank %}<p class="h2 title">{{ cus_heading_menu }}</p>{% endunless %}
+                    <ul class="menu-list">
+                      {% for l in linklists[section.settings.nav_linklist ].links %}
+                      {% include 'nav-link' %}
+                      {% endfor %}
+                    </ul>
+                  </div>
+                  <div class="search-block-button">
+                    {% unless cus_btn_heading == blank %}<p class="h2 title">{{ cus_btn_heading }}</p>{% endunless %}
+                    <div class="search-button-content">
+                      {% for block in section.blocks %}
+                        {% assign button_type = block.settings.button_type %}
+                        {% assign link        = block.settings.link %}
+                        {% assign icon        = block.settings.icon %}
+                        {% assign heading     = block.settings.heading %}
+
+                        <div class="search-button button-style-{{button_type}}" {{block.shopify_attributes}}>
+                          <a href="{{link}}" class="btn btn-1">
+                            {% if button_type == 'icon' %}
+                              <i class="demo-icon {{icon}}"></i>
+                            {% else %}
+                              <span>{{heading}}</span>
+                            {% endif %}
+                          </a>
+                          {% if button_type == 'icon' and heading != blank %}
+                            <p>{{heading}}</p>
+                          {% endif %}
+                        </div>
+                      {% endfor %}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% else %}
+          {% endcase %}
+
+        {% else %}
+          {% if search.performed %}
+            <div class="container">
+              {% paginate search.results by limited %}
+              {% capture search_title %}{{ search.terms | escape }}{% endcapture %}
+              <p class="h2 title">{{heading_title | replace: '_result_',search.results.size | replace: '_keyword_',search_title }}</p>
+              <p class="h4">{{heading_subtitle | replace: '_result_',search.results.size | replace: '_keyword_',search_title }}</p>
+
+              <div class="cata-product cp-grid">
+                {% for product in search.results %}
+  {% if product.object_type == 'product' and product.type == 'SHOPSTORM_HIDDEN_PRODUCT' %}{% continue %}{% endif %}
+
+  {% if product.object_type == 'product' and product.type == 'SHOPSTORM_HIDDEN_PRODUCT' %}{% continue %}{% endif %}
+
+{%- include 'bold-product' with product, hide_action: 'skip' -%}
+
+                  {% if product.object_type == 'product' %}
+                    <div class="product-grid-item">
+                      {% include 'product-item' %}
+                    </div>
+                  {% else %}
+                    <div class="article-grid-item">
+                      {% include 'article-result' %}
+                    </div>
+                  {% endif %}
+                {% endfor %}
+              </div>
+
+              {% if paginate.pages > 1 %}
+                {% include 'pagination' %}
+              {% endif %}
+
+              {% endpaginate %}
+            </div>
+          {% endif %}
+
+        {% endif %}
+      </div>
+      {% if suggest_product %}
+        {% include 'include-item-per-row' %}
+        {% assign desk        = '5'     %}
+        {% assign mob         = '2'     %}
+        {% assign nav         = 'false' %}
+        {% assign dot         = 'true'  %}
+        {% assign padding     = '20'    %}
+        {% assign padding_mob = '10'    %}
+        {% assign autoplay    = 'false' %}
+        {% capture carousel_attr %}
+        {% if carousel_layout %}
+          data-owl-md     = "{{desk}}"
+          data-owl-xs     = "{{mob}}"
+          data-nav        = "{{nav}}"
+          data-dot        = "{{dot}}"
+          data-padding-md = "{{padding}}"
+          data-padding-xs = "{{padding_mob}}"
+          data-autoplay   = "{{autoplay}}"
+        {% endif %}
+        {% endcapture %}
+        <div class="related-wrapper-search hide"{% unless section.settings.suggest_background_color == blank %} style="background: {{section.settings.suggest_background_color}}"{% endunless %}>
+          <div class="container" data-test="{{search.terms}}">
+            {% unless suggest_title == blank %}<p class="h2 sg_title">{{suggest_title}}</p>{% endunless %}
+            <div class="related-items-{{section.id}}{% if carousel_layout %} related-carousel{% else %} row{% endif %}" {{carousel_attr|strip}}></div>
+          </div>
+        </div>
+        <script>
+          let limit = Number('{{limited}}');
+          jQuery.getJSON("/search/suggest.json", {
+            s: "{{word_search}}",
+            resources: {
+              "types": ["product"],
+              "limit": limit,
+              "unavailable_products": "hide"
+            }
+          }).done(function(response) {
+            var productSuggestions = response.resources.results.products;
+            if( productSuggestions.length > 0 ){
+              let product_item_temp = '';
+              for (var i = 0; i < productSuggestions.length; i++) {
+                let product = productSuggestions[i];
+                let temp = `<div class="product-wrapper{% unless carousel_layout %} {{items_class}}{% endunless %}">
+                              <div class="product-head">
+                                <div class="product-image">
+                                  <div class="featured-img">
+                                    <a href="${product.url}">
+                                      <img {% if _lazyload %} class="img-lazy lazyload" data-{% endif %}src="${product.image}">
+                                    </a>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="product-content text-{{settings.text_align_product_item}}">
+                                <div class="pc-inner">
+                                  <div class="prod-name">
+                                    <h5 class="product-name{% if settings.product_title_string != 'none' %} max-{{settings.product_title_string}}-str{% endif %}">
+                                      <a href="${product.url}">${product.title}</a>
+                                    </h5>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>`;
+                product_item_temp += temp;
+              }              
+              jQuery('.related-items-{{section.id}}').append(product_item_temp);              
+              jQuery('.related-items-{{section.id}} > div').length && jQuery('.related-wrapper-search').removeClass('hide');
+              jQuery(document).ready(function($) {
+                let re_carousel = jQuery('.related-items-{{section.id}}.related-carousel');
+                re_carousel.length  && AT_Main.init_carousel(re_carousel);
+                AT_Main.switchImgProduct();                
+              });
+            }
+          });
+        </script>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% schema %}
+{
+ "name":"Search Page",
+ "max_blocks":3,
+ "settings":[
+    {
+       "type":"color",
+       "id":"background_color",
+       "label":"Background color"
+    },
+    {
+      "type":"range",
+      "id":"layout_style",
+      "label":"Layout Style",
+      "min":1,
+      "max":3,
+      "default":1
+    },
+    {
+       "type":"select",
+       "id":"text_align",
+       "label":"Text align for heading",
+       "options":[
+          {
+             "value":"left",
+             "label":"Left"
+          },
+          {
+             "value":"center",
+             "label":"Center"
+          },
+          {
+             "value":"right",
+             "label":"Right"
+          }
+       ],
+       "default":"left"
+    },
+    {
+      "type":"header",
+      "content":"When match with keyword"
+    },
+    {
+      "type":"text",
+      "id":"heading_title",
+      "label":"Title",
+      "default":"We found _result_ result  for \"_keyword_\""
+    },
+    {
+      "type":"textarea",
+      "id":"heading_subtitle",
+      "label":"Content"
+    },
+    {
+      "type":"header",
+      "content":"When unmatch with keyword"
+    },
+    {
+      "type":"text",
+      "id":"heading_title_unf",
+      "label":"Title",
+      "default":"We're Sorry!"
+    },
+    {
+      "type":"textarea",
+      "id":"heading_subtitle_unf",
+      "label":"Content",
+      "default":"We can't seem to find any products that match your search for '_keyword_'."
+    },
+    {
+      "type":"header",
+      "content":"Custom Menu",
+      "info":"Use for style 02 & 03"
+    },
+    {
+      "type":"text",
+      "id":"cus_heading_menu",
+      "label":"Heading menu",
+      "default":"Still can't find that you're looking for"
+    },
+    {
+      "type":"link_list",
+      "id":"nav_linklist",
+      "label":"Menu"
+    },
+    {
+      "type":"header",
+      "content":"Custom content",
+      "info":"Use for style 03"
+    },
+    {
+      "type":"text",
+      "id":"cus_heading",
+      "label":"Heading",
+      "default":"Search Tips"
+    },
+    {
+      "type":"richtext",
+      "id":"cus_content",
+      "label":"Content"
+    },
+    {
+      "type":"header",
+      "content":"Custom button",
+      "info":"Use for style 01 & 03"
+    },
+    {
+      "type":"text",
+      "id":"cus_btn_heading",
+      "label":"Heading",
+      "default":"Need Help?"
+    },
+    {
+       "type":"color",
+       "id":"background_content",
+       "label":"Background content",
+       "info":"Configure only apply to Header style 03"
+    },
+    {
+      "type":"paragraph",
+      "content":"Please add block to custom content"
+    },
+    {
+      "type":"header",
+      "content":"Suggest Product"
+    },
+    {
+      "type":"checkbox",
+      "id":"show_suggest",
+      "label":"Show Suggest Products",
+      "default":true
+    },
+    {
+       "type":"color",
+       "id":"suggest_background_color",
+       "label":"Background color"
+    },
+    {
+      "type":"text",
+      "id":"heading_suggest",
+      "label":"Title",
+      "default":"Item related to current search"
+    },
+    {
+       "type":"checkbox",
+       "id":"carousel_layout",
+       "label":"Enable Carousel Layout"
+    },
+    {
+       "type":"range",
+       "id":"item_per_row",
+       "label":"Max number of items per row",
+       "min":1,
+       "max":6,
+       "default":4,
+       "step":1
+    },
+    {
+       "type":"range",
+       "id":"item_per_row_mobile",
+       "label":"Mobile: Number of items per row",
+       "min":1,
+       "max":6,
+       "default":2,
+       "step":1
+    }
+ ],
+ "blocks":[ 
+   {
+      "type":"button",
+      "name":"Button",
+      "settings":[
+        {
+           "type":"select",
+           "id":"button_type",
+           "label":"Button type",
+           "options":[
+              {
+                 "value":"icon",
+                 "label":"Icon"
+              },
+              {
+                 "value":"text",
+                 "label":"Text"
+              }
+            ]
+        },
+        {
+          "type":"url",
+          "id":"link",
+          "label":"Link"
+        },
+        {
+          "type":"text",
+          "id":"icon",
+          "label":"Icon name"
+        },
+        {
+          "type":"text",
+          "id":"heading",
+          "label":"Title"
+        }
+      ]
+   }
+ ]
+}
+ {% endschema %}

@@ -1,0 +1,57 @@
+<!-- Subcollection-->
+{%- for block in section.blocks -%}
+  {% if block.type == 'subcollection' %}
+    {% unless block.settings.subcategory_menu == blank %}
+
+      {% for _link in linklists[block.settings.subcategory_menu].links %}
+        {% assign _submenu = _link.title | handleize %}
+        {% assign _url = _link.url %}
+
+        {% if linklists[_submenu].links.size > 0 and _url == _collectionurl %}
+
+          <h2 class="subcategory">{{ collection.title }} {{ block.settings.subcategory_title }}</h2>
+
+          <div class="row subcategory-list">
+            {% assign _subcollection_per_row = block.settings.subcollection_per_row %}
+            {% if _subcollection_per_row == 2 %}
+              {% assign _class = 'col-6' %}
+            {% elsif _subcollection_per_row == 3 %}
+              {% assign _class = 'col-4' %}
+            {% else %}
+              {% assign _class = 'col-3' %}
+            {% endif %}
+
+            {% for link in linklists[_submenu].links %}
+
+              {% if link.type == 'collection_link' %}
+                {% assign _collection = link.object %}
+
+                <div class="category {{ _class }} text-center">
+                  <div class="category-image">
+                      <a href="{{ link.url }}">
+                        {% assign image_size = '370x' %}
+                        {% if collection.image %}
+                        {% include 'image-style' with image: _collection.image, image_size: '180x', _type: 'product' %}
+                        {% else %}
+                        {% assign product = _collection.products.first %}
+                        {% include 'image-style' with image: product.image, image_size: '180x', _type: 'product' %}
+                        {% endif %}
+                      </a>
+                  </div>
+                  <a class="category-name" href="{{ link.url }}" title="{{ link.title | escape }}">{{ link.title }}</a>
+                </div>
+              {% endif %}
+
+            {% endfor %}
+
+          </div>
+
+        {% endif %}
+
+      {% endfor %}
+
+    {% endunless %}
+    {% break %}
+  {% endif %}
+{%- endfor -%}
+<!-- End Subcollection-->

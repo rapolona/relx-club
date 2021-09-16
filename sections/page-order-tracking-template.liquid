@@ -1,0 +1,64 @@
+{% unless settings.breadcrumb_styles == 'none' %}{% include 'breadcrumb' %}{% endunless %}
+
+{%- assign _width = section.settings.width -%}
+
+<div class="page-order-tracking">
+ {% if _width == 'boxed' %} <div class="container">{% endif %}
+    <div id="col-main" class="order-tracking">
+      {% unless section.settings.caption == blank %}
+        <div class="title-order-tracking">
+          <p>{{ section.settings.caption }}</p>
+        </div>
+      {% endunless %}        
+
+      <div class="form-order-tracking">
+        <div class="control-wrapper">
+          <label >{{'order.form.order_id' | t }}</label>
+          <input type="text" name="order[order_id]" id="order" {% if form.order_id %}value="{{ form.order_id }}"{% endif %} autocapitalize="words" autofocus />
+        </div>
+        <div class="control-wrapper">
+          <label>{{ 'order.form.email' | t }}<span class="req"></span></label>
+          <input type="email" required name="order[email]" id="order"/>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-1 btn-order">{{'order.form.submit_button' | t }}</button>
+        </div>
+      </div>
+    </div>
+  
+      {% if _width == 'boxed' %} </div>{% endif %}
+</div>
+
+{% schema %}
+{
+  "name": "Order Tracking",
+  "settings": [
+  {
+    "type": "select",
+    "id": "width",
+    "label": "Section Layout Mode",
+    "default": "boxed",
+    "options": [
+    {
+      "value": "boxed",
+      "label": "Boxed"
+    },
+    {
+      "value": "full",
+      "label": "Wide"
+    }
+    ]
+  },
+  {
+    "type": "image_picker",
+    "id": "breadcrumb_image",
+    "label": "Breadcrumb image"
+  },
+  {
+    "type": "textarea",
+    "id": "caption",
+    "label": "Caption"
+  }
+  ]
+}
+{% endschema %}

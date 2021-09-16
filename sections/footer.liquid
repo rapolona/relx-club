@@ -1,0 +1,2137 @@
+{% if section.settings.boxed_layout %}{% assign _layout = 'boxed' %}{% else %}{% assign _layout = 'full' %}{% endif %}
+{% assign _lazyload   = settings.use_lazyload %}
+{% assign bg          = section.settings.footer_bg %}
+{% assign ftitle_size = 'b-footer-title h4' %}
+{% assign no_bottom   = true %}
+{% assign _show_copyright          = section.settings.show_copyright %}
+
+      {%- for block in section.blocks -%}
+        {%- if block.type contains 'bot_' -%}{%- assign no_bottom = false -%}{%- endif -%}
+        {%- if block.type == 'top_social' -%}
+          {% assign alignment = block.settings.alignment %}
+          <div class="widget-social text-{{alignment}}{% if block.settings.hide_mobile %} d-none d-md-block{% endif %}" {{ block.shopify_attributes }}>
+            {% if _layout == 'boxed' %}<div class="container">{% endif %}
+              {% unless block.settings.social_icon_text == blank %}
+                <span class="h4">{{ block.settings.social_icon_text }}</span>
+              {% endunless %}
+              {% include 'social-media-icons' with type: 'block' %}
+            {% if _layout == 'boxed' %}</div>{% endif %}
+          </div>
+          {% break %}
+        {%- endif -%}
+      {%- endfor -%}
+
+
+
+
+<div class="mobile-layout-bar d-lg-none">
+
+</div>
+<div id="footer-content">
+  <div class="footer-container layout-{{ _layout }} border-{{section.settings.border}}{% if _lazyload %} lazyload{% endif %}"
+  {% unless bg == blank %} {% if _lazyload %} data-bgset="{{bg | img_url: '1920x'}} 1920w"{% else %}style="background: url({{bg | img_url: '1920x'}})"  {% endif %}{% endunless %}>
+
+
+
+      <!-- Top Footer -->
+      {% if section.settings.show_top_footer != 'hide'  %}
+        {%- capture visibility -%}
+          {%- case section.settings.show_top_footer -%}
+            {%- when 'hide_mobile' -%} d-none d-lg-block
+            {%- when 'hide_desktop' -%} d-lg-none
+            {%- else -%}
+          {%- endcase -%}
+        {%- endcapture -%}
+        <div class="top-footer footer-widget {{visibility}}">
+          {% if _layout == 'boxed' %}<div class="container">{% endif %}
+          <div class="footer-inner">
+            <div class="row">
+              {% for block in section.blocks %}
+                {% assign alignment = block.settings.alignment %}
+
+                {% case block.type %}
+               
+                  {% when 'logo' %}
+
+                      <div class="col-md-{{ block.settings.width }} col-12 text-{{alignment}}" {{ block.shopify_attributes }}>
+                        <div class="footer-block footer-logo">
+                          {% include 'include-logo' with type: 'block' %}
+
+                          {% if block.settings.footer_infor_support %}
+                            <div class="infor-support ">
+                              <p>{{block.settings.info_l_text}}</p>
+                              <ul>
+                                {% for i in (1..3) %}
+                                  {% assign _text = 'info_support_text_' | append: i %}
+                                  {% unless block.settings[_text] == blank %}
+                                    {% assign _font_icon = 'info_support_' | append: i %}
+                                    <li>
+                                      <i class="demo-icon {{ block.settings[_font_icon] }}"></i>
+                                      <span>{{ block.settings[_text] }}</span>
+                                    </li>
+                                    {% endunless %}
+                                {% endfor %}
+                              </ul>
+                            </div>
+                          {% endif %}
+                        </div>
+                      </div>
+
+                  {% when 'menu' %}
+                      {% assign _f_menu = block.settings.footer_menu %}
+
+                      {% unless _f_menu == blank %}
+                        <div class="col-md-{{ block.settings.width }} text-{{alignment}}" {{ block.shopify_attributes }}>
+                          <div class="footer-block footer-menu">
+
+                            {% assign _f_title = block.settings.footer_menu_title  %}
+                            {% unless _f_title == blank %}<p class="{{ ftitle_size }}">{{ _f_title }}</p>{% endunless %}
+
+                            <ul class="f-list">
+                              {% for l in linklists[_f_menu].links %}
+                                <li><a href="{{ l.url }}"><span>{{ l.title }}</span></a></li>
+                              {% endfor %}
+                            </ul>
+
+                          </div>
+                        </div>
+                      {% endunless %}
+
+                  {% when 'social' %}
+                    <div class="col-md-{{ block.settings.width }} text-{{alignment}}" {{ block.shopify_attributes }}>
+                      <div class="footer-block footer-social {{block.settings.style}}">
+
+                        {% assign _f_title = block.settings.footer_menu_title  %}
+                        {% unless _f_title == blank %}<p class="{{ ftitle_size }}">{{ _f_title }}</p>{% endunless %}
+
+                        {% include 'social-media-icons' with footer_type: block.settings.style %}
+
+                      </div>
+                    </div>
+
+                  {% when 'subscribe' %}
+                    <div class="col-md-{{ block.settings.width }} text-{{alignment}}" {{ block.shopify_attributes }}>
+                      <div class="footer-block footer-subscribe subscribe-style-{{block.settings.style}}">
+                        {% assign _title   = block.settings.footer_menu_title  %}
+                        {% assign _action  = block.settings.action %}
+                        {% assign _caption = block.settings.footer_subscribe_caption %}
+                        {% assign btn_text = block.settings.btn_text %}
+                        {% assign btn_type = block.settings.form_btn_display %}
+                        {%- assign _tfooter_form_bg         = block.settings.form_bg -%}
+                        {%- assign _tfooter_form_border     = block.settings.form_border -%}
+                        {%- assign _tfooter_form_btn_text   = block.settings.form_btn_text -%}
+                        {%- assign _tfooter_form_btn_bg     = block.settings.form_btn_bg -%}
+
+                        {% unless _title == blank %}<p class="{{ ftitle_size }}">{{ _title }}</p>{% endunless %}
+                        <div class="content">
+                          <div class="subscibe-content sub-{{block.id}}">
+                            {% unless _caption == blank %}<p>{{ _caption }}</p>{% endunless%}
+                            {%- if block.settings.action_type == 'mailchimp' -%}
+                              <form action="{{ _action }}" method="post" class="form-inline form-subscribe" name="mc-embedded-subscribe-form" target="_blank" rel="noopener">
+                                <input class="form-control" type="email" required  placeholder="Your email" name="EMAIL" id="email-input" />
+                                <button type="submit" title="Subscibe" class="btn">
+
+                                  {%- if btn_type == 'icon' or btn_type == 'all' or btn_type == blank -%}
+                                    <i class="icon-footer-sb icon-paper-plane-empty"></i>
+                                  {%- endif -%}
+
+                                  {%- if btn_type == 'text' or btn_type == 'all' or btn_type == blank -%}
+                                    <span class="btn-text">{{ btn_text }}</span>
+                                  </span>
+                                  {%- endif -%}
+
+                                </button>
+                              </form>
+                            {%- else -%}
+                            {% include 'include-klaviyo' with type: 'block'%}
+                            {%- endif -%}
+                          </div>
+                         {% case block.settings.footer_payment_icon %}
+                          {% when 'icon' %}
+                              <ul class="payment-icons list-inline">
+                                {% for i in (1..5) %}
+                                  {% assign _font_icon = 'payment_icon_' | append: i %}
+
+                                    {% unless block.settings[_font_icon] == blank %}
+                                      {% assign _icon_title = 'payment_icon_title_' | append: i %}
+                                      <li><i class="demo-icon {{ block.settings[_font_icon] }}" title="{{ block.settings[_icon_title] }}"></i></li>
+                                    {% endunless %}
+
+                                {% endfor %}
+                              </ul>
+                            {% when 'image' %}
+                              <div class="payment-image">
+                                <img {% if _lazyload %}class="lazyload" data-{% endif %}src="{{block.settings.image | img_url: block.settings.image_size}}" />
+                              </div>
+                          {% else %}
+                        {% endcase %}
+                        </div>
+                      </div>
+                      {%- capture _subClass -%}#footer-content .sub-{{block.id}}{%- endcapture -%}
+                      <style>
+                        {{_subClass}} form input[type="email"]{
+                          background-color: {{_tfooter_form_bg}};
+                          border-color: {{_tfooter_form_border}};
+                        }
+                        {{_subClass}} form button[type="submit"]{
+                          color: {{_tfooter_form_btn_text}};
+                          background-color: {{_tfooter_form_btn_bg}};
+                        }
+                      </style>
+                    </div>
+
+                  {% when 'information' %}
+                    <div class="col-md-{{ block.settings.width }} text-{{alignment}}" {{ block.shopify_attributes }}>
+                        <div class="footer-block footer-information">
+                          {% assign _show_icon = block.settings.show_icon %}
+                          {% assign _f_title   = block.settings.heading   %}
+                          {% unless _f_title == blank %}<p class="{{ ftitle_size }}">{{ _f_title }}</p>{% endunless %}
+
+                          {% for i in (1..4) %}
+                            {% assign _show_block = 'show_block_' | append: i %}
+
+                            {% if block.settings[_show_block] %}
+                              {% assign _icon   = 'block_icon_'           | append: i %}
+                              {% assign _link   = 'information_link_'     | append: i %}
+                              {% assign _text_1 = 'information_title_'    | append: i %}
+                              {% assign _text_2 = 'information_caption_'  | append: i %}
+
+                              <div class="fb-content">
+                                {% if block.settings.show_icon %}
+                                  <i class="demo-icon {{ block.settings[_icon] }}"></i>
+                                {% endif %}
+                                <a href="{{ block.settings[_link] }}">
+                                  <span class="text-1">{{ block.settings[_text_1] }}</span>
+                                  <span class="text-2">{{ block.settings[_text_2] }}</span>
+                                </a>
+                              </div>
+                            {% endif %}
+
+                          {% endfor %}
+
+                        </div>
+                      </div>
+                  {% else %}
+                {% endcase %}
+
+              {% endfor %}
+            </div>
+          </div>
+          {% if _layout == 'boxed' %}</div>{% endif %}
+        </div>
+      {% endif %}
+
+      <!-- Bottom Footer -->
+      {% if section.settings.show_bottom_footer != 'hide' %}
+        {%- capture visibility -%}
+          {%- case section.settings.show_bottom_footer -%}
+            {%- when 'hide_mobile' -%} d-none d-lg-block
+            {%- when 'hide_desktop' -%} d-lg-none
+            {%- else -%}
+          {%- endcase -%}
+        {%- endcapture -%}
+        <div class="bottom-footer {{visibility}}">
+          <div class="container{% unless _layout == 'boxed' %}-fluid{% endunless %}">
+            <div class="row">
+              <div class="bot-f-col col-md-{% if no_bottom %}12 text-center{% else %}4{% endif %} bt-copyright{% unless _show_copyright %} hide{% endunless %}">
+                <div class="copyright">
+                  <img height="20" src="{{ 'warning.jpg' | asset_url }}" style="height:47px !important; width:300px !important;" />
+                </div>
+              </div>
+
+              {%- for block in section.blocks -%}
+                {%- if block.type contains 'bot_' -%}
+                  <div class="bot-f-col col-md-{{ block.settings.width }} text-{{ block.settings.alignment }} bt-{{block.type}}" {{ block.shopify_attributes }}>
+                    {%- case block.type -%}
+
+                      {%- when 'bot_payment' -%}
+                        {% case block.settings.footer_payment_icon %}
+                          {% when 'icon' %}
+                              <ul class="payment-icons list-inline">
+                                {% for i in (1..5) %}
+                                  {% assign _font_icon = 'payment_icon_' | append: i %}
+
+                                    {% unless block.settings[_font_icon] == blank %}
+                                      {% assign _icon_title = 'payment_icon_title_' | append: i %}
+                                      <li><i class="demo-icon {{ block.settings[_font_icon] }}" title="{{ block.settings[_icon_title] }}"></i></li>
+                                    {% endunless %}
+
+                                {% endfor %}
+                              </ul>
+                            {% when 'image' %}
+                              {% assign _image          = block.settings.image %}
+                              {% assign _image_size     = block.settings.image_max_width | append: 'x' %}
+                              {% assign _image_size_2x  = block.settings.image_max_width | times: 2 | append: 'x' %}
+                              {% assign _image_size_max = block.settings.image_max_width | append: 'px' %}
+                              <div class="payment-image">
+                                <img {% if _lazyload %}class="lazyload" data-srcset="{{ _image | img_url: _image_size }} 1x,{{ _image | img_url: _image_size_2x }} 2x"
+                                     {% else %} src="{{ _image | img_url: _image_size }}"{% endif %}
+                                     alt="{{ shop.name | escape }}" style="max-width: {{ _image_size_max }};" />
+                              </div>
+                          {% else %}
+                        {% endcase %}
+
+                      {%- when 'bot_menu' -%}
+                        {%- unless block.settings.footer_menu == blank -%}
+                          <ul class="list-inline text-{{ block.settings.alignment }}">
+                            {% for l in linklists[block.settings.footer_menu].links %}
+                              <li><a href="{{ l.url }}"><span>{{ l.title }}</span></a></li>
+                            {% endfor %}
+                          </ul>
+                        {%- endunless -%}
+
+                      {%- when 'bot_social' -%}
+                        {% include 'social-media-icons' %}
+
+                      {%- when 'bot_curr_lang' -%}
+                        <div class="footer-status-site{% if block.settings.hide_label %} hide-label{% endif %}">
+                          <ul class="list-inline">
+                            <li class="stt-currency currency-{{settings.flag_currency}}">
+                              <span class="footer-label">{{'general.topbar.currencies'| t }}</span>
+                              {% include 'currencies-switcher' with type: 'footer' %}
+                            </li>
+                              
+                            {%- unless settings.lang_type == 'none' -%}
+                            <li>
+                              <span class="footer-label">{{'general.topbar.languages'| t }}</span>
+                              {% include 'include-translate',c_position: 'footer' %}
+                            </li>
+                            {%- endunless -%}
+                          </ul>
+                        </div>
+
+                      {%- else -%}
+                    {%- endcase -%}
+                  </div>
+                {%- endif -%}
+              {%- endfor -%}
+            </div>
+          </div>
+        </div>
+      {% endif %}
+  </div>
+
+  <div id="checkLayout">
+    <span class="d-block d-sm-none"></span>
+    <span class="d-none d-sm-block d-md-none"></span>
+    <span class="d-none d-md-block d-lg-none"></span>
+    <span class="d-none d-lg-block d-xl-none"></span>
+    <span class="d-none d-xl-block"></span>
+  </div>
+</div>
+{% schema %}
+{
+   "name":"Footer",
+   "settings":[
+      {
+        "type": "paragraph",
+        "content": "More settings available at Theme Settings > Footer"
+        },
+      {
+         "type":"header",
+         "content":"Layout"
+      },
+      {
+         "type":"image_picker",
+         "id":"footer_bg",
+         "label":"Background Image"
+      },
+      {
+         "type":"checkbox",
+         "id":"boxed_layout",
+         "label":"Boxed layout",
+         "default":true
+      },
+      {
+         "type":"checkbox",
+         "id":"border",
+         "label":"Show Border",
+         "default":true
+      },
+      {
+         "type":"checkbox",
+         "id":"show_copyright",
+         "label":"Show Copyright",
+         "default":true
+      },
+      {
+         "type":"header",
+         "content":"Top Footer",
+         "info":"To customize Top footer, please click add content with the name contain 'Top'."
+      },
+      {
+         "type":"select",
+         "id":"show_top_footer",
+         "label":"Show Top Footer",
+         "default":"all",
+         "options":[
+           {
+             "value": "hide",
+             "label": "Hide"
+           },
+           {
+             "value": "hide_mobile",
+             "label": "Hide on Mobile"
+           },
+           {
+             "value": "hide_desktop",
+             "label": "Hide on Desktop"
+           },
+           {
+             "value": "all",
+             "label": "Show All"
+           }
+         ]
+      },
+      {
+         "type":"header",
+         "content":"Bottom Footer",
+         "info":"To customize Bottom footer, please click add content with the name contain 'Bottom'."
+      },
+      {
+         "type":"select",
+         "id":"show_bottom_footer",
+         "label":"Show Bottom Footer",
+         "default":"all",
+         "options":[
+           {
+             "value": "hide",
+             "label": "Hide"
+           },
+           {
+             "value": "hide_mobile",
+             "label": "Hide on Mobile"
+           },
+           {
+             "value": "hide_desktop",
+             "label": "Hide on Desktop"
+           },
+           {
+             "value": "all",
+             "label": "Show All"
+           }
+         ]
+      }
+   ],
+   "blocks":[
+      {
+         "type":"image",
+         "name":"Image",
+         "settings":[
+            {
+               "type":"image_picker",
+               "id":"image",
+               "label":"Image"
+            }
+         ]
+      },
+      {
+         "type":"menu",
+         "name":"Top - Menu item",
+         "settings":[
+            {
+               "type":"range",
+               "id":"width",
+               "label":"Width",
+               "min":1,
+               "max":12,
+               "default":4,
+               "step":1,
+               "unit":"/12"
+            },
+            {
+               "type":"select",
+               "id":"alignment",
+               "label":"Item alignment",
+               "options":[
+                  {
+                     "value":"left",
+                     "label":"Left"
+                  },
+                  {
+                     "value":"center",
+                     "label":"Center"
+                  },
+                  {
+                     "value":"right",
+                     "label":"Right"
+                  }
+               ],
+               "default":"left"
+            },
+            {
+               "type":"text",
+               "id":"footer_menu_title",
+               "label":"Title",
+               "default":"Information"
+            },
+            {
+               "type":"link_list",
+               "id":"footer_menu",
+               "label":"Menu item"
+            }
+         ]
+      },
+      {
+         "type":"top_social",
+         "name":"Footer Topbar Social Icon",
+         "limit":1,
+         "settings":[
+            {
+               "type"  :"checkbox",
+               "id"    :"hide_mobile",
+               "label" :"Hide On Mobile"
+            },
+            {
+               "type":"select",
+               "id":"alignment",
+               "label":"Item alignment",
+               "options":[
+                  {
+                     "value":"left",
+                     "label":"Left"
+                  },
+                  {
+                     "value":"center",
+                     "label":"Center"
+                  },
+                  {
+                     "value":"right",
+                     "label":"Right"
+                  }
+               ],
+               "default":"left"
+            },
+            {
+               "type"  :"text",
+               "id"    :"social_icon_text",
+               "label" :"Text",
+               "default":"Let's connect:"
+            },
+            {
+               "type":"header",
+               "content":"Social icon 01"
+            },
+            {
+               "type":"select",
+               "id":"social_icon_type_1",
+               "label":"Icon type",
+               "options":[
+                  {
+                     "value":"font-icon",
+                     "label":"Font icon"
+                  },
+                  {
+                     "value":"image",
+                     "label":"Image"
+                  },
+                  {
+                     "value":"none",
+                     "label":"None"
+                  }
+               ],
+               "default":"font-icon"
+            },
+            {
+               "type":"text",
+               "id":"social_font_icon_1",
+               "label":"Font icon name",
+               "default":"icon-facebook",
+               "info":"Default is icon-facebook. [Icon list](https:\/\/font.arenacommerce.com\/handy4\/)"
+            },
+            {
+               "type":"image_picker",
+               "id":"social_icon_1",
+               "label":"Image",
+               "info":"Image size is 20x20 pixels"
+            },
+            {
+               "type":"text",
+               "id":"social_icon_title_1",
+               "label":"Title",
+               "default":"Facebook"
+            },
+            {
+               "type":"text",
+               "id":"social_icon_link_1",
+               "label":"Link to",
+               "default":"https://www.facebook.com/R-Club-100691925552662/?view_public_for=100691925552662"
+            },
+            {
+               "type":"header",
+               "content":"Social icon 02"
+            },
+            {
+               "type":"select",
+               "id":"social_icon_type_2",
+               "label":"Icon type",
+               "options":[
+                  {
+                     "value":"font-icon",
+                     "label":"Font icon"
+                  },
+                  {
+                     "value":"image",
+                     "label":"Image"
+                  },
+                  {
+                     "value":"none",
+                     "label":"None"
+                  }
+               ],
+               "default":"font-icon"
+            },
+            {
+               "type":"text",
+               "id":"social_font_icon_2",
+               "label":"Font icon name",
+               "default":"icon-twitter",
+               "info":"Default is icon-twitter. [Icon list](https:\/\/font.arenacommerce.com\/handy4\/)"
+            },
+            {
+               "type":"image_picker",
+               "id":"social_icon_2",
+               "label":"Image",
+               "info":"Image size is 20x20 pixels"
+            },
+            {
+               "type":"text",
+               "id":"social_icon_title_2",
+               "label":"Title",
+               "default":"Twitter"
+            },
+            {
+               "type":"text",
+               "id":"social_icon_link_2",
+               "label":"Link to",
+               "default":"https:\/\/www.twitter.com\/shopify\/"
+            },
+            {
+               "type":"header",
+               "content":"Social icon 03"
+            },
+            {
+               "type":"select",
+               "id":"social_icon_type_3",
+               "label":"Icon type",
+               "options":[
+                  {
+                     "value":"font-icon",
+                     "label":"Font icon"
+                  },
+                  {
+                     "value":"image",
+                     "label":"Image"
+                  },
+                  {
+                     "value":"none",
+                     "label":"None"
+                  }
+               ],
+               "default":"font-icon"
+            },
+            {
+               "type":"text",
+               "id":"social_font_icon_3",
+               "label":"Font icon name",
+               "default":"icon-instagram",
+               "info":"Default is icon-instagram. [Icon list](https:\/\/font.arenacommerce.com\/handy4\/)"
+            },
+            {
+               "type":"image_picker",
+               "id":"social_icon_3",
+               "label":"Image",
+               "info":"Image size is 20x20 pixels"
+            },
+            {
+               "type":"text",
+               "id":"social_icon_title_3",
+               "label":"Title",
+               "default":"Instagram"
+            },
+            {
+               "type":"text",
+               "id":"social_icon_link_3",
+               "label":"Link to",
+               "default":"https://instagram.com/relxclubph?utm_medium=copy_link"
+            },
+            {
+               "type":"header",
+               "content":"Social icon 04"
+            },
+            {
+               "type":"select",
+               "id":"social_icon_type_4",
+               "label":"Icon type",
+               "options":[
+                  {
+                     "value":"font-icon",
+                     "label":"Font icon"
+                  },
+                  {
+                     "value":"image",
+                     "label":"Image"
+                  },
+                  {
+                     "value":"none",
+                     "label":"None"
+                  }
+               ],
+               "default":"font-icon"
+            },
+            {
+               "type":"text",
+               "id":"social_font_icon_4",
+               "label":"Font icon name",
+               "default":"icon-pinterest-circled",
+               "info":"Default is icon-pinterest-circled. [Icon list](https:\/\/font.arenacommerce.com\/handy4\/)"
+            },
+            {
+               "type":"image_picker",
+               "id":"social_icon_4",
+               "label":"Image",
+               "info":"Image size is 20x20 pixels"
+            },
+            {
+               "type":"text",
+               "id":"social_icon_title_4",
+               "label":"Title",
+               "default":"Pinterest"
+            },
+            {
+               "type":"text",
+               "id":"social_icon_link_4",
+               "label":"Link to",
+               "default":"https://www.facebook.com/R-Club-100691925552662/?view_public_for=100691925552662"
+            },
+            {
+               "type":"header",
+               "content":"Social icon 05"
+            },
+            {
+               "type":"select",
+               "id":"social_icon_type_5",
+               "label":"Icon type",
+               "options":[
+                  {
+                     "value":"font-icon",
+                     "label":"Font icon"
+                  },
+                  {
+                     "value":"image",
+                     "label":"Image"
+                  },
+                  {
+                     "value":"none",
+                     "label":"None"
+                  }
+               ],
+               "default":"font-icon"
+            },
+            {
+               "type":"text",
+               "id":"social_font_icon_5",
+               "label":"Font icon name",
+               "default":"icon-youtube-play",
+               "info":"Default is icon-youtube-play. [Icon list](https:\/\/font.arenacommerce.com\/handy4\/)"
+            },
+            {
+               "type":"image_picker",
+               "id":"social_icon_5",
+               "label":"Image",
+               "info":"Image size is 20x20 pixels"
+            },
+            {
+               "type":"text",
+               "id":"social_icon_title_5",
+               "label":"Title",
+               "default":"Youtube"
+            },
+            {
+               "type":"text",
+               "id":"social_icon_link_5",
+               "label":"Link to",
+               "default":"https:\/\/www.youtube.com\/shopify\/"
+            },
+            {
+               "type":"header",
+               "content":"Social icon 06"
+            },
+            {
+               "type":"select",
+               "id":"social_icon_type_6",
+               "label":"Icon type",
+               "options":[
+                  {
+                     "value":"font-icon",
+                     "label":"Font icon"
+                  },
+                  {
+                     "value":"image",
+                     "label":"Image"
+                  },
+                  {
+                     "value":"none",
+                     "label":"None"
+                  }
+               ],
+               "default":"font-icon"
+            },
+            {
+               "type":"text",
+               "id":"social_font_icon_6",
+               "label":"Font icon name",
+               "default":"icon-github-circled-alt2",
+               "info":"Default is icon-github-circled-alt2. [Icon list](https:\/\/font.arenacommerce.com\/handy4\/)"
+            },
+            {
+               "type":"image_picker",
+               "id":"social_icon_6",
+               "label":"Image",
+               "info":"Image size is 20x20 pixels"
+            },
+            {
+               "type":"text",
+               "id":"social_icon_title_6",
+               "label":"Title",
+               "default":"Github"
+            },
+            {
+               "type":"text",
+               "id":"social_icon_link_6",
+               "label":"Link to"
+            },
+            {
+               "type":"header",
+               "content":"Social icon 07"
+            },
+            {
+               "type":"select",
+               "id":"social_icon_type_7",
+               "label":"Icon type",
+               "options":[
+                  {
+                     "value":"font-icon",
+                     "label":"Font icon"
+                  },
+                  {
+                     "value":"image",
+                     "label":"Image"
+                  },
+                  {
+                     "value":"none",
+                     "label":"None"
+                  }
+               ],
+               "default":"font-icon"
+            },
+            {
+               "type":"text",
+               "id":"social_font_icon_7",
+               "label":"Font icon name",
+               "default":"icon-rss",
+               "info":"Default is icon-rss. [Icon list](https:\/\/font.arenacommerce.com\/handy4\/)"
+            },
+            {
+               "type":"image_picker",
+               "id":"social_icon_7",
+               "label":"Image",
+               "info":"Image size is 20x20 pixels"
+            },
+            {
+               "type":"text",
+               "id":"social_icon_title_7",
+               "label":"Title",
+               "default":"RSS"
+            },
+            {
+               "type":"text",
+               "id":"social_icon_link_7",
+               "label":"Link to"
+            },
+            {
+               "type":"header",
+               "content":"Social icon 08"
+            },
+            {
+               "type":"select",
+               "id":"social_icon_type_8",
+               "label":"Icon type",
+               "options":[
+                  {
+                     "value":"font-icon",
+                     "label":"Font icon"
+                  },
+                  {
+                     "value":"image",
+                     "label":"Image"
+                  },
+                  {
+                     "value":"none",
+                     "label":"None"
+                  }
+               ],
+               "default":"font-icon"
+            },
+            {
+               "type":"text",
+               "id":"social_font_icon_8",
+               "label":"Font icon name",
+               "default":"icon-flickr",
+               "info":"Default is icon-flickr. [Icon list](https:\/\/font.arenacommerce.com\/handy4\/)"
+            },
+            {
+               "type":"image_picker",
+               "id":"social_icon_8",
+               "label":"Image",
+               "info":"Image size is 20x20 pixels"
+            },
+            {
+               "type":"text",
+               "id":"social_icon_title_8",
+               "label":"Title",
+               "default":"Flickr"
+            },
+            {
+               "type":"text",
+               "id":"social_icon_link_8",
+               "label":"Link to"
+            },
+            {
+               "type":"header",
+               "content":"Social icon 09"
+            },
+            {
+               "type":"select",
+               "id":"social_icon_type_9",
+               "label":"Icon type",
+               "options":[
+                  {
+                     "value":"font-icon",
+                     "label":"Font icon"
+                  },
+                  {
+                     "value":"image",
+                     "label":"Image"
+                  },
+                  {
+                     "value":"none",
+                     "label":"None"
+                  }
+               ],
+               "default":"font-icon"
+            },
+            {
+               "type":"text",
+               "id":"social_font_icon_9",
+               "label":"Font icon name",
+               "default":"icon-bitbucket",
+               "info":"Default is icon-bitbucket. [Icon list](https:\/\/font.arenacommerce.com\/handy4\/)"
+            },
+            {
+               "type":"image_picker",
+               "id":"social_icon_9",
+               "label":"Image",
+               "info":"Image size is 20x20 pixels"
+            },
+            {
+               "type":"text",
+               "id":"social_icon_title_9",
+               "label":"Title",
+               "default":"Bitbucket"
+            },
+            {
+               "type":"text",
+               "id":"social_icon_link_9",
+               "label":"Link to"
+            },
+            {
+               "type":"header",
+               "content":"Social icon 10"
+            },
+            {
+               "type":"select",
+               "id":"social_icon_type_10",
+               "label":"Icon type",
+               "options":[
+                  {
+                     "value":"font-icon",
+                     "label":"Font icon"
+                  },
+                  {
+                     "value":"image",
+                     "label":"Image"
+                  },
+                  {
+                     "value":"none",
+                     "label":"None"
+                  }
+               ],
+               "default":"font-icon"
+            },
+            {
+               "type":"text",
+               "id":"social_font_icon_10",
+               "label":"Font icon name",
+               "default":"icon-tumblr",
+               "info":"Default is icon-tumblr. [Icon list](https:\/\/font.arenacommerce.com\/handy4\/)"
+            },
+            {
+               "type":"image_picker",
+               "id":"social_icon_10",
+               "label":"Image",
+               "info":"Image size is 20x20 pixels"
+            },
+            {
+               "type":"text",
+               "id":"social_icon_title_10",
+               "label":"Title",
+               "default":"Tumblr"
+            },
+            {
+               "type":"text",
+               "id":"social_icon_link_10",
+               "label":"Link to"
+            },
+            {
+               "type":"header",
+               "content":"Social icon 11"
+            },
+            {
+               "type":"select",
+               "id":"social_icon_type_11",
+               "label":"Icon type",
+               "options":[
+                  {
+                     "value":"font-icon",
+                     "label":"Font icon"
+                  },
+                  {
+                     "value":"image",
+                     "label":"Image"
+                  },
+                  {
+                     "value":"none",
+                     "label":"None"
+                  }
+               ],
+               "default":"font-icon"
+            },
+            {
+               "type":"text",
+               "id":"social_font_icon_11",
+               "label":"Font icon name",
+               "default":"icon-dribbble",
+               "info":"Default is icon-dribbble. [Icon list](https:\/\/font.arenacommerce.com\/handy4\/)"
+            },
+            {
+               "type":"image_picker",
+               "id":"social_icon_11",
+               "label":"Image",
+               "info":"Image size is 20x20 pixels"
+            },
+            {
+               "type":"text",
+               "id":"social_icon_title_11",
+               "label":"Title",
+               "default":"Dribbble"
+            },
+            {
+               "type":"text",
+               "id":"social_icon_link_11",
+               "label":"Link to"
+            },
+            {
+               "type":"header",
+               "content":"Social icon 12"
+            },
+            {
+               "type":"select",
+               "id":"social_icon_type_12",
+               "label":"Icon type",
+               "options":[
+                  {
+                     "value":"font-icon",
+                     "label":"Font icon"
+                  },
+                  {
+                     "value":"image",
+                     "label":"Image"
+                  },
+                  {
+                     "value":"none",
+                     "label":"None"
+                  }
+               ],
+               "default":"font-icon"
+            },
+            {
+               "type":"text",
+               "id":"social_font_icon_12",
+               "label":"Font icon name",
+               "default":"icon-vimeo",
+               "info":"Default is icon-vimeo. [Icon list](https:\/\/font.arenacommerce.com\/handy4\/)"
+            },
+            {
+               "type":"image_picker",
+               "id":"social_icon_12",
+               "label":"Image",
+               "info":"Image size is 20x20 pixels"
+            },
+            {
+               "type":"text",
+               "id":"social_icon_title_12",
+               "label":"Title",
+               "default":"Vimeo"
+            },
+            {
+               "type":"text",
+               "id":"social_icon_link_12",
+               "label":"Link to"
+            },
+            {
+               "type":"header",
+               "content":"Social icon 13"
+            },
+            {
+               "type":"select",
+               "id":"social_icon_type_13",
+               "label":"Icon type",
+               "options":[
+                  {
+                     "value":"font-icon",
+                     "label":"Font icon"
+                  },
+                  {
+                     "value":"image",
+                     "label":"Image"
+                  },
+                  {
+                     "value":"none",
+                     "label":"None"
+                  }
+               ],
+               "default":"font-icon"
+            },
+            {
+               "type":"text",
+               "id":"social_font_icon_13",
+               "label":"Font icon name",
+               "default":"icon-delicious",
+               "info":"Default is icon-delicious. [Icon list](https:\/\/font.arenacommerce.com\/handy4\/)"
+            },
+            {
+               "type":"image_picker",
+               "id":"social_icon_13",
+               "label":"Image",
+               "info":"Image size is 20x20 pixels"
+            },
+            {
+               "type":"text",
+               "id":"social_icon_title_13",
+               "label":"Title",
+               "default":"Delicious"
+            },
+            {
+               "type":"text",
+               "id":"social_icon_link_13",
+               "label":"Link to"
+            },
+            {
+               "type":"header",
+               "content":"Social icon 14"
+            },
+            {
+               "type":"select",
+               "id":"social_icon_type_14",
+               "label":"Icon type",
+               "options":[
+                  {
+                     "value":"font-icon",
+                     "label":"Font icon"
+                  },
+                  {
+                     "value":"image",
+                     "label":"Image"
+                  },
+                  {
+                     "value":"none",
+                     "label":"None"
+                  }
+               ],
+               "default":"font-icon"
+            },
+            {
+               "type":"text",
+               "id":"social_font_icon_14",
+               "label":"Font icon name",
+               "default":"icon-skype",
+               "info":"Default is icon-skype. [Icon list](https:\/\/font.arenacommerce.com\/handy4\/)"
+            },
+            {
+               "type":"image_picker",
+               "id":"social_icon_14",
+               "label":"Image",
+               "info":"Image size is 20x20 pixels"
+            },
+            {
+               "type":"text",
+               "id":"social_icon_title_14",
+               "label":"Title",
+               "default":"Skype"
+            },
+            {
+               "type":"text",
+               "id":"social_icon_link_14",
+               "label":"Link to"
+            },
+            {
+               "type":"header",
+               "content":"Social icon 15"
+            },
+            {
+               "type":"select",
+               "id":"social_icon_type_15",
+               "label":"Icon type",
+               "options":[
+                  {
+                     "value":"font-icon",
+                     "label":"Font icon"
+                  },
+                  {
+                     "value":"image",
+                     "label":"Image"
+                  },
+                  {
+                     "value":"none",
+                     "label":"None"
+                  }
+               ],
+               "default":"font-icon"
+            },
+            {
+               "type":"text",
+               "id":"social_font_icon_15",
+               "label":"Font icon name",
+               "default":"icon-digg",
+               "info":"Default is icon-digg. [Icon list](https:\/\/font.arenacommerce.com\/handy4\/)"
+            },
+            {
+               "type":"image_picker",
+               "id":"social_icon_15",
+               "label":"Image",
+               "info":"Image size is 20x20 pixels"
+            },
+            {
+               "type":"text",
+               "id":"social_icon_title_15",
+               "label":"Title",
+               "default":"Digg"
+            },
+            {
+               "type":"text",
+               "id":"social_icon_link_15",
+               "label":"Link to"
+            },
+            {
+               "type":"header",
+               "content":"Social icon 16"
+            },
+            {
+               "type":"select",
+               "id":"social_icon_type_16",
+               "label":"Icon type",
+               "options":[
+                  {
+                     "value":"font-icon",
+                     "label":"Font icon"
+                  },
+                  {
+                     "value":"image",
+                     "label":"Image"
+                  },
+                  {
+                     "value":"none",
+                     "label":"None"
+                  }
+               ],
+               "default":"font-icon"
+            },
+            {
+               "type":"text",
+               "id":"social_font_icon_16",
+               "label":"Font icon name",
+               "default":"icon-behance",
+               "info":"Default is icon-behance. [Icon list](https:\/\/font.arenacommerce.com\/handy4\/)"
+            },
+            {
+               "type":"image_picker",
+               "id":"social_icon_16",
+               "label":"Image",
+               "info":"Image size is 20x20 pixels"
+            },
+            {
+               "type":"text",
+               "id":"social_icon_title_16",
+               "label":"Title",
+               "default":"Behance"
+            },
+            {
+               "type":"text",
+               "id":"social_icon_link_16",
+               "label":"Link to"
+            }
+         ]
+      },
+      {
+         "type":"logo",
+         "name":"Top - Logo",
+         "limit":1,
+         "settings":[
+            {
+               "type":"range",
+               "id":"width",
+               "label":"Width",
+               "min":1,
+               "max":12,
+               "default":4,
+               "step":1,
+               "unit":"/12"
+            },
+            {
+               "type":"select",
+               "id":"alignment",
+               "label":"Item alignment",
+               "options":[
+                  {
+                     "value":"left",
+                     "label":"Left"
+                  },
+                  {
+                     "value":"center",
+                     "label":"Center"
+                  },
+                  {
+                     "value":"right",
+                     "label":"Right"
+                  }
+               ],
+               "default":"left"
+            },
+            {
+               "type":"image_picker",
+               "id":"logo",
+               "label":"Footer logo image"
+            },
+            {
+               "type":"range",
+               "id":"logo_max_width",
+               "min":100,
+               "max":1180,
+               "step":20,
+               "unit":"px",
+               "label":"Logo maximum width",
+               "default":280
+            },
+            {
+               "type":"header",
+               "content":"Info Support"
+            },
+            {
+               "type":"textarea",
+               "id":"info_l_text",
+               "label":"Text"
+            },
+            {
+               "type":"checkbox",
+               "id":"footer_infor_support",
+               "label":"Enable infor support",
+               "default":true
+            },
+            {
+               "type":"text",
+               "id":"info_support_1",
+               "label":"Font icon name 01",
+               "default":"icon-location-3",
+               "info":"Default is icon-location-3. [Icon list](https:\/\/font.arenacommerce.com\/handy4\/)"
+            },
+            {
+               "type":"text",
+               "id":"info_support_text_1",
+               "label":"Text 01",
+               "default":"225 Bills Place Brogan Chad"
+            },
+            {
+               "type":"text",
+               "id":"info_support_2",
+               "label":"Font icon name 02",
+               "default":"icon-mail-alt",
+               "info":"Default is icon-mail-alt. [Icon list](https:\/\/font.arenacommerce.com\/handy4\/)"
+            },
+            {
+               "type":"text",
+               "id":"info_support_text_2",
+               "label":"Text 02",
+               "default":"Tina.theme@theme.com"
+            },
+            {
+               "type":"text",
+               "id":"info_support_3",
+               "label":"Font icon name 03",
+               "default":"icon-phone",
+               "info":"Default is icon-phone. [Icon list](https:\/\/font.arenacommerce.com\/handy4\/)"
+            },
+            {
+               "type":"text",
+               "id":"info_support_text_3",
+               "label":"Text 03",
+               "default":"(424) 138 7397"
+            }
+         ]
+      },
+      {
+         "type":"information",
+         "name":"Top - Information",
+         "limit":1,
+         "settings":[
+            {
+               "type":"range",
+               "id":"width",
+               "label":"Width",
+               "min":1,
+               "max":12,
+               "default":4,
+               "step":1,
+               "unit":"/12"
+            },
+            {
+               "type":"select",
+               "id":"alignment",
+               "label":"Item alignment",
+               "options":[
+                  {
+                     "value":"left",
+                     "label":"Left"
+                  },
+                  {
+                     "value":"center",
+                     "label":"Center"
+                  },
+                  {
+                     "value":"right",
+                     "label":"Right"
+                  }
+               ],
+               "default":"left"
+            },
+            {
+               "type":"text",
+               "id":"heading",
+               "label":"Heading",
+               "default":"Information"
+            },
+            {
+               "type":"checkbox",
+               "id":"show_icon",
+               "label":"Show icon",
+               "default":true
+            },
+            {
+               "type":"header",
+               "content":"Block 01"
+            },
+            {
+               "type":"checkbox",
+               "id":"show_block_1",
+               "label":"Show Block 01",
+               "default":true
+            },
+            {
+               "type":"text",
+               "id":"block_icon_1",
+               "label":"Class name for icon",
+               "default":"icon-phone",
+               "info":"Default is icon-phone. [Icon list](https:\/\/font.arenacommerce.com\/handy4\/)"
+            },
+            {
+               "type":"url",
+               "id":"information_link_1",
+               "label":"Link"
+            },
+            {
+               "type":"text",
+               "id":"information_title_1",
+               "label":"Text 01",
+               "default":"Online Consultation"
+            },
+            {
+               "type":"text",
+               "id":"information_caption_1",
+               "label":"Text 02",
+               "default":"Call: + 0123 456 789"
+            },
+            {
+               "type":"header",
+               "content":"Block 02"
+            },
+            {
+               "type":"checkbox",
+               "id":"show_block_2",
+               "label":"Show Block 02",
+               "default":true
+            },
+            {
+               "type":"text",
+               "id":"block_icon_2",
+               "label":"Class name for icon",
+               "default":"icon-lifebuoy",
+               "info":"Default is icon-lifebuoy. [Icon list](https:\/\/font.arenacommerce.com\/handy4\/)"
+            },
+            {
+               "type":"url",
+               "id":"information_link_2",
+               "label":"Link"
+            },
+            {
+               "type":"text",
+               "id":"information_title_2",
+               "label":"Text 01",
+               "default":"Customer Support"
+            },
+            {
+               "type":"text",
+               "id":"information_caption_2",
+               "label":"Text 02",
+               "default":"Check our documentation"
+            },
+            {
+               "type":"header",
+               "content":"Block 03"
+            },
+            {
+               "type":"checkbox",
+               "id":"show_block_3",
+               "label":"Show Block 03",
+               "default":true
+            },
+            {
+               "type":"text",
+               "id":"block_icon_3",
+               "label":"Class name for icon",
+               "default":"icon-question-circle-o",
+               "info":"Default is icon-question-circle-o. [Icon list](https:\/\/font.arenacommerce.com\/handy4\/)"
+            },
+            {
+               "type":"url",
+               "id":"information_link_3",
+               "label":"Link"
+            },
+            {
+               "type":"text",
+               "id":"information_title_3",
+               "label":"Text 01",
+               "default":"F.A.Q."
+            },
+            {
+               "type":"text",
+               "id":"information_caption_3",
+               "label":"Text 02",
+               "default":"Check our F.A.Q."
+            },
+            {
+               "type":"header",
+               "content":"Block 04"
+            },
+            {
+               "type":"checkbox",
+               "id":"show_block_4",
+               "label":"Show Block 04",
+               "default":true
+            },
+            {
+               "type":"text",
+               "id":"block_icon_4",
+               "label":"Class name for icon",
+               "default":"icon-thumbs-up",
+               "info":"Default is icon-thumbs-up. [Icon list](https:\/\/font.arenacommerce.com\/handy4\/)"
+            },
+            {
+               "type":"url",
+               "id":"information_link_4",
+               "label":"Link"
+            },
+            {
+               "type":"text",
+               "id":"information_title_4",
+               "label":"Text 01",
+               "default":"Big Community"
+            },
+            {
+               "type":"text",
+               "id":"information_caption_4",
+               "label":"Text 02",
+               "default":"We have 245 positive reviews"
+            }
+         ]
+      },
+      {
+         "type":"social",
+         "name":"Top - Social icons",
+         "limit":1,
+         "settings":[
+            {
+               "type":"range",
+               "id":"width",
+               "label":"Width",
+               "min":1,
+               "max":12,
+               "default":4,
+               "step":1,
+               "unit":"/12"
+            },
+            {
+               "type":"select",
+               "id":"alignment",
+               "label":"Item alignment",
+               "options":[
+                  {
+                     "value":"left",
+                     "label":"Left"
+                  },
+                  {
+                     "value":"center",
+                     "label":"Center"
+                  },
+                  {
+                     "value":"right",
+                     "label":"Right"
+                  }
+               ],
+               "default":"left"
+            },
+            {
+               "type":"text",
+               "id":"footer_menu_title",
+               "label":"Title",
+               "default":"Information"
+            },
+            {
+               "type":"radio",
+               "id":"style",
+               "label":"Style",
+               "default":"style-01",
+               "options":[
+                  {
+                     "value":"style-01",
+                     "label":"Style 01"
+                  },
+                  {
+                     "value":"style-02",
+                     "label":"Style 02"
+                  }
+               ]
+            }
+         ]
+      },
+      {
+         "type":"subscribe",
+         "name":"Top - Form",
+         "limit":1,
+         "settings":[
+            {
+               "type":"range",
+               "id":"width",
+               "label":"Width",
+               "min":1,
+               "max":12,
+               "default":4,
+               "step":1,
+               "unit":"/12"
+            },
+            {
+               "type":"select",
+               "id":"alignment",
+               "label":"Item alignment",
+               "options":[
+                  {
+                     "value":"left",
+                     "label":"Left"
+                  },
+                  {
+                     "value":"center",
+                     "label":"Center"
+                  },
+                  {
+                     "value":"right",
+                     "label":"Right"
+                  }
+               ],
+               "default":"left"
+            },
+            {
+               "type":"text",
+               "id":"footer_menu_title",
+               "label":"Title",
+               "default":"Subscribe to our Newsletter"
+            },
+            {
+               "type":"textarea",
+               "id":"footer_subscribe_caption",
+               "label":"Content"
+            },
+            {
+               "type"  :"select",
+               "id"    :"form_btn_display",
+               "label" :"Button type:",
+               "default":"all",
+               "options":[
+                 {
+                   "value": "all",
+                   "label": "Use Text & Icon"
+                 },
+                 {
+                   "value": "icon",
+                   "label": "Use Icon"
+                 },
+                 {
+                   "value": "text",
+                   "label": "Use Text"
+                 }
+               ]
+            },
+            {
+               "type"  :"text",
+               "id"    :"btn_text",
+               "label" :"Button Label",
+               "default":"Subcrible"
+            },
+            {
+               "type"  :"select",
+               "id"    :"action_type",
+               "label" :"Form Type:",
+               "options":[
+               {
+                  "value": "mailchimp",
+                  "label": "Mailchimp"
+               },
+               {
+                  "value": "klaviyo",
+                  "label": "Klaviyo"
+               }
+               ],
+               "default":"mailchimp"
+            },
+            {
+               "type":"textarea",
+               "id":"action",
+               "label":"Form Action"
+            },
+            {
+               "type"  :"paragraph",
+               "content":"Mailchimp: [Where do I get my MailChimp Form Action](http:\/\/shopify.barrelny.com\/where-do-i-find-the-mailchimp-signup-url)"
+            },
+            {
+               "type"  :"paragraph",
+               "content":"KLAVIYO: Please copy the hidden input[name='g'] value from the KLAVIYO form and paste here."
+            },
+            {
+               "type":"range",
+               "id":"style",
+               "label":"Form style",
+               "min":1,
+               "max":4,
+               "step":1,
+               "default":1
+            },
+            {
+               "type":"header",
+               "content":"Payment icons"
+            },
+            {
+               "type":"select",
+               "id":"footer_payment_icon",
+               "label":"Payment icons type",
+               "default":"icon",
+               "options":[
+                  {
+                     "value":"none",
+                     "label":"None"
+                  },
+                  {
+                     "value":"icon",
+                     "label":"Use font icon"
+                  },
+                  {
+                     "value":"image",
+                     "label":"Use image"
+                  }
+               ]
+            },
+            {
+               "type":"color",
+               "id"  :"form_bg",
+               "label":"Form Background color",
+               "default": "#ffffff"
+            },
+            {
+               "type":"color",
+               "id"  :"form_border",
+               "label":"Form Border color",
+               "default": "#ffffff"
+            },
+            {
+               "type":"color",
+               "id"  :"form_btn_text",
+               "label":"Form Button Text color",
+               "default": "#000000"
+            },
+            {
+               "type":"color",
+               "id"  :"form_btn_bg",
+               "label":"Form Button Background color",
+               "default": "#000000"
+            },
+            {
+               "type":"image_picker",
+               "id":"image",
+               "label":"Payment image"
+            },
+            {
+               "type":"text",
+               "id":"image_size",
+               "label":"Payment image size",
+               "default":"400x50",
+               "info":"Default is 400x50"
+            },
+            {
+               "type":"text",
+               "id":"payment_icon_1",
+               "label":"Font icon name 01",
+               "default":"icon-cc-visa",
+               "info":"Default is icon-cc-visa. [Icon list](https:\/\/font.arenacommerce.com\/handy4\/)"
+            },
+            {
+               "type":"text",
+               "id":"payment_icon_title_1",
+               "label":"Font icon title 01",
+               "default":"Visa"
+            },
+            {
+               "type":"text",
+               "id":"payment_icon_2",
+               "label":"Font icon name 02",
+               "default":"icon-cc-paypal",
+               "info":"Default is icon-cc-paypal. [Icon list](https:\/\/font.arenacommerce.com\/handy4\/)"
+            },
+            {
+               "type":"text",
+               "id":"payment_icon_title_2",
+               "label":"Font icon title 02",
+               "default":"PayPal"
+            },
+            {
+               "type":"text",
+               "id":"payment_icon_3",
+               "label":"Font icon name 03",
+               "default":"icon-cc-discover",
+               "info":"Default is icon-cc-discover. [Icon list](https:\/\/font.arenacommerce.com\/handy4\/)"
+            },
+            {
+               "type":"text",
+               "id":"payment_icon_title_3",
+               "label":"Font icon title 03",
+               "default":"Discover"
+            },
+            {
+               "type":"text",
+               "id":"payment_icon_4",
+               "label":"Font icon name 04",
+               "default":"icon-cc-amex",
+               "info":"Default is icon-cc-amex. [Icon list](https:\/\/font.arenacommerce.com\/handy4\/)"
+            },
+            {
+               "type":"text",
+               "id":"payment_icon_title_4",
+               "label":"Font icon title 04",
+               "default":"American express"
+            },
+            {
+               "type":"text",
+               "id":"payment_icon_5",
+               "label":"Font icon name 05",
+               "default":"icon-cc-mastercard",
+               "info":"Default is icon-cc-mastercard. [Icon list](https:\/\/font.arenacommerce.com\/handy4\/)"
+            },
+            {
+               "type":"text",
+               "id":"payment_icon_title_5",
+               "label":"Font icon title 05",
+               "default":"Mastercard"
+            }
+         ]
+      },
+      {
+         "type":"bot_payment",
+         "name":"Bottom-Payment",
+         "limit":1,
+         "settings":[
+            {
+               "type":"range",
+               "id":"width",
+               "label":"Width",
+               "min":1,
+               "max":12,
+               "default":4,
+               "step":1,
+               "unit":"/12"
+            },
+            {
+               "type":"select",
+               "id":"alignment",
+               "label":"Item alignment",
+               "options":[
+                  {
+                     "value":"left",
+                     "label":"Left"
+                  },
+                  {
+                     "value":"center",
+                     "label":"Center"
+                  },
+                  {
+                     "value":"right",
+                     "label":"Right"
+                  }
+               ],
+               "default":"center"
+            },
+            {
+               "type":"header",
+               "content":"Payment"
+            },
+            {
+               "type":"select",
+               "id":"footer_payment_icon",
+               "label":"Payment icons type",
+               "default":"icon",
+               "options":[
+                  {
+                     "value":"none",
+                     "label":"None"
+                  },
+                  {
+                     "value":"icon",
+                     "label":"Use font icon"
+                  },
+                  {
+                     "value":"image",
+                     "label":"Use image"
+                  }
+               ]
+            },
+            {
+               "type":"image_picker",
+               "id":"image",
+               "label":"Payment image"
+            },
+            {
+               "type":"range",
+               "id":"image_max_width",
+               "min":100,
+               "max":500,
+               "step":5,
+               "unit":"px",
+               "label":"Image maximum width",
+               "default":100
+            },
+            {
+               "type":"text",
+               "id":"payment_icon_1",
+               "label":"Font icon name 01",
+               "default":"icon-cc-visa",
+               "info":"Default is icon-cc-visa. [Icon list](https:\/\/font.arenacommerce.com\/handy4\/)"
+            },
+            {
+               "type":"text",
+               "id":"payment_icon_title_1",
+               "label":"Font icon title 01",
+               "default":"Visa"
+            },
+            {
+               "type":"text",
+               "id":"payment_icon_2",
+               "label":"Font icon name 02",
+               "default":"icon-cc-paypal",
+               "info":"Default is icon-cc-paypal. [Icon list](https:\/\/font.arenacommerce.com\/handy4\/)"
+            },
+            {
+               "type":"text",
+               "id":"payment_icon_title_2",
+               "label":"Font icon title 02",
+               "default":"PayPal"
+            },
+            {
+               "type":"text",
+               "id":"payment_icon_3",
+               "label":"Font icon name 03",
+               "default":"icon-cc-discover",
+               "info":"Default is icon-cc-discover. [Icon list](https:\/\/font.arenacommerce.com\/handy4\/)"
+            },
+            {
+               "type":"text",
+               "id":"payment_icon_title_3",
+               "label":"Font icon title 03",
+               "default":"Discover"
+            },
+            {
+               "type":"text",
+               "id":"payment_icon_4",
+               "label":"Font icon name 04",
+               "default":"icon-cc-amex",
+               "info":"Default is icon-cc-amex. [Icon list](https:\/\/font.arenacommerce.com\/handy4\/)"
+            },
+            {
+               "type":"text",
+               "id":"payment_icon_title_4",
+               "label":"Font icon title 04",
+               "default":"American express"
+            },
+            {
+               "type":"text",
+               "id":"payment_icon_5",
+               "label":"Font icon name 05",
+               "default":"icon-cc-mastercard",
+               "info":"Default is icon-cc-mastercard. [Icon list](https:\/\/font.arenacommerce.com\/handy4\/)"
+            },
+            {
+               "type":"text",
+               "id":"payment_icon_title_5",
+               "label":"Font icon title 05",
+               "default":"Mastercard"
+            }
+         ]
+      },
+      {
+         "type":"bot_menu",
+         "name":"Bottom-Menu",
+         "limit":1,
+         "settings":[
+            {
+               "type":"range",
+               "id":"width",
+               "label":"Width",
+               "min":1,
+               "max":12,
+               "default":4,
+               "step":1,
+               "unit":"/12"
+            },
+            {
+               "type":"link_list",
+               "id":"footer_menu",
+               "label":"Menu item"
+            },
+            {
+               "type":"select",
+               "id":"alignment",
+               "label":"Menu alignment",
+               "options":[
+                  {
+                     "value":"left",
+                     "label":"Left"
+                  },
+                  {
+                     "value":"center",
+                     "label":"Center"
+                  },
+                  {
+                     "value":"right",
+                     "label":"Right"
+                  }
+               ],
+               "default":"center"
+            }
+         ]
+      },
+      {
+         "type":"bot_social",
+         "name":"Bottom-Social icons",
+         "limit":1,
+         "settings":[
+            {
+               "type":"range",
+               "id":"width",
+               "label":"Width",
+               "min":1,
+               "max":12,
+               "default":4,
+               "step":1,
+               "unit":"/12"
+            },
+            {
+               "type":"select",
+               "id":"alignment",
+               "label":"Item alignment",
+               "options":[
+                  {
+                     "value":"left",
+                     "label":"Left"
+                  },
+                  {
+                     "value":"center",
+                     "label":"Center"
+                  },
+                  {
+                     "value":"right",
+                     "label":"Right"
+                  }
+               ],
+               "default":"center"
+            }
+         ]
+      },
+      {
+         "type":"bot_curr_lang",
+         "name":"Bottom-Currency&Language",
+         "limit":1,
+         "settings":[
+            {
+               "type":"range",
+               "id":"width",
+               "label":"Width",
+               "min":1,
+               "max":12,
+               "default":4,
+               "step":1,
+               "unit":"/12"
+            },
+            {
+               "type":"checkbox",
+               "id"   :"hide_label",
+               "label":"Hide label"
+            },
+            {
+               "type":"select",
+               "id":"alignment",
+               "label":"Item alignment",
+               "options":[
+                  {
+                     "value":"left",
+                     "label":"Left"
+                  },
+                  {
+                     "value":"center",
+                     "label":"Center"
+                  },
+                  {
+                     "value":"right",
+                     "label":"Right"
+                  }
+               ],
+               "default":"center"
+            }
+         ]
+      }
+   ]
+}
+{% endschema %}

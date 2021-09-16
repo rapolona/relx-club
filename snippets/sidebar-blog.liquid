@@ -1,0 +1,161 @@
+<div id="sidebar-blog" class="sidebar">
+  {% if section.blocks.size > 0 %}
+    {% assign t_f_size = 'h4' %}
+
+    {% for block in section.blocks %}
+      {% case block.type %}
+        {% when 'post' %}
+          <div class="sb-widget">
+            <div class="sb-blog-posts">
+
+              {% unless block.settings.sidebar_post_title == blank %}
+                <p class="{{t_f_size}} sb-title">{{ block.settings.sidebar_post_title }}</p>
+              {% endunless %}
+
+              {%- assign n_blog = blogs[block.settings.sidebar_post] -%}
+
+              {% unless n_blog.articles_count == 0 %}
+                <div class="post-list">
+
+                  {% for article in n_blog.articles limit: block.settings.sidebar_post_limit %}
+                    <div class="post-item">
+                      <div class="post-item-inner">
+                        <div class="post-image">
+                          <a href="{{ article.url }}">
+                            {% include "image-style" with image: article.image, image_size: '240x', ratio: 'list' %}
+                          </a>
+                        </div>
+
+                        <div class="post-content">
+                          <div class="info">
+                            <p class="h6"><a href="{{ article.url }}">{{ article.title }}</a></p>
+                            <p class="date">{{ article.published_at | date: '%b %d, %Y' }}</p>
+                          </div>
+                        </div>
+                      </div>
+
+                    </div>
+                  {% endfor %}
+                  {% assign limit_post = block.settings.sidebar_post_limit | plus: 0 %}
+                  {% if n_blog.articles.size > limit_post %}
+                    <div class="post-item see-more-post">
+                      <a href="{{ n_blog.url }}"> See more posts </a>
+                    </div>
+                  {% endif %}
+
+                </div>
+              {% endunless %}
+
+            </div>
+          </div>
+
+        {% when 'categories' %}
+          <div class="sb-widget">
+            <div class="sb-menu icon-{{block.settings.icon}}">
+              {% unless block.settings.sb_categories_title == blank %}
+              <p class="{{t_f_size}} sb-title">{{ block.settings.sb_categories_title }}</p>
+              {% endunless %}
+
+              <ul class="blog-menu categories-menu">
+                {% if block.settings.sb_categories_type == 'categories' %}
+
+                  {% for collection in collections limit: block.settings.sb_categories_limit %}
+                    {% unless collection.handle == 'frontpage'  %}
+
+                      <li {% if l.active %} class="match"{% endif %}>
+                        {% include 'include-list-icons' ,type: 'sidebar-icon', c: collection  %}
+                        <a href="{{ collection.url }}">{{ collection.title }}
+                        {%- if collection.products_count > 0 -%}
+                          <span>({{ collection.products_count }})</span>
+                        {%- endif -%}
+                        </a>
+                      </li>
+                    {% endunless %}
+                  {% endfor %}
+
+                {% else %}
+
+                  {% for l in linklists[block.settings.sb_categories_menu].links limit: block.settings.sb_categories_limit %}
+                    {%- if l.type == 'collection_link' or l.type == 'catalog_link' -%}
+                      {% assign col_handle = l.url | split: 'collections/' | last | handleize %}
+                      {% assign n_col      = collections[col_handle] %}
+                      {% assign link_col   = true %}
+                    {%- endif -%}
+
+                    {% assign submenu    = l.title | handleize %}
+                    {% if linklists[submenu].links.size > 0 %}
+                      {% include 'sb-dropdown-menu' with n_collection: n_col %}
+
+                    {% else %}
+                      <li {% if l.active %} class="match"{% endif %}>
+                        {% include 'include-list-icons' ,type: 'sidebar-icon', c: n_col  %}
+
+                        <a href="{{ l.url }}">{{ l.title }}
+                          {%- if n_col.products_count > 0 -%}<span>({{ n_col.products_count }})</span>{%- endif -%}
+                        </a>
+                      </li>
+                    {% endif %}
+                 {% endfor %}
+                {% endif %}
+              </ul>
+
+            </div>
+          </div>
+
+        {% when 'tag' %}
+          <div class="sb-widget sb-tag">
+
+            {% unless block.settings.sidebar_tags_title == blank %}
+              <p class="{{t_f_size}} sb-title">{{ block.settings.sidebar_tags_title }}</p>
+            {% endunless %}
+
+            <ul class="list-inline">
+              <li><a href="{{ shop.url}}/blogs/{{ blog.handle }}">All</a></li>
+              {% for tag in blog.all_tags %}
+
+                {% if current_tags contains tag %}
+                <li class="active">{{ tag | link_to_remove_tag: tag }}</li>
+                {% else %}
+                <li>{{ tag | link_to_tag: tag }}</li>
+                {% endif %}
+
+              {% endfor %}
+            </ul>
+
+          </div>
+
+        {% when 'banner' %}
+
+          {% assign _image = block.settings.image_banner %}
+          {% assign _link = block.settings.link %}
+          {% assign _text = block.settings.image_text %}
+          {% assign _button_text = block.settings.button_text %}
+
+          <div class="sb-widget d-none d-lg-block">
+            <div class="sb-banner">
+
+                {% unless _image == blank %}
+                  <a href="{{ _link }}">
+                    {% include "image-style" with image: _image, image_size: '390x' %}
+                  </a>
+
+                {% else %}
+                  {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+
+                {% endunless %}
+
+                <div class="block-text">
+                  {% unless _text == blank %}<span class="text" style="color: {{ block.settings.title_color }};">{{ _text }}</span>{% endunless %}
+                  {% unless _button_text == blank %}<a class="btn btn-1" href="{{ _link }}">{{ _button_text }}</a>{% endunless %}
+                </div>
+            </div>
+          </div>
+
+        {% else %}
+      {% endcase %}
+    {% endfor %}
+
+  {% else %}
+    <p>{{ 'homepage.onboarding.no_content' | t }}</p>
+  {% endif %}
+</div>

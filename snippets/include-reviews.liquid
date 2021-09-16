@@ -1,0 +1,29 @@
+{% if type == 'preview_badge' %}
+
+	{%- if _product_layout != 'product-gallery-v2' and _product_layout != 'product-simple-v2' -%}
+		<div class="preview-badge">
+	{%- endif -%}
+
+		{% case settings.product_review_type %}
+			{% when 'reviews' %}
+				<div class="rating-links">
+					<div class="shopify-product-reviews-badge" data-id="{{ product.id }}"></div>
+				</div>
+			{% when 'judgeme' %}
+				{% include 'judgeme_widgets', widget_type: 'judgeme_preview_badge', jm_style: '', concierge_install: false %}
+			{% else %}
+		{% endcase %}
+	{%- if _product_layout != 'product-gallery-v2' and _product_layout != 'product-simple-v2' -%}
+	</div>
+	{%- endif -%}
+
+{% else %}
+	{% case settings.product_review_type %}
+		{% when 'reviews' %}
+			<div id="shopify-product-reviews" data-id="{{product.id}}">{{ product.metafields.spr.reviews }}</div>
+		{% when 'judgeme' %}
+			{% include 'judgeme_widgets', widget_type: 'judgeme_review_widget', concierge_install: false %}
+		{% else %}
+	{% endcase %}
+{% endif %}
+{% render 'judgeme_widgets', widget_type: 'judgeme_preview_badge', jm_style: '', concierge_install: true, product: product %}

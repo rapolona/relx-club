@@ -1,0 +1,24 @@
+{%- if settings.use_color_hexcode -%}
+{%- assign color = 'Blue:#0000FF,Gold:#FFD700,Brown:#A52A2A,Black:#000000,Night:#0C090A,Gunmetal:#2c3539,Midnight:#2b1b17,Charcoal:#34282c,Oil:#3b3131,Iridium:#3D3C3A,Grey:#736f6e,Granite:#837E7C,Platinum:#E5E4E2,Iceberg:#56a5ec,Water:#EBF4FA,AliceBlue:#F0F8FF,Azure:#F0FFFF,Aquamarine:#7FFFD4,Celeste:#50ebec,Turquoise:#43c6db,Jellyfish:#46c7c7,Teal:#008080,Green:#00ff00,Chartreuse:#8afb17,Goldenrod:#edda74,Yellow:#ffff00,Parchment:#FFFFC2,Cream:#FFFFCC,Cornsilk:#FFF8DC,Beige:#F5F5DC,Blonde:#FBF6D9,AntiqueWhite:#FAEBD7,Champagne:#F7E7CE,BlanchedAlmond:#FFEBCD,Vanilla:#F3E5AB,Peach:#FFE5B4,Mustard:#FFDB58,Saffron:#fbb917,Beer:#fbb117,Cantaloupe:#FFA62F,BurlyWood:#DEB887,Sand:#C2B280,Caramel:#c68e17,Brass:#B5A642,Khaki:#ada96e,Bronze:#CD7F32,Cinnamon:#c58917,Copper:#B87333,Wood:#966F33,Moccasin:#827839,Sandstone:#786D5F,Mocha:#493D26,Taupe:#483C32,Coffee:#6F4E37,Sepia:#7f462c,Rust:#c36241,Chocolate:#c85a17,Sedona:#CC6600,Coral:#FF7F50,Tangerine:#e78a61,Red:#ff0000,Scarlet:#FF2400,Grapefruit:#DC381F,Mahogany:#C04000,Cranberry:#9F000F,Burgundy:#8C001A,Chestnut:#954535,Sienna:#8a4117,Sangria:#7e3817,Firebrick:#800517,Maroon:#810541,Puce:#7f5a58,Rose:#e8adaa,Pink:#faafbe,Magenta:#ff00ff,Plum:#b93b8f,Indigo:#4B0082,Eggplant:#614051,Grape:#5e5a80,Violet:#8d38c9,Purple:#8e35ef,Crimson:#e238ec,Lilac:#C8A2C8,Mauve:#E0B0FF,Thistle:#D2B9D3,Periwinkle:#d9cfec,Pearl:#fdeef4,SeaShell:#FFF5EE,White:#ffffff' | downcase -%}
+{%- assign colors 		 = color | split: ',' -%}
+{%- assign ar_color 	 = settings.color_config | downcase | split: ',' -%}
+{%- assign color_setting = '' -%}
+
+{%- for i_color in ar_color -%}
+	{%- assign temp 	= i_color | strip_newlines -%}
+	{%- assign _color 	= temp | split: ':' | first | handleize -%}
+	{%- assign _cl_code = temp | split: ':' | last | strip -%}
+	{%- unless color contains _cl_code -%}
+		{%- capture temp_color %}label.cf-{{_color}},.cf-{{_color}}{background-color: {{_cl_code}};}{% endcapture -%}
+		{%- assign color_setting = color_setting | strip | append: temp_color -%}
+	{%- endunless -%}
+{%- endfor -%}
+{%- for i_color in colors  -%}
+	{%- assign temp		= i_color | strip_newlines -%}
+	{%- assign _color 	= temp | split: ':' | first | handleize -%}
+	{%- assign _cl_code = temp | split: ':' | last -%}
+	{%- capture temp_color %}label.cf-{{_color}},.cf-{{_color}}{background-color: {{_cl_code}};}{% endcapture -%}
+	{%- assign color_setting = color_setting | strip | append: temp_color -%}
+{%- endfor -%}
+<style>{{color_setting}}</style>
+{%- endif -%}

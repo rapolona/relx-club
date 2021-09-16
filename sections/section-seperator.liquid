@@ -1,0 +1,341 @@
+{%- assign _bg_color = section.settings.bg_color -%}
+
+<div class="section-separator section-separator-{{ section.id }} section-show-{{section.id}}"      
+     style="background: {{ _bg_color }};">
+
+  {% for block in section.blocks %}
+    {% case block.type %}
+      {% when 'text_line' %}
+        {%- assign _content_hwline_heading_text               = block.settings.content_hwline_heading_text -%}
+        {%- assign _content_hwline_heading_color              = block.settings.content_hwline_heading_color -%}
+        {%- assign _content_hwline_heading_size               = block.settings.content_hwline_heading_size -%}
+        {%- assign _content_hwline_style                      = block.settings.content_hwline_style -%}
+        {%- assign _content_hwline_position                   = block.settings.content_hwline_position -%}
+        {%- assign _content_hwline_subheading_text            = block.settings.content_hwline_subheading_text -%}
+        {%- assign _content_hwline_subheading_color           = block.settings.content_hwline_subheading_color -%}
+        {%- assign _content_hwline_subheading_size            = block.settings.content_hwline_subheading_size -%}
+        {%- assign _content_text_align                        = block.settings.text_align -%}
+
+
+        <div class="separator-heading-line {{ _content_hwline_position }} line-{{ _content_hwline_style }} text-{{_content_text_align}}"{{block.shopify_attributes}}>
+          {% if _content_hwline_position == 'top_bottom' %}<div class="separator-sub-line sub-double-line"></div>{% endif %}
+          {% if _content_hwline_position == 'top' %}<div class="separator-sub-line sub-line-top"></div>{% endif %}
+          <h2><span>{{_content_hwline_heading_text}}</span></h2>
+          {% if _content_hwline_position == 'center' %}<div class="separator-sub-line"></div>{% endif %}
+          <span class="separator-subtext">{{_content_hwline_subheading_text}}</span>
+          {% if _content_hwline_position == 'bottom' %}<div class="separator-sub-line sub-line-bt"></div>{% endif %}
+          {% if _content_hwline_position == 'top_bottom' %}<div class="separator-sub-line sub-double-line sub-line-bt"></div>{% endif %}
+        </div>
+
+        <style type="text/css">
+        .section-separator-{{ section.id }} h2 {
+          color: {{_content_hwline_heading_color}};
+          font-size: {{_content_hwline_heading_size}}px;
+        }
+        .section-separator-{{ section.id }} .separator-subtext {
+          color: {{_content_hwline_subheading_color}};
+          font-size: {{_content_hwline_subheading_size}}px;
+        }
+        .section-separator-{{ section.id }} .separator-sub-line {
+          border-color: {{ _content_hwline_heading_color}};
+        }
+        .section-separator-{{ section.id }} .separator-heading-line.side-line h2:before,
+        .section-separator-{{ section.id }} .separator-heading-line.side-line h2:after {
+          border-color: {{ _content_hwline_heading_color}};
+        }
+      </style>
+    {% when 'text' %}
+      {%- assign _content_hwline_heading_text           = block.settings.content_hwline_heading_text -%}
+      {%- assign _content_hwline_heading_color          = block.settings.content_hwline_heading_color -%}
+      {%- assign _content_hwline_heading_size           = block.settings.content_hwline_heading_size -%}
+      {%- assign _content_hwline_subheading_text        = block.settings.content_hwline_subheading_text -%}
+      {%- assign _content_hwline_subheading_color       = block.settings.content_hwline_subheading_color -%}
+      {%- assign _content_hwline_subheading_size        = block.settings.content_hwline_subheading_size -%}
+      {%- assign _content_text_align                    = block.settings.text_align -%}
+
+      <div class="separator-heading text-{{_content_text_align}}"{{block.shopify_attributes}}>
+        <h2><span>{{_content_hwline_heading_text}}</span></h2>
+        <span class="separator-subtext">{{_content_hwline_subheading_text}}</span>
+      </div>
+
+      <style type="text/css">
+      .section-separator-{{ section.id }} h2 {
+        color: {{_content_hwline_heading_color}};
+        font-size: {{_content_hwline_heading_size}}px;
+      }
+      .section-separator-{{ section.id }} .separator-subtext {
+        color: {{_content_hwline_subheading_color}};
+        font-size: {{_content_hwline_subheading_size}}px;
+      }
+      </style>
+    {% else %}
+      <div class="separator spacing-{{block.id}}"{{block.shopify_attributes}}></div>
+      <style>
+        @media (min-width: 768px) {
+          .separator.spacing-{{block.id}}{
+            height: {{block.settings.spacing_desk | append: 'px' }};
+          }
+        }
+        @media (max-width: 767px) {
+          .separator.spacing-{{block.id}}{
+            height: {{block.settings.spacing_mob | append: 'px' }};
+          }
+        }
+      </style>
+  {% endcase %}
+{% endfor %}
+
+</div>
+{% schema %}
+{
+  "name": "Separator",
+  "settings": [
+  {
+    "type": "paragraph",
+    "content": "Seperator Section use to create spacing between sections and add headings to the sections"
+  },
+  {
+    "type": "text",
+    "id": "title",
+    "label": "Section Label",
+    "default": "Separator"
+  },
+  {
+    "type": "header",
+    "content": "Layout"
+  },
+  {
+    "type": "color",
+    "id": "bg_color",
+    "label": "Background color"
+  }
+  ],
+  "blocks": [
+    {
+      "type":"text",
+      "name":"Text",
+      "settings":[
+        {
+          "type":"header",
+          "content":"Layout Content"
+        },
+        {
+          "type": "text",
+          "id": "content_hwline_heading_text",
+          "label": "Heading",
+          "default": "Heading"
+        },
+        {
+          "type": "text",
+          "id": "content_hwline_subheading_text",
+          "label": "Subheading",
+          "default": "Subheading"
+        },
+        {
+          "type":"header",
+          "content":"Text font size"
+        },
+        {
+          "type": "range",
+          "id": "content_hwline_heading_size",
+          "label": "Heading",
+          "default": 30,
+          "min":10,
+          "max":80,
+          "unit":"px",
+          "step":1
+        },
+        {
+          "type": "range",
+          "id": "content_hwline_subheading_size",
+          "label": "Subheading",
+          "default": 30,
+          "min":10,
+          "max":80,
+          "unit":"px",
+          "step":1
+        },
+        {
+          "type":"header",
+          "content":"Text color"
+        },
+        {
+          "type": "color",
+          "id": "content_hwline_heading_color",
+          "label": "Heading",
+          "default": "#222222"
+        },
+        {
+          "type": "color",
+          "id": "content_hwline_subheading_color",
+          "label": "Subheading",
+          "default": "#222222"
+        },
+        {
+           "type":"select",
+           "id"   :"text_align",
+           "label":"Text alignment",
+           "default": "center",
+           "options":[
+             {
+               "value": "left",
+               "label": "Left"
+             },
+             {
+               "value": "center",
+               "label": "Center"
+             },
+             {
+               "value": "right",
+               "label": "Right"
+             }
+           ]
+        }
+      ]
+    },
+    {
+      "type": "text_line",
+      "name": "Text With Line",
+      "settings": [
+        {
+          "type":"header",
+          "content":"Layout Content"
+        },
+        {
+          "type": "text",
+          "id": "content_hwline_heading_text",
+          "label": "Heading",
+          "default": "Heading"
+        },
+        {
+          "type": "select",
+          "id": "content_hwline_style",
+          "label": "Line style",
+          "options": [
+          { "value": "solid", "label": "Solid" },
+          { "value": "dashed ", "label": "Dashed " },
+          { "value": "dotted", "label": "Dotted" }
+          ],
+          "default": "solid"
+        },
+        {
+          "type": "select",
+          "id": "content_hwline_position",
+          "label": "Line position",
+          "options": [
+          { "value": "top", "label": "Top" },
+          { "value": "center ", "label": "Center " },
+          { "value": "bottom", "label": "Bottom" },
+          { "value": "side-line", "label": "2-Side" },
+          { "value": "top_bottom", "label": "Top & Bottom" },
+          { "value": "left-line", "label": "Left" },
+          { "value": "right-line ", "label": "Right " }
+          ],
+          "default": "bottom"
+        },
+        {
+          "type": "text",
+          "id": "content_hwline_subheading_text",
+          "label": "Subheading",
+          "default": "Subheading"
+        },
+        {
+          "type":"header",
+          "content":"Text font size"
+        },
+        {
+          "type": "range",
+          "id": "content_hwline_heading_size",
+          "label": "Heading",
+          "default": 30,
+          "min":10,
+          "max":80,
+          "unit":"px",
+          "step":1
+        },
+        {
+          "type": "range",
+          "id": "content_hwline_subheading_size",
+          "label": "Subheading",
+          "default": 30,
+          "min":10,
+          "max":80,
+          "unit":"px",
+          "step":1
+        },
+        {
+          "type":"header",
+          "content":"Text color"
+        },
+        {
+          "type": "color",
+          "id": "content_hwline_heading_color",
+          "label": "Heading",
+          "default": "#222222"
+        },
+        {
+          "type": "color",
+          "id": "content_hwline_subheading_color",
+          "label": "Subheading",
+          "default": "#222222"
+        },
+        {
+           "type":"select",
+           "id"   :"text_align",
+           "label":"Text alignment",
+           "default": "center",
+           "options":[
+             {
+               "value": "left",
+               "label": "Left"
+             },
+             {
+               "value": "center",
+               "label": "Center"
+             },
+             {
+               "value": "right",
+               "label": "Right"
+             }
+           ]
+        }
+      ]
+    },
+    {
+      "type":"spacing",
+      "name":"Spacing",
+      "settings":[
+      {
+        "type": "range",
+        "id": "spacing_desk",
+        "label": "Spacing on Desktop",
+        "default": 30,
+        "min":10,
+        "max":100,
+        "unit":"px",
+        "step":1
+      },
+      {
+        "type": "range",
+        "id": "spacing_mob",
+        "label": "Spacing on Mobile",
+        "default": 10,
+        "min":10,
+        "max":100,
+        "unit":"px",
+        "step":1
+      }
+      ]
+    }
+  ],
+  "presets": [{
+  "name": "Separator",
+  "category": "Separator",
+  "blocks":[
+    {
+     "type":"spacing"
+   }
+   ]
+}]
+}
+{% endschema %}

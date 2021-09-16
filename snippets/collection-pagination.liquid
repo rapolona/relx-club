@@ -1,0 +1,57 @@
+<div class="top-pagination-holder">
+
+    <span>{{ 'general.pagination.page' | t }}</span>
+
+    <ul class="pagination">
+
+      {% if paginate.pages > 1 %}
+
+        {% if paginate.previous %}
+          <li>
+            <a href="{{ paginate.previous.url }}" title="{{'general.pagination.previous' | t }}" class="prev">
+              <i class="fa fa-caret-left"></i>
+            </a>
+          </li>
+        {% else %}
+          <li>
+            <a class="prev disabled" href="javascript:;">
+              <i class="fa fa-caret-left"></i>
+            </a>
+          </li>
+        {% endif %}
+
+        {% for part in paginate.parts %}
+          {% if part.is_link %}
+            <li><a href="{{ part.url }}">{{ part.title }}</a></li>
+          {% else %}
+            {% if part.title == '&hellip;' %}
+              <li class="ellipsis"><span>{{ part.title }}</span></li>
+            {% else %}
+              <li class="active"><a href="javascript:;">{{ part.title }}</a></li>
+            {% endif %}
+          {% endif %}
+        {% endfor %}
+
+        {% if paginate.next %}
+          <li>
+            <a href="{{ paginate.next.url }}" title="{{'general.pagination.next' | t }}" class="next">
+              <i class="fa fa-caret-right"></i>
+            </a>
+          </li>
+        {% else %}
+          <li>
+            <a class="next disabled" href="javascript:;">
+              <i class="fa fa-caret-right"></i>
+            </a>
+          </li>
+        {% endif %}
+
+      {% else %}
+      
+      	<li class="active"><a href="javascript:;">1</a></li>
+
+      {% endif %}
+
+    </ul>
+
+</div>

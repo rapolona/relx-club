@@ -1,0 +1,78 @@
+{% comment %}
+/**************************************************
+* DO NOT MODIFY THIS FILE!!!                      *
+* IT WILL BE OVERWRITTEN BY UPDATES FROM GROWAVE! *
+**************************************************/
+{% endcomment %}
+<style>
+  @font-face {
+    font-family: "Ssw Fontello";
+    src: url("{{ "ssw-fontello.woff" | asset_url }}") format("woff");
+    font-weight: 400;
+    font-style: normal;
+    font-display: fallback;
+  }
+  :root {
+    --gw_divider_color: {{ shop.metafields.ssw.css_variables.ssw_divider_color }};
+    --gw_modal_bg_color: {{ shop.metafields.ssw.css_variables.ssw_modal_bg_color }};
+    --gw_modal_second_bg_color: {{ shop.metafields.ssw.css_variables.ssw_modal_second_bg_color }};
+    --gw_dm_border_radius: {{ shop.metafields.ssw.css_variables.ssw_dm_border_radius }};
+    --gw_dm_bg_color: {{ shop.metafields.ssw.css_variables.ssw_dm_bg_color }};
+    --gw_dm_item_color: {{ shop.metafields.ssw.css_variables.ssw_dm_item_color }};
+    --gw_dm_item_hover_color: {{ shop.metafields.ssw.css_variables.ssw_dm_item_hover_color }};
+    --gw_dm_item_hover_bg_color: {{ shop.metafields.ssw.css_variables.ssw_dm_item_hover_bg_color }};
+    --gw_ft_color: {{ shop.metafields.ssw.css_variables.ssw_ft_color }};
+    --gw_ft_bg_color: {{ shop.metafields.ssw.css_variables.ssw_ft_bg_color }};
+    --gw_ft_border_radius: {{ shop.metafields.ssw.css_variables.ssw_ft_border_radius }};
+    --gw_ft_hover_color: {{ shop.metafields.ssw.css_variables.ssw_ft_hover_color }};
+    --gw_ft_hover_bg_color: {{ shop.metafields.ssw.css_variables.ssw_ft_hover_bg_color }};
+    --gw_cd_color: {{ shop.metafields.ssw.css_variables.ssw_cd_color }};
+    --gw_cd_border_radius: {{ shop.metafields.ssw.css_variables.ssw_cd_border_radius }};
+    --gw_cd_border_color: {{ shop.metafields.ssw.css_variables.ssw_cd_border_color }};
+    --gw_cd_focus_border_color: {{ shop.metafields.ssw.css_variables.ssw_cd_focus_border_color }};
+    --gw_cd_font_size: {{ shop.metafields.ssw.css.variables.ssw_cd_font_size }};
+    --gw_lb_position: {{ shop.metafields.ssw.css.variables.ssw_lb_position }};
+    --gw_lb_color: {{ shop.metafields.ssw.css_variables.ssw_lb_color }};
+    --gw_lb_bg_color: {{ shop.metafields.ssw.css_variables.ssw_lb_bg_color }};
+    --gw_lb_hover_bg_color: {{ shop.metafields.ssw.css_variables.ssw_lb_hover_bg_color }};
+    --gw_lb_hover_bg_color_star: {{ shop.metafields.ssw.css_variables.ssw_lb_hover_bg_color_star }};
+    --gw_lb_hover_bg_color_fave: {{ shop.metafields.ssw.css_variables.ssw_lb_hover_bg_color_fave }};
+    --gw_lb_bg_color_fave: {{ shop.metafields.ssw.css_variables.ssw_lb_bg_color_fave }};
+    --gw_lb_bg_color_text_fave: {{ shop.metafields.ssw.css_variables.ssw_lb_bg_color_text_fave }};
+    --gw_cm_bg_color: {{ shop.metafields.ssw.css_variables.ssw_cm_bg_color }};
+    --gw_cm_color: {{ shop.metafields.ssw.css_variables.ssw_cm_color }};
+    --gw_reward_side_background: {{ shop.metafields.ssw.css_variables.reward_side_background }};
+    --gw_reward_header_background: {{ shop.metafields.ssw.css_variables.reward_header_background }};
+    --gw_reward_buttons_color: {{ shop.metafields.ssw.css_variables.reward_buttons_color }};
+    --gw_reward_text_color: {{ shop.metafields.ssw.css_variables.reward_text_color }};
+    --gw_reward_tab_color: {{ shop.metafields.ssw.css_variables.reward_tab_color }};
+    --gw_reward_tab_text_color: {{ shop.metafields.ssw.css_variables.reward_tab_text_color }};
+    --gw_wishlist_button_height: {{ shop.metafields.ssw.css_variables.wishlist_button_height }}em;
+    --gw_wishlist_button_width: {{ shop.metafields.ssw.css_variables.wishlist_button_width }}%;
+    --gw_heart_collections_color: {{ shop.metafields.ssw.css_variables.heart_collections_color }};
+    --gw_review_buttons_color: {{ shop.metafields.ssw.css_variables.review_buttons_color }};
+    --gw_review_buttons_padding_vertical: {{ shop.metafields.ssw.css_variables.review_buttons_padding_vertical }}px;
+    --gw_review_buttons_padding_horizontal: {{ shop.metafields.ssw.css_variables.review_buttons_padding_horizontal }}px;
+    --gw_review_widget_margin_top: {{ shop.metafields.ssw.css_variables.review_widget_margin_top }}px;
+    --gw_insta_title_padding_top: {{ shop.metafields.ssw.css_variables.insta_title_padding_top }}px;
+    --gw_insta_title_padding_bottom: {{ shop.metafields.ssw.css_variables.insta_title_padding_bottom }}px;
+    --gw_insta_title_size: {{ shop.metafields.ssw.css_variables.insta_title_size }}px;
+    --gw_login_buttons_color: {{ shop.metafields.ssw.css_variables.login_buttons_color }};
+    --gw_login_input_height: {{ shop.metafields.ssw.css_variables.login_input_height }}px;
+    --gw_share_icons_color: {{ shop.metafields.ssw.css_variables.share_icons_color }};
+    --gw_share_icons_size: {{ shop.metafields.ssw.css_variables.share_icons_size }}px;
+    --gw_wishlist_hide_counter: {{ shop.metafields.ssw.css_variables.wishlist_hide_counter }};
+    --gw_wishlist_hide_counter_colections: {{ shop.metafields.ssw.css_variables.wishlist_hide_counter_colections }};
+    --gw_wishlist_effect: {{ shop.metafields.ssw.css_variables.wishlist_effect }};
+    --gw_login_my_order: {{ shop.metafields.ssw.css_variables.login_my_order }};
+    --gw_login_view_profile: {{ shop.metafields.ssw.css_variables.login_view_profile }};
+    --gw_show_rewards_tab_on_desktop: {{ shop.metafields.ssw.css_variables.show_rewards_tab_on_desktop }};
+    --gw_show_rewards_tab_on_mobile: {{ shop.metafields.ssw.css_variables.show_rewards_tab_on_mobile }};
+    --gw_login_my_itches: {{ shop.metafields.ssw.css_variables.login_my_itches }};
+    --gw_login_edit_profile: {{ shop.metafields.ssw.css_variables.login_edit_profile }};
+    --gw_wishlist_page_show_vendor: {{ shop.metafields.ssw.css_variables.wishlist_page_show_vendor }};
+    --gw_custom_forms_rating_color: {{ shop.metafields.ssw.css_variables.review_custom_forms_rating_color }};
+    --gw_social_networks_icon_for_dropdown: {{ shop.metafields.ssw.css_variables.social_networks_icon_for_dropdown }};
+  {% if settings.color_button_bg %} --gw_color_button_bg: {{ settings.color_button_bg }}{% endif %}
+  }
+</style>

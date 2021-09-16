@@ -1,0 +1,75 @@
+{% assign _lazyload     = settings.use_lazyload %}
+{% assign use_image     = settings.use_breadcrumb_image %}
+{% assign breadcrumb_bg = settings.breadcrumb_bg %}
+
+{% if template contains 'customers' or template == 'page' %}
+  {% capture _breadcrumb_image %}
+  {%- if breadcrumb_bg != blank -%}{{ breadcrumb_bg | img_url: '1920x', format: 'pjpg' }}{%- endif -%}
+  {% endcapture %}
+
+{% else %}
+  {% capture _breadcrumb_image %} {{ section.settings.breadcrumb_image | img_url: '1920x', format: 'pjpg' }} {% endcapture %}
+
+  {% if section.settings.breadcrumb_image == blank and breadcrumb_bg != blank %}
+    {% capture _breadcrumb_image %} {{ breadcrumb_bg | img_url: '1920x', format: 'pjpg' }} {% endcapture %}
+  {% endif %}
+{% endif %}
+
+  <div class="wrap-breadcrumb bw-color{% unless use_image %} no-image{% endunless %}">
+    <div id="breadcrumb" class="breadcrumb-holder layout-full padding-false">
+      {%- if use_image -%}
+        {% if hide_breadcrumb_image == blank %}
+          <div class="bw-image{% if _lazyload %} lazyload{% endif %}"
+          {% unless _breadcrumb_image contains 'no-image' %}{% if _lazyload %} data-bgset="{{ _breadcrumb_image }} 1920w" {% else %} style="background-image: url({{_breadcrumb_image }});"{% endif %}{% endunless %}>
+            <div class="container">
+              <h1>{% if hide_breadcrumb_title == blank %}{{ page_title }}{% endif %}</h1>
+              {% if section.settings.col_des_position == 'top' and collection.description != blank %}{{collection.description}}{% endif %}
+            </div>
+          </div>
+        {% endif %}
+      {%- endif -%}
+      {% if hide_breadcrumb_location == blank %}
+        <div class="container">
+          {%- unless use_image -%}
+          <span class="h3">{{page_title}}</span>
+          {%- endunless -%}
+          <ul class="breadcrumb">
+            <li itemscope itemtype="http://data-vocabulary.org/Breadcrumb">
+              <a itemprop="url" href="/">
+                <span itemprop="title" class="d-none">{{ shop.name | escape }}</span>{{- 'general.text.home' | t -}}
+              </a>
+            </li>
+
+            {% if template contains 'collection' %}
+
+              {% if current_tags %}
+                <li>{{ collection.title | link_to: collection.url }}</li>
+                <li class="active">{{ current_tags.first }}</li>
+
+              {% elsif collection.handle %}
+                <li itemscope itemtype="http://data-vocabulary.org/Breadcrumb" class="d-none">
+                  <a href="{{collection.url}}" itemprop="url">
+                    <span itemprop="title">{{ collection.title }}</span>
+                  </a>
+                </li>
+                <li class="active">{{ collection.title }}</li>
+
+              {% else %}
+                <li class="active">{{ page_title }}</li>
+              {% endif %}
+
+            {% elsif template == 'article' %}
+
+              <li>{{ blog.title | link_to: blog.url }}</li>
+              <li class="active">{{ article.title }}</li>
+
+            {% else %}
+
+              <li class="active">{{ page_title }}</li>
+
+            {% endif %}
+          </ul>
+        </div>
+      {% endif %}
+    </div>
+  </div>

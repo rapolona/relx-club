@@ -1,0 +1,12 @@
+<div class="sb-product-head">
+  <a href="{{ prod.url | within: collection }}">  	
+    <img {% if _lazyload %} class="img-lazy lazyload" data-{% endif %}src="{% if prod.images.size >= 1%}{{ prod.featured_image | product_img_url: '320x' }}{% else %}{{ 'default-image.jpg' | asset_url }}{% endif %}" alt="{{ prod.featured_image.alt | escape }}" />
+  </a>
+</div>
+
+<div class="sb-product-content">
+  <div class="bp-content-inner">
+    <a href="{{ prod.url | within: collection }}">{{ prod.title }}</a>
+    <div class="sb-price">{% include 'product-price' with product: prod %}</div>
+  </div>
+</div>

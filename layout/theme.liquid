@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="{{ shop.locale }}" class="js{% if template == 'index' %} templateIndex{% endif %}">
+  <head>
+    <meta name="google-site-verification" content="00YL_NCc1SzUz01GNYQqo9an0fN-vAF3kzq0IE9O0ko" />
+    {% if settings.favicon != nil %}
+      <link rel="shortcut icon" type="image/x-icon" href="{{ settings.favicon | img_url: '32x32' }}">
+    {% else %}
+      <link rel="shortcut icon" type="image/x-icon" href="{{ 'favicon.png' | asset_url }}">
+    {% endif %}
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="viewport-fit=cover, width=device-width,initial-scale=1, user-scalable=0"/>
+    <meta name='HandheldFriendly' content='True'>
+    <meta name='MobileOptimized' content='375'>
+    <meta http-equiv="cleartype" content="on">
+    <meta name="theme-color" content="{{ settings.main_color }}">
+    <title>{{ page_title }}{% if current_tags %}{% assign meta_tags = current_tags | join: ', ' %} &ndash; {{ 'general.meta.tags' | t: tags: meta_tags }}{% endif %}{% if current_page != 1 %} &ndash; {{ 'general.meta.page' | t: page: current_page }}{% endif %}{% unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless %}</title>
+    {% if page_description %}
+    <meta name="description" content="{{ page_description | escape }}{% if current_tags %} {{ 'general.meta.tagged_html' | t: tags: meta_tags | escape }}.{% endif %}{% if current_page != 1 %} {{ 'general.meta.page' | t: page_number: current_page }}.{% endif %}" />
+    {% endif %}
+    {% include 'fb-open-graph' %}
+    <link rel="canonical" href="{{ canonical_url }}"/>
+    <link rel="preconnect dns-prefetch" href="https://cdn.shopify.com">
+    <link rel="preconnect dns-prefetch" href="https://v.shopify.com">
+    <link rel="preconnect dns-prefetch" href="https://cdn.shopifycloud.com">
+    {%- if settings.enable_rtl -%}
+      <link rel="preload" href="{{'theme-rtl.scss.css' | asset_url }}" as="style" >
+      <link rel="preload" href="{{'vendor-rtl.css' | asset_url }}" as="style" >
+    {%- else -%}
+      <link rel="preload" href="{{'theme.scss.css' | asset_url }}" as="style">
+      <link rel="preload" href="{{'vendor.css' | asset_url }}" as="style">
+    {%- endif -%}
+    {%- if settings.header_font_type == 'google' or settings.body_font_type == 'google' -%}
+    <link rel="dns-prefetch preconnect" href="https://fonts.gstatic.com">
+    <link ref="preload" href="//fonts.googleapis.com/css?family=.|{% if settings.header_font_type == 'google' and settings.type_header_family contains 'Google' %}{{ settings.type_header_family | replace: 'Google_', '' }}:light,normal,bold|{% endif %}{% if settings.body_font_type == 'google' and settings.type_base_family contains 'Google' %}{{ settings.type_base_family | replace: 'Google_', '' }}:light,normal,bold&&display=swap{% endif %}" as="style" crossorigin="anonymous" />
+    {%- endif -%}
+    <link rel="preload" href="{{'arenafont.css' | asset_url }}" as="style">
+
+    <!-- CSS Language translation-->
+    {% case settings.lang_type %}
+    {% when 'google' %}
+    <link crossorigin="anonymous" rel="prefetch" href="https://translate.googleapis.com/translate_static/css/translateelement.css" as="style">
+    {% when 'weglot' %}
+    <link rel="preconnect dns-prefetch" href="https://cdn.weglot.com">
+    <link rel="prefetch" href="https://cdn.weglot.com/weglot.min.css" as="style">
+    {% else %}
+    {% endcase %}
+    <!-- End CSSLanguage translation -->
+    {% case settings.product_review_type %}
+      {% when 'reviews' %}
+      <link rel="prefetch" href="https://productreviews.shopifycdn.com/assets/v4/spr-5a2d2fd286dca8042a3a5a76bc9032c64c52a2792a734307c76740d012641514.css" as="style" type="text/css">
+      {% when 'judgeme' %}
+      <link rel="preconnect dns-prefetch" href="https://cdn.judge.me">
+      <link rel="prefetch" href="https://cdn.judge.me/shopify_v2.css" as="style">
+      {% else %}
+    {% endcase %}
+    {% unless settings.search_api_key == blank %}
+    <link rel="preconnect dns-prefetch" href="https://www.searchanise.com/">
+    <link rel="preconnect dns-prefetch" href="https://searchanise-ef84.kxcdn.com/">
+    <link rel="prefetch" href="https://searchanise-ef84.kxcdn.com/styles.{{settings.search_api_key}}.css" as="style">
+    {% endunless %}
+    {%- if settings.enable_product_wishlist or settings.enable_product_compare -%}
+    <link rel="preconnect dns-prefetch" href="https://apps.arenatheme.com">
+    <link rel="preload" href="{{'bc_wl_cp_style.scss.css' | asset_url}}" as="style">
+    {%- endif -%}
+    <!-- Main CSS-->
+    {% include 'google-font' %}
+    {{ 'arenafont.css'| asset_url | stylesheet_tag }}
+    {% if settings.enable_rtl %}
+    {{ 'vendor-rtl.css'| asset_url | stylesheet_tag }}
+    {{ 'theme-rtl.scss.css'| asset_url | stylesheet_tag }}
+    {% else %}
+    {{ 'vendor.css'| asset_url | stylesheet_tag }}
+    {{ 'theme.scss.css'| asset_url | stylesheet_tag }}
+    {% endif %}
+    <!-- End Main CSS-->
+    <!-- Arena Wishlist App CSS-->
+    
+    {{'bc_wl_cp_style.scss.css' | asset_url | stylesheet_tag }}
+    <!-- End Arena Wishlist App CSS -->
+    <script crossorigin="anonymous" src="{{ 'lazysizes.min.js' | asset_url }}" async=""></script>
+    {% include 'jquery' %}
+  
+    <!-- Content for header -->
+    <!-- starapps_scripts_start -->
+<!-- This code is automatically managed by StarApps Studio -->
+<!-- Please contact support@starapps.studio for any help -->
+<script type="text/javascript" src="https://bcdn.starapps.studio/apps/vtk/relx-club/script-1620741769.js?shop={{shop.permanent_domain}}" async></script>
+<!-- starapps_scripts_end -->
+{{ content_for_header }}
+{%- include 'bold-product' with product, hide_action: 'header' -%}
+{%- render 'bold-pr' -%}
+{%- render 'bold-common' -%}
+    <!-- End content -->
+    {% include 'bc_wl_cp_config' %}
+ 
+{% include 'pagefly-header' %}
+  {{ 'shopstorm-apps.scss.css' | asset_url | stylesheet_tag }}
+  {% render 'shopstorm-scripttags' %}
+{% render 'minmaxify-head' %}
+
+  {% include 'judgeme_core' %}
+    
+    <!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-NRHF69H');</script>
+<!-- End Google Tag Manager -->
+    
+<!-- Hotjar Tracking Code for https://relxclub.com/ -->
+<script>
+    (function(h,o,t,j,a,r){
+        h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
+        h._hjSettings={hjid:2470605,hjsv:6};
+        a=o.getElementsByTagName('head')[0];
+        r=o.createElement('script');r.async=1;
+        r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
+        a.appendChild(r);
+    })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
+</script>
+
+{% include 'grss-json-ld' %}
+  
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org/",
+  "@type": "WebSite",
+  "name": "RELX Club",
+  "url": "https://relxclub.com/",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://relxclub.com/search?type={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+    
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "RELX Club",
+  "url": "https://relxclub.com/",
+  "logo": "https://imgur.com/v60fn0a",
+  "sameAs": "https://www.facebook.com/R-Club-100691925552662/?view_public_for=100691925552662"
+}
+</script> 
+  </head>
+<body class="template{{ template | split: '.' | first | camelize }}{% if settings.catalog_mode %} category-mode{% endif %}{% if settings.button_rounded_border %} btn-rounded{% endif %}{% if settings.enable_rtl %} theme-rtl{% endif %}" data-theme-id="{{theme.id}}">
+  <!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NRHF69H"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+{% capture the_snippet_content %}{% render 'socialshopwave-helper' %}{% endcapture %}
+            {% unless the_snippet_content contains 'Liquid error' %}
+              {{ the_snippet_content }}
+            {% endunless %}
+
+  {% if settings.lang_type != 'none' %}{% include 'include-translate', type: 'init' %}{% endif %}
+
+    <div class="new-loading"></div>
+    <div class="boxed-wrapper qty-style-{{settings.qty_style}}">
+
+      {%- unless template contains 'cart' -%}{% if settings.cart_styles == 'sidebar'%}{% include 'cart-sidebar' %}{% endif %}{%- endunless -%}
+
+      <div id="page-body" class="{% if settings.general_placement %}boxed{% else %}wide{% endif %}" data-bg-type="{{settings.boxes_mode_bg}}">
+
+        <header class="h-desk-{{settings.desk_bg_type}} h-mobi-{{settings.mobi_bg_type}}" data-desk-type="{{settings.desk_bg_style}}" data-mobi-type="{{settings.mobi_bg_style}}">
+          {%- unless settings.disable_topbar -%}{% section 'section-top-bar' %}{%- endunless -%}
+          {% section 'header' %}
+        </header>
+        <div id="body-content">
+          <div id="main-content">
+            <div class="main-content lazyload" >
+              {{ content_for_layout }}
+              {%- if settings.enable_partner -%}{% section 'section-partner' %}{%- endif -%}              
+            </div>
+          </div>
+        </div>
+        {% section 'newsletter-template' %}
+        <footer>{% section 'footer' %}</footer>
+        {% if settings.enable_notify %}{% section 'section-fomo-popup' %}{% endif %}
+      </div>
+
+      {% if settings.show_multiple_currencies or settings.lang_type != 'none' %}
+        <div id="topbar-popup" class="topbar-popup-elem">{% include 'include-popup', type: 'curr_lang' %}</div>
+      {% endif %}
+
+      {% if settings.cart_styles == 'dropdown'%}
+        {% include 'cart-dd-custom' %}
+        {% include 'layer-cart-modal' %}
+      {% else %}
+        {% include 'cart-sb-custom' %}
+      {% endif %}
+
+      {% if settings.show_back_to_top %}
+        <div id="scroll-to-top" title="Back To Top"><a href="javascript:;"></a></div>
+      {% endif %}
+
+      {% include 'layer-search-modal' %}
+      {% include 'currencies' %}
+      {% include 'quick-shop-product' %}
+      {% include 'bc-config-js' %}
+      {% if settings.show_cookie_policy %}{% include 'include-cookie-policy' %}{% endif %}
+    </div>
+    {% include 'color-settings' %}
+    {% include 'include-auto-currency' %}
+    <script crossorigin="anonymous" src="{{ 'vendor.min.js' | asset_url }}" defer></script>
+    <script crossorigin="anonymous" src="{{ 'api.jquery.js' | shopify_asset_url }}" defer></script>
+    <script crossorigin="anonymous" src="{{ 'bc.script.js' | asset_url }}" defer></script>
+    {% include 'js-file' %}
+    {% include 'revy-bundle-script' %}
+  {% render 'mbc-bundles' %}{% render 'th-bundle-product' %} {% render 'product-customizer-asw' %}{% include 'mw_GP_objects' %}
+  {% render 'ajaxify-cart' %}
+  
+<script src="https://www.enormapps.com/faq-v2/frontend/js/embed.js" defer="defer"></script>
+	{%- render 'flits_capture_code' with 'load_snippet',template:'flits_snippet' -%}
+ {% include 'smile-initializer' %}
+
+{{ '//cdn.shopify.com/s/files/1/0194/1736/6592/t/1/assets/booster-page-speed-optimizer.js?23' | script_tag }}
+</body>
+</html

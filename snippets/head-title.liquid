@@ -1,0 +1,22 @@
+{% if _title == blank %}
+	{% assign _title = section.settings.heading_text %}
+{% endif %}
+
+{% if _subtitle == blank %}
+	{% assign _subtitle = section.settings.subheading_text %}
+{% endif %}
+
+{% if section.settings.heading_content_align == blank %}
+	{% assign _title_alignment = 'center' %}
+{% else %}
+	{% assign _title_alignment = section.settings.heading_content_align %}
+{% endif %}
+
+{% unless _title == blank and _subtitle == blank %}
+	{%- assign _sh_h_size = settings.section_heading_size 		| prepend: 'h'	-%}
+	{%- assign _sh_s_size = settings.section_subheading_size 	| prepend: 'h'	-%}
+	<div class="title-wrapper text-{{_title_alignment}}">
+		{% unless _title == blank %}<p class="title {{_sh_h_size}}">{{ _title }}</p>{% endunless %}
+		{% unless _subtitle == blank %}<p class="subtitle {{_sh_s_size}}">{{ _subtitle }}</p>{% endunless %}
+	</div>
+{% endunless %}

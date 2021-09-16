@@ -1,0 +1,87 @@
+{% assign _text_in_cart_1 = "Other people want this." %}
+{% assign _text_in_cart_2 = "people have this in their carts right now." %}
+
+<div class="people-in-cart">
+    <div class="img-user">
+      <img src="{{ 'in_cart.png' | asset_url }}" alt="Image" />
+    </div>
+    <div class="people-block-text"></div>
+</div>
+
+<script type="text/javascript">
+    function setCookie(cname, cvalue, exdays) {
+        var d = new Date();
+        d.setTime(d.getTime() + (exdays*24*60*60*1000));
+        var expires = "expires="+ d.toUTCString();
+        document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+    };
+
+    function getCookie(name) {
+        var dc = document.cookie;
+        var prefix = name + "=";
+        var begin = dc.indexOf("; " + prefix);
+        if (begin == -1) {
+            begin = dc.indexOf(prefix);
+            if (begin != 0) return null;
+        }
+        else
+        {
+            begin += 2;
+            var end = document.cookie.indexOf(";", begin);
+            if (end == -1) {
+            end = dc.length;
+            }
+        }
+        return decodeURI(dc.substring(begin + prefix.length, end));
+    };
+
+    function checkCookie($name) {
+        var popup = getCookie($name);
+        if (popup != "") {
+            return popup;
+        } else {
+            return false
+        }
+    };
+$(function(){
+    var i_sections = new theme.Sections();
+    i_sections.register('product-page', function(){
+        // let _current_handle = '{{product.id}}';
+        var cookieincartName = `incart`;
+        var _incart = checkCookie(cookieincartName);
+        var cookieincartHide = 30/60/60/24;
+        var _maxOri = Number('{{section.settings.in_cart_count_max}}') || 999;
+        var _minOri = 1 || 99;
+        var _percent = 0.1;
+        var _number_rd = (max,min)=>Math.floor(Math.random() * (max - min) ) + min;
+        var _number = _number_rd(_maxOri,_minOri);
+        if (_incart != null) {
+            let arrayN =  _incart.toString().split(',');
+            let arr_element = parseInt(arrayN.pop());
+
+            let max = Math.round(arr_element+(arr_element*_percent));
+            let min = Math.round(arr_element-(arr_element*_percent));
+
+            let _rd = _number_rd(max,min);
+
+            if (_rd > _maxOri) {
+              _rd = _maxOri;
+            }else if(_rd < _minOri){
+              _rd = _minOri;
+            }
+
+            $('.people-block-text').html('<span>{{ _text_in_cart_1 }}</span> ' + _rd + ' {{_text_in_cart_2}}');
+            arrayN.push(_rd);
+            document.cookie = `${cookieincartName}=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;`;
+            setCookie(cookieincartName, arrayN, cookieincartHide);
+
+        } else{
+            $('.people-block-text').html('<span>{{ _text_in_cart_1 }}</span> ' + _number + ' {{_text_in_cart_2}}');
+            let _array_number = [];
+            _array_number.push(_number);
+            document.cookie = `${cookieincartName}=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;`;
+            setCookie(cookieincartName, _array_number, cookieincartHide);
+        };
+        })
+    });
+</script>

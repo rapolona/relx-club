@@ -1,0 +1,12 @@
+<!--dropdown-menu-->
+<li class="dropdown{% if l.active %} active{% endif %}">
+  	<a href="{{ l.url }}" class="dropdown-link"><span>{{ l.title }}</span>
+	{% include 'include-label-handle' with l_title:l.title %}
+  	</a>
+  	<span class="expand"></span> 
+
+	<ul class="dropdown-menu">
+		<li class="back-prev-menu"><span class="expand">Back</span></li>
+		{% for l in linklists[submenu].links %}{% include 'nav-sub-link' %}{% endfor %}
+	</ul>
+</li>

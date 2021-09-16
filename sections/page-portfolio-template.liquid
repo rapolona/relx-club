@@ -1,0 +1,108 @@
+{% assign _lazyload = settings.use_lazyload %}
+  <div class="page-portfolio home-banner{% if section.settings.padding == 'yes' %} has-padding{% endif %}" data-section-type="image-gallery" data-section-id="{{section.id}}">
+    <h2 class="portfolio-title">{{section.settings.heading}}</h2>
+    {% unless settings.breadcrumb_styles == 'none' %}{% include 'breadcrumb' %}{% endunless %}
+    <div class="container home-banner-items">
+      {% if section.blocks.size > 0 %}
+      <div class="home-banner-masonry masonry_{{section.id}}">
+        <div class="bc-masonry">
+          {% for block in section.blocks %}
+          {%- assign _image_width_desk = block.settings.image_width_desk -%}
+          {%- assign _image_width_mobile = block.settings.image_width_mobile -%}
+          {%- assign image = block.settings.image -%}
+          {%- assign _image_size = block.settings.image_size -%}
+          {%- assign _link = block.settings.link -%}         
+          {%- assign img_url = _image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+          
+          <div class="banner-item width-col-{{_image_width_desk}} width-col-mob-{{_image_width_mobile}}">
+            <a href="{{ _link }}"{% if _lazyload %} style="display:block;position: relative;padding-top:{% unless image == blank %}{{ 1 | divided_by: image.aspect_ratio | times: 100}}%{% else %}100%{% endunless %};"{% endif %}>
+              {% include 'image-style' with image_lazy_class: 'img-lazy', image_size: '540x' %}
+            </a>
+          </div>
+
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+{% schema %}
+{
+  "name": "Portfolio pages",
+  "max_blocks": 20,
+  "settings": [
+  {
+    "type": "image_picker",
+    "id": "breadcrumb_image",
+    "label": "Breadcrumb image"
+  },
+  {
+    "type":"text",
+    "id":"heading",
+    "label":"Title",
+    "default":"Our Portfolio"
+  },
+  {
+    "type": "select",
+    "id": "padding",
+    "label": "Padding",
+    "default": "yes",
+    "options": [
+    {
+      "value": "no",
+      "label": "No"
+    },
+    {
+      "value": "yes",
+      "label": "Yes"
+    }
+    ]
+  }
+  ],
+  "blocks": [
+  {
+    "type": "image",
+    "name": "Image",
+    "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type":"range",
+      "id":"image_width_desk",
+      "label":"Desktop Item Width",
+      "min":1,
+      "max":12,
+      "unit":"/12",
+      "default":4,
+      "info":"Only for Muuri"
+    },
+    {
+      "type":"range",
+      "id":"image_width_mobile",
+      "label":"Mobile Item Width",
+      "min":1,
+      "max":12,
+      "unit":"/12",
+      "default":6,
+      "info":"Only for Muuri"
+    },
+    {
+      "type": "text",
+      "id": "image_size",
+      "label": "Image size",
+      "default": "380x380",
+      "info": "E.g 380x380 pixels"
+    },
+    {
+      "type": "url",
+      "id": "link",
+      "label": "Link"
+    }
+    ]
+  }
+  ]
+}
+{% endschema %}

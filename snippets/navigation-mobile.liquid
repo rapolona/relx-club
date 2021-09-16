@@ -1,0 +1,76 @@
+<div class="mobile-version mobile-style-{{header_style}} d-lg-none">
+<!-- Begin Menu Mobile-->
+  <div class="menu-mobile navbar">
+    <div class="mm-wrapper" data-expand="10">
+      {%- if header_style == 3 -%}
+        <div class="top-nav">
+          <div><span class="m-close close-nav-mobile d-lg-none"><i class="demo-icon icon-delete"></i></span></div>
+          {% include 'include-list-icons' type: 'account' %}
+          {% include 'include-list-icons' type: 'wishlist' %}
+          {% include 'include-list-icons' type: 'compare' %}
+          {% include 'include-list-icons' type: 'curr_lang' %}
+        </div>
+      {%- endif -%}
+      <div class="nav-collapse">
+        <ul class="main-nav">
+          <li class="back-prev-menu">
+            {%- if header_style != 3 -%}<span class="m-close close-nav-mobile d-lg-none"><i class="demo-icon icon-delete"></i></span>{%- endif -%}
+            {% include 'include-logo' with type: 'mobile' %}
+          </li>
+
+          {% for l in linklists[section.settings.mobile_linklist].links %}
+          {% include 'nav-link-mobile' %}
+          {% endfor %}
+        </ul>
+      </div>
+        {%- if header_style != 1 -%}
+          {%- assign ctb_phone  = section.settings.ctb_phone -%}
+          {%- assign ctb_email  = section.settings.ctb_email -%}
+          {%- assign ctb_store  = section.settings.ctb_store_info -%}
+          {%- assign ctb_direct = section.settings.ctb_direct -%}
+
+          <ul class="mobile-contact-bar list-inline">
+            <li class="contactbar-item">
+              <a class="contactbar-item-link" href="tel:{{ ctb_phone }}">
+                <i class="demo-icon icon-phone"></i>
+                <span>{{'general.text.call' | t }}</span>
+              </a>
+            </li>
+            <li class="contactbar-item">
+              <a class="contactbar-item-link" href="mailto:{{ ctb_email }}">
+                <i class="demo-icon icon-mail"></i>
+                <span>{{'general.text.contact' | t }}</span>
+              </a>
+            </li>
+            <li class="contactbar-item ci-store-info">
+              <a class="contactbar-item-link" href="javascript:;">
+                <i class="demo-icon icon-clock-1"></i>
+                <span>{{'general.text.store_info' | t }}</span>
+              </a>
+            </li>
+            <li class="contactbar-item">
+              <a class="contactbar-item-link" href="{{ ctb_direct }}">
+                <i class="demo-icon icon-location"></i>
+                <span>{{'general.text.directions' | t }}</span>
+              </a>
+            </li>
+          </ul>
+          <div class="contactbar-info">
+            <span class="contactbar-info-close"><i class="demo-icon icon-delete"></i></span>
+            {{- ctb_store -}}
+          </div>
+          <script>
+            jQuery(document).ready(function($) {
+              jQuery(document).on('click','.ci-store-info',function(event) {
+                jQuery('.contactbar-info').toggleClass('active');
+              }).on('click','.contactbar-info-close',function(e){
+                jQuery('.contactbar-info').removeClass('active');
+              });
+            });
+          </script>
+        {%- endif -%}
+
+    </div>
+  </div>
+<!-- End Menu Mobile-->
+</div>

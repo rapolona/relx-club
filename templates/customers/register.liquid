@@ -1,0 +1,70 @@
+{% include 'breadcrumb',hide_breadcrumb_image: true %}
+{% assign title_h = 'h2' %}
+
+<div class="container">
+  <div id="col-main" class="page-login">
+    <div class="row">
+      <div class="col-md-3">&nbsp;</div>
+      <div class="col-md-6 col-12">
+        <{{ title_h }}> {{'customer.register.title' | t }}</{{ title_h }}>
+        <div id="customer-register">
+          <div class="form-wrapper">
+
+            {% form 'create_customer' %}
+
+              {% if form.errors %}
+              <div class="alert alert-danger">
+                <button type="button" class="close" title="{{'customer.general.close' | t }}" data-dismiss="alert">×</button>
+                {{ form.errors | default_errors }}
+              </div>
+              {% endif %}
+              <div class="control-wrapper">
+                <label for="first_name">{{'customer.register.first_name' | t }}</label>
+                <input required type="text" name="customer[first_name]" id="first-name" {% if form.first_name %}value="{{ form.first_name }}"{% endif %} autocapitalize="words" autofocus />
+              </div>
+
+              <div class="control-wrapper">
+                <label for="last_name">{{'customer.register.last_name' | t }}</label>
+                <input required type="text" name="customer[last_name]" id="last-name" {% if form.last_name %}value="{{ form.last_name }}"{% endif %} autocapitalize="words"/>
+              </div>
+
+              <div class="control-wrapper{% if form.errors contains 'email' %} has-error{% endif %}">
+                <label for="email">{{'customer.register.email' | t }}<span class="req">*</span></label>
+                <input required type="email" value="{{ form.email }}" name="customer[email]" id="email"{% if form.errors contains 'email' %} class="error"{% endif %} />
+              </div>
+
+              <div class="control-wrapper{% if form.errors contains 'password' %} has-error{% endif %}">
+                <label for="password">{{'customer.register.password' | t }}<span class="req">*</span></label>
+                <input required type="password" value="" name="customer[password]" id="password" class="password{% if form.errors contains 'password' %} error{% endif %}" />
+              </div>
+
+              <div class="control-wrapper">
+                <button class="btn btn-1" type="submit">{{'customer.register.submit' | t }}</button>
+              </div>
+            {% endform %}
+
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">&nbsp;</div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+  if (window.location.hash == '#recover') { showRecoverPasswordForm(); }
+
+  function showRecoverPasswordForm() {
+    $('#recover-password').fadeIn();
+    $('#customer-login-form').hide();
+    window.location.hash = '#recover';
+    return false;
+  }
+
+  function hideRecoverPasswordForm() {
+    $('#recover-password').hide();
+    $('#customer-login-form').fadeIn();
+    window.location.hash = '';
+    return false;
+  }
+</script>

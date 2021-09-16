@@ -1,0 +1,350 @@
+{% if section.settings.show_breabcrumb and settings.show_breabcrumb %}{% include 'breadcrumb' %}{% endif %}
+{% assign _lazyload = settings.use_lazyload %}
+<div class="page-contact">
+  <div class="container">
+    <div id="col-main" class="page-contact-content">
+
+      {% unless page.content == blank %}
+      <div class="page-content">{{ page.content }}</div>
+      {% endunless %}
+
+      {% if section.settings.show_content %}
+      <div class="vendor-banner">
+        <div class="wpb_wrapper">
+
+          {% assign _color       = section.settings.text_color %}
+          {% assign _image       = section.settings.image %}
+          {% assign _link        = section.settings.link %}
+          {% assign _heading     = section.settings.image_title %}
+          {% assign _caption     = section.settings.image_caption %}
+          {% assign _button_text = section.settings.button_text %}
+
+
+          {% unless _image == blank %}
+            {% include 'image-style' with image: _image, image_size: '1170x' %}
+
+            <div class="wrap-text">
+              {% unless _heading == blank %}<span class="heading">{{ _heading }}</span>{% endunless %}
+              {% unless _caption == blank %}<p class="caption">{{ _caption }}</p>{% endunless %}
+              {% unless _button_text == blank %}<a class="btn btn-1" href="{{ _link }}">{{ _button_text }}</a>{% endunless %}
+            </div>
+
+          {% else %}
+            {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+          {% endunless %}
+
+          <style type="text/css">
+              .wrap-text .heading,
+              .wrap-text .caption {
+                color: {{ _color }};
+              }
+              .wpb_wrapper:after {
+                border-color: {{ _color }};
+              }
+            </style>
+
+        </div>
+      </div>
+      {% endif %}
+
+      {% if section.blocks.size > 0 %}
+      <div class="vendor-stores">
+
+        {% for block in section.blocks %}
+          {% assign _image          = block.settings.image %}
+          {% assign _image_size     = block.settings.image_size %}
+          {% assign _vendor_name    = block.settings.vendor_name %}
+          {% assign _star_rating    = block.settings.rating_star %}
+          {% assign _number_rating  = block.settings.rating_number %}
+          {% assign _store_address  = block.settings.store_address %}
+          {% assign _about_vendor   = block.settings.about_vendor %}
+          {% assign _button_text    = block.settings.button_text %}
+          {% assign _link           = block.settings.link %}
+
+          {% if _link == blank %}
+            {% assign v_n = _vendor_name | url_param_escape  %}
+            {% assign _link = '/collections/vendors?q=' | append: v_n %}
+          {% endif %}
+
+          <div class="row">
+
+            <div class="vendor-image col-md-lg-2 col-md-2 d-none d-md-block">
+              <div class="vendor-image-inner">
+
+                {% unless _image == blank %}
+                  <div class="vendor-icon">
+                    <img src="{{ _image | img_url: _image_size }}" alt="Vendor Icon" />
+                  </div>
+                {% endunless %}
+
+                {% if block.settings.social_icons %}
+                  <div class="socials-container">
+                    <ul class="social-icons">
+                      {% unless block.settings.facebook_link == blank %}<li><a href="{{ block.settings.facebook_link }}" target="_blank"><i class="demo-icon icon-facebook"></i></a></li>{% endunless %}
+                      {% unless block.settings.instagram_link == blank %}<li><a href="{{ block.settings.instagram_link }}" target="_blank"><i class="demo-icon icon-instagram"></i></a></li>{% endunless %}
+                      {% unless block.settings.twitter_link == blank %}<li><a href="{{ block.settings.twitter_link }}" target="_blank"><i class="demo-icon icon-twitter"></i></a></li>{% endunless %}
+                      {% unless block.settings.google_link == blank %}<li><a href="{{ block.settings.google_link }}" target="_blank"><i class="demo-icon icon-google"></i></a></li>{% endunless %}
+                      {% unless block.settings.youtube_link== blank %}<li><a href="{{ block.settings.youtube_link }}" target="_blank"><i class="demo-icon icon-youtube"></i></a></li>{% endunless %}
+                      {% unless block.settings.linkedin_link == blank %}<li><a href="{{ block.settings.linkedin_link }}" target="_blank"><i class="demo-icon icon-linkedin"></i></a></li>{% endunless %}
+                    </ul>
+                    <i class="demo-icon icon-share-1"></i>
+                  </div>
+                {% endif %}
+
+              </div>
+            </div>
+
+            <div class="vendor-description col-md-lg-4 col-md-4 col-sm-12 col-12">
+              <div class="vendor-description-inner">
+                {% unless _vendor_name == blank %}<h4>{{ _vendor_name }}</h4>{% endunless %}
+
+                <span class="rating-container {{ _star_rating }}-star">
+                  {% case _star_rating %}
+                    {% when 1 %}
+                      <i class="demo-icon icon-star"></i><i class="demo-icon icon-star-empty"></i><i class="demo-icon icon-star-empty"></i><i class="demo-icon icon-star-empty"></i><i class="demo-icon icon-star-empty"></i>
+                    {% when 2 %}
+                      <i class="demo-icon icon-star"></i><i class="demo-icon icon-star"></i><i class="demo-icon icon-star-empty"></i><i class="demo-icon icon-star-empty"></i><i class="demo-icon icon-star-empty"></i>
+                    {% when 3 %}
+                      <i class="demo-icon icon-star"></i><i class="demo-icon icon-star"></i><i class="demo-icon icon-star"></i><i class="demo-icon icon-star-empty"></i><i class="demo-icon icon-star-empty"></i>
+                    {% when 4 %}
+                      <i class="demo-icon icon-star"></i><i class="demo-icon icon-star"></i><i class="demo-icon icon-star"></i><i class="demo-icon icon-star"></i><i class="demo-icon icon-star-empty"></i>
+                    {% else %}
+                      <i class="demo-icon icon-star"></i><i class="demo-icon icon-star"></i><i class="demo-icon icon-star"></i><i class="demo-icon icon-star"></i><i class="demo-icon icon-star"></i>
+                  {% endcase %}
+                  ( {{ _number_rating }}{% if _number_rating == '1' %} rating{% else %} ratings{% endif %} )
+                </span>
+
+                {% unless _store_address == blank %}<span class="vendor-address"><i class="demo-icon icon-location"></i>{{ _store_address }}</span>{% endunless %}
+
+                {% unless _vendor_name == blank and _about_vendor == blank %}
+                  <div class="short-vendor-description">
+                    {% unless _vendor_name == blank %}<h4>About "{{ _vendor_name }}"</h4>{% endunless %}
+                    {% unless _about_vendor == blank %}<div class="description">{{ _about_vendor }}</div>{% endunless %}
+                  </div>
+                {% endunless %}
+
+                {% unless _button_text == blank %}<a class="btn btn-1" href="{{ _link }}" target="_blank" rel="noopener">{{ _button_text }}</a>{% endunless %}
+
+              </div>
+            </div>
+
+            <div class="vendor-products col-md-lg-4 col-md-6 col-sm-12 col-12">
+              <div class="vendor-products-inner">
+                {%- assign _collection = 'all' -%}
+                {%- assign i = 0 -%}
+
+                {%- if _link contains 'collections' -%}
+                  {%- assign _link_last = _link | split: "/" | last -%}
+                  {%- unless _link_last contains '?' -%}
+                    {%- assign _collection = _link_last -%}
+                  {%- endunless -%}
+                {%- endif -%}
+
+                {%- for product in collections[_collection].products -%}
+  {% if product.object_type == 'product' and product.type == 'SHOPSTORM_HIDDEN_PRODUCT' %}{% continue %}{% endif %}
+
+  {% if product.object_type == 'product' and product.type == 'SHOPSTORM_HIDDEN_PRODUCT' %}{% continue %}{% endif %}
+
+                  {%- capture p_vendor -%}{{ product.vendor | downcase }}{%- endcapture -%}
+                  {%- capture vendor -%}{{ _vendor_name | downcase }}{%- endcapture -%}                  
+                  {%- if p_vendor == vendor -%}
+                    {%- assign i = i | plus: 1 -%}
+                    {%- unless i > 6 -%}
+                    {% comment %}{%- if product.images.size >= 1 -%}
+                        <div class="product-img" data-number="{{ i }}">
+                          {% include 'image-style' with image: product.featured_image, image_size: '160x' %}
+                        </div>
+                      {%- endif -%}{% endcomment %}
+                      <div class="product-img" data-number="{{ i }}">
+                        <a href="{{product.url}}">
+                        {%- capture _img -%}{%- if product.images.size >= 1 -%}{{ product.featured_image | product_img_url: '160x' }}{%- else -%}{{ 'default-image.jpg' | asset_url }}{%- endif -%}{%- endcapture -%}
+                        {% include 'image-style' with image: product.images[1], image_size: '390x', _type: 'product' %}
+                        </a>
+                      </div>
+                    {%- endunless -%}
+                  {%- endif -%}
+                {%- endfor -%}
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+
+      </div>
+      {% endif %}
+
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+   "name":"Vendor Page",
+   "settings":[
+      {
+         "type":"checkbox",
+         "id":"show_breabcrumb",
+         "label":"Show Breadcrumb",
+         "default":true
+      },
+      {
+         "type":"image_picker",
+         "id":"breadcrumb_image",
+         "label":"Breadcrumb image"
+      },
+      {
+         "type":"header",
+         "content":"Layout Content"
+      },
+      {
+         "type":"checkbox",
+         "id":"show_content",
+         "label":"Show layout content",
+         "default":true
+      },
+      {
+         "type":"image_picker",
+         "id":"image",
+         "label":"Image"
+      },
+      {
+         "type":"color",
+         "id":"text_color",
+         "label":"Text color",
+         "default":"#ffffff"
+      },
+      {
+         "type":"text",
+         "id":"image_title",
+         "label":"Heading",
+         "default":"Open Your Store"
+      },
+      {
+         "type":"text",
+         "id":"image_caption",
+         "label":"Caption",
+         "default":"Sell new unique and handcrafted products across 5500 categories."
+      },
+      {
+         "type":"text",
+         "id":"button_text",
+         "label":"Button Text",
+         "default":"BECOME A VENDOR"
+      },
+      {
+         "type":"url",
+         "id":"link",
+         "label":"Link to",
+         "default":"/collections"
+      }
+   ],
+   "blocks":[
+      {
+         "type":"image",
+         "name":"Vendor",
+         "settings":[
+            {
+               "type":"image_picker",
+               "id":"image",
+               "label":"Vendor image"
+            },
+            {
+               "type":"text",
+               "id":"image_size",
+               "label":"Image size (pixels)",
+               "default":"120x",
+               "info":"E.g 460x240 pixels"
+            },
+            {
+               "type":"text",
+               "id":"vendor_name",
+               "label":"Vendor Name",
+               "default":"New vendor's Shop"
+            },
+            {
+               "type":"range",
+               "id":"rating_star",
+               "label":"Star rating",
+               "default":5,
+               "min":1,
+               "max":5,
+               "step":1
+            },
+            {
+               "type":"text",
+               "id":"rating_number",
+               "label":"Number rating",
+               "default":"10"
+            },
+            {
+               "type":"textarea",
+               "id":"store_address",
+               "label":"Store address"
+            },
+            {
+               "type":"textarea",
+               "id":"about_vendor",
+               "label":"About vendor",
+               "default":"Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s"
+            },
+            {
+               "type":"text",
+               "id":"button_text",
+               "label":"Button Text",
+               "default":"Visit Store"
+            },
+            {
+               "type":"url",
+               "id":"link",
+               "label":"Link to"
+            },
+            {
+               "type":"header",
+               "content":"Social icons"
+            },
+            {
+               "type":"checkbox",
+               "id":"social_icons",
+               "label":"Show social icons",
+               "default":true
+            },
+            {
+               "type":"text",
+               "id":"facebook_link",
+               "label":"Facebook link",
+               "default":"https://facebook.com"
+            },
+            {
+               "type":"text",
+               "id":"instagram_link",
+               "label":"Instagram link",
+               "default":"https://instagram.com"
+            },
+            {
+               "type":"text",
+               "id":"twitter_link",
+               "label":"Twitter link",
+               "default":"https://twitter.com"
+            },
+            {
+               "type":"text",
+               "id":"google_link",
+               "label":"Google Plus link",
+               "default":"https://plus.google.com"
+            },
+            {
+               "type":"text",
+               "id":"youtube_link",
+               "label":"Youtube link",
+               "default":"https://youtube.com"
+            },
+            {
+               "type":"text",
+               "id":"linkedin_link",
+               "label":"Linkedin link",
+               "default":"https://linkedin.com"
+            }
+         ]
+      }
+   ]
+}
+{% endschema %}

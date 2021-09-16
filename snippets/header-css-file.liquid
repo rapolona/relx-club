@@ -1,0 +1,12 @@
+{{ 'vendors.css' | asset_url | stylesheet_tag }}
+{{ 'arenafont.css' | asset_url | stylesheet_tag }}
+{% if settings.enable_rtl %}
+{{ 'bootstrap-rtl.min.css' | asset_url | stylesheet_tag }}
+{% else %}
+{{ 'bootstrap.4x.css' | asset_url | stylesheet_tag }}
+{% endif %}
+{{ 'jquery.plugin.css' | asset_url | stylesheet_tag }}
+
+{% if template == index %}
+{{ 'instagram.min.css' | asset_url | stylesheet_tag }}	
+{% endif %}

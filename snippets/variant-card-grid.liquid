@@ -1,0 +1,128 @@
+
+
+<div align="center" class="grid-view-item{% unless variant.available %} grid-view-item--sold-out{% endunless %} product-card" data-product-card>
+  {% capture img_id %}ProductCardImage-{{ section.id }}-{{ product.id }}{% endcapture %}
+  {% capture wrapper_id %}ProductCardImageWrapper-{{ section.id }}-{{ product.id }}{% endcapture %}
+  {%- assign img_url = variant.image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+ 
+
+  <a class="grid-view-item__link grid-view-item__image-container full-width-link" href="{{ variant.url | within: collection }}">
+  <div class="product-card__image-with-placeholder-wrapper" data-image-with-placeholder-wrapper>
+    <div id="{{ wrapper_id }}" class="grid-view-item__image-wrapper product-card__image-wrapper js">
+      <div style="">
+        <img id="{{ img_id }}"
+              class="grid-view-item__image lazyload"
+              alt="{{ variant.image.alt }}"
+              data-src="{{ img_url }}"
+              data-widths="[360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048]"
+              data-aspectratio="{{ product.featured_image.aspect_ratio }}"
+              data-sizes="auto"
+              data-image>
+      </div>
+    </div>
+    <div class="placeholder-background placeholder-background--animation" data-image-placeholder></div>
+  </div>
+ 
+  
+  <noscript>
+    {% capture image_size %}{{ max_height }}x{{ max_height }}{% endcapture %}
+    <img class="grid-view-item__image" src="{{ variant.image.src | img_url: '400x400' }}" alt="{{ product.featured_image.alt }}" />
+  </noscript>
+    
+  </a>
+  
+  
+  
+  
+  
+  
+  
+ 
+  <div class="relx-collection-product-name">
+    <a class="grid-view-item__link grid-view-item__image-container full-width-link" href="{{ variant.url | within: collection }}">
+    	<p class="product-variant">{{variant[product_option_key]}}</p>
+    	<p class="product-title">{{ product.title }}</p>
+    </a>
+    <p class="product-price">
+      
+      <form action="/cart/add" method="post" enctype="multipart/form-data">
+        <div class="bold-bundles-product bold_bundles_product_loaded"></div>
+        <div class="relx-product-price">
+        {{ variant.price | money }}
+        <a href="javascript:void(0);" class="btn-add-cart btn-1 add-to-cart" title="Add to cart">
+        	<i class="demo-icon icon-cart-2"></i>
+        </a>
+        <select class="d-none" name="id">
+        	<option value="{{ variant.id }}">Default Title</option>
+        </select>
+        </div>
+      </form>
+    </p>
+    
+   </div>
+  
+  
+ 
+</div>
+
+
+<div stype="display: none !important; " class="page-cata{% if _layout == 'full' %} layout-full{% endif %} sidebar-{{_catalog_sb_placement}} {{ type }}"
+     data-logic="{{ _filter_logic }}"
+     data-mode-view="{{section.settings.show_col_gl}}"
+     data-section-type="collectionPage"
+     data-section-id="{{section.id}}"
+     {% unless section.settings.background_color == blank %} style="background: {{section.settings.background_color}}"{% endunless %}>
+
+  {% if _layout == 'boxed' %}<div class="container">{% endif %}
+    <div class="row">
+      {% if _catalog_sb_placement == 'left' %}{% include 'sidebar-catalog' %}{% endif %}
+
+      {% paginate collection.products by section.settings.item_per_page %}
+        <div class="{% if _catalog_sb_placement == 'none' %}col-12{% else %}{{ _main_class }}{% endif %}">
+
+          {% include 'include-subcollection' %}
+
+          {% if section.settings.col_des_position == 'top' and collection.description != blank %}
+            <div class="cata-description">{{ collection.description }}</div>
+          {% endif %}
+          
+          {% include 'cata-toolbar' %}
+
+          {% if _filter_pos == 'body_filter' %}
+            <div class="filter-component {{_filter_pos | replace: '_','-'}} {{ _filters_style }}">
+              <div class="filter-heading">
+                <span class="h4">{{'collections.general.filter_by' | t }}</span>
+                <a id="clear-all-filter" class="clear-filter hidden" style="float: right;" href="javascript:void(0);">{{'collections.general.clear_all' | t }}</a>
+              </div>
+              <div class="sb-filter-wrapper">
+                <div class="f-close{% if _filters_style != 'drawer' %} d-lg-none {% endif %}"><i class="demo-icon icon-delete"></i></div>
+
+                {% if section.settings.sb_filters == 'groups' %}
+                  {% for block in section.blocks %}
+                    {% if block.type == 'filter_group' %}
+                      {% include 'filter-group' %}
+                    {% endif %}
+                  {% endfor %}
+                {% else %}
+                  {% include 'filter-tag' %}
+                {% endif %}
+              </div>
+            </div>
+          {% endif %}
+          {% if banner_image_position == 'top' %}
+            <div class="collection_banner-images-top">
+            {% include 'image-gallery-layout' with _type: 'masonry',_padding_item: true %}
+            </div>
+          {% endif %}
+
+        </div>
+
+      {% endpaginate %}
+
+
+    </div>
+
+  {% if _layout == 'boxed' %}</div>{% endif %}
+</div>
+
+

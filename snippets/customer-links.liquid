@@ -1,0 +1,28 @@
+{% if shop.customer_accounts_enabled %}
+  <div class="customer-link d-none d-lg-block">
+
+    {% if customer %}
+      <a href="/account" title="{{ 'general.header.my_account' | t }}">
+        <span>{{ 'general.header.my_account' | t }}</span>
+      </a>
+    
+      <span class="or">/</span>    
+    
+      {{ 'general.header.logout' | t | customer_logout_link }}
+
+    {% else %}
+      <a href="/account/login" title="{{ 'general.header.login' | t }}">
+        <span>{{ 'general.header.login' | t }}</span>
+      </a>
+    
+      <span class="or">/</span> 
+    
+      <a href="/account/register" title="{{ 'general.header.register' | t }}">
+        <span>{{ 'general.header.register' | t }}</span>
+      </a>
+    
+    {% endif %}
+
+  </div>
+{% endif %}
+

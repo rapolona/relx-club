@@ -1,0 +1,270 @@
+{%- if section.blocks.size > 0 -%}
+   {% if section.settings.boxed_layout %}{% assign _layout = 'boxed' %}{% else %}{% assign _layout = 'full' %}{% endif %}
+   {% if section.settings.carousel_layout %}{% assign _type = 'carousel' %}{% else %}{% assign _type = 'row' %}{% endif %}
+   {% assign _lazyload            = settings.use_lazyload %}
+   {% assign _padding_item        = section.settings.padding_item %}
+   {% assign _background_style    = section.settings.background_type %}
+   {% assign _image_class         = '' %}
+   {% if section.settings.use_circle_image %}
+      {% assign _image_class = 'image-circle' %}
+   {% endif %}
+
+   {% include 'include-item-per-row' %}
+
+   {% capture background_section %}
+      {% if _background_style == 'color' %}
+        {% unless section.settings.background_color == blank %} style="background: {{section.settings.background_color}};"{% endunless %}
+      {% else %}
+      {%- assign bg_img = section.settings.background_image -%}
+         {% unless bg_img == blank %}
+         {% if _lazyload %}
+            data-bgset = "{{bg_img | img_url: '1920x'}} 1920w"
+         {% else %}
+            style="background: url({{bg_img | img_url: '1920x'}});"
+         {% endif %}
+         {% endunless %}
+      {% endif %}
+   {% endcapture %}
+
+   <div class="partner-wrapper layout-{{_layout }} section-show-{{section.id}}{% if _lazyload and _background_style == 'image' %} lazyload{% endif %}"
+        data-section-type="partner"
+        data-section-id="{{section.id}}"
+        {{background_section|strip}}>
+     {% if _layout == 'boxed' %}<div class="container">{% endif %}
+         {% include 'head-title' %}
+
+         <div class="widget-partner widget-partner-{{ section.id }} widget-partner-{{_type}}{% if _type == 'row' %} row{% endif %}" {% include 'include-carousel-attr' %}>
+            {% for block in section.blocks %}
+               <div class="partner-item item-{{block.id}} padding-{{_padding_item}}{% if _type == 'row' %} {{ items_class }}{% endif %}" {{ block.shopify_attributes }}>
+                  {% unless block.settings.image == blank %}
+                     <div class="item-content">
+                        <a href="{{ block.settings.link }}">
+                           {% include 'image-style' with image: block.settings.image, image_size: '230x',image_class: _image_class %}
+                        </a>
+                        {% if section.settings.use_text %}
+                           <div class="image-text"><a href="{{ block.settings.link }}">{{block.settings.text_image}}</a></div>
+                           <style>
+                              .partner-item.item-{{block.id}} .image-text a{
+                                 color: {{block.settings.text_color}};
+                                 background:{{block.settings.background_text}};
+                              }
+                           </style>
+                        {% endif %}
+                     </div>
+                  {% else %}
+                    <a href="/collections"><div class="partner-item">{{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}</div></a>
+                  {% endunless %}
+               </div>
+            {% endfor %}
+         </div>
+         
+     {% if _layout == 'boxed' %}</div>{% endif %}
+   </div>
+{%- endif -%}
+{% schema %}
+{
+   "name":"Partner Logo",
+   "settings":[
+      {
+         "type":"paragraph",
+         "content":"Created by 'Partner' section"
+      },
+      {
+         "type":"text",
+         "id":"title",
+         "label":"Section Label",
+         "default":"Lookbook"
+      },
+      {
+         "type":"header",
+         "content":"LAYOUT"
+      },
+      {
+         "type":"checkbox",
+         "id":"boxed_layout",
+         "label":"Boxed layout",
+         "default":true
+      },
+      {
+         "type"  :"select",
+         "id"     :"background_type",
+         "label" :"Background Style",
+         "options":[
+            {
+              "value": "color",
+              "label": "Color"
+            },
+            {
+              "value": "image",
+              "label": "Image"
+            }
+         ]
+      },
+      {
+         "type":"color",
+         "id":"background_color",
+         "label":"Background color"
+      },
+      {
+         "type"  :"image_picker",
+         "id"    :"background_image",
+         "label" :"Background Image"
+      },
+      {
+         "type":"header",
+         "content":"LAYOUT CONTENT"
+      },
+      {
+         "type":"checkbox",
+         "id":"use_circle_image",
+         "label":"Use Circle Image"
+      },
+      {
+         "type":"checkbox",
+         "id":"use_text",
+         "label":"Show text content"
+      },
+      {
+         "type":"checkbox",
+         "id":"padding_item",
+         "label":"Padding items",
+         "default":true
+      },         
+       {
+          "type"  :"text",
+          "id"    :"items_resp",
+          "label":"Responsive number of items",
+          "placeholder": "xl,lg,md,sm,xs",
+          "info": "You can define the number of slides to display for various breakpoint settings. e.g. 4 items on desktop, 3 items on tablet and 2 items on mobile. Input: 4,3,2. [Read more](https:\/\/help.arenacommerce.com\/customization\/grid.html)",
+          "default": "5,4,3,2"
+       },
+      {
+         "type":"header",
+         "content":"Heading content",
+         "info":"Blank to hide."
+      },
+      {
+         "type":"select",
+         "id":"heading_content_align",
+         "label":"Heading alignment",
+         "options":[
+            {
+               "value":"left",
+               "label":"Left"
+            },
+            {
+               "value":"center",
+               "label":"Center"
+            },
+            {
+               "value":"right",
+               "label":"Right"
+            }
+         ],
+         "default":"center"
+      },
+      {
+         "type":"text",
+         "id":"heading_text",
+         "label":"Heading"
+      },
+      {
+         "type":"text",
+         "id":"subheading_text",
+         "label":"Subheading"
+      },
+      {
+         "type":"header",
+         "content":"Carousel settings"
+      },
+      {
+         "type":"checkbox",
+         "id":"carousel_layout",
+         "label":"Enable Carousel Layout"
+      },
+      {
+         "type":"checkbox",
+         "id":"autoplay",
+         "label":"Enable Autoplay"
+      },
+      {
+         "type":"checkbox",
+         "id":"loop",
+         "label":"Enable Loop"
+      },
+      {
+         "type":"checkbox",
+         "id":"nav",
+         "label":"Show Next & Prev arrows",
+         "default":true
+      },
+      {
+         "type":"checkbox",
+         "id":"dot",
+         "label":"Show Dots",
+         "default":false
+      }
+   ],
+   "blocks":[
+      {
+         "type":"image",
+         "name":"Image",
+         "settings":[
+            {
+               "type":"image_picker",
+               "id":"image",
+               "label":"Image",
+               "info":"The default width is 230 pixels"
+            },
+            {
+               "type":"text",
+               "id":"text_image",
+               "label":"Label image",
+               "default":"Title"
+            },
+            {
+               "type":"url",
+               "id":"link",
+               "label":"Link",
+               "default":"/collections"
+            },
+            {
+               "type":"color",
+               "id":"text_color",
+               "label":"Text color",
+               "default":"#000000"
+            },
+            {
+               "type":"color",
+               "id":"background_text",
+               "label":"Background color",
+               "default":"#ffffff"
+            }
+         ]
+      }
+   ],
+   "presets":[
+      {
+         "name":"Lookbook",
+         "category":"Banner",
+         "blocks":[
+            {
+               "type":"image"
+            },
+            {
+               "type":"image"
+            },
+            {
+               "type":"image"
+            },
+            {
+               "type":"image"
+            },
+            {
+               "type":"image"
+            }
+         ]
+      }
+   ]
+}
+{% endschema %}

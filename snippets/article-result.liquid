@@ -1,0 +1,21 @@
+<article class="post-item">
+  <div class="post-item-inner">
+
+    <div class="post-image">
+      {% if product.image %}
+      {% assign image_alt = product.title | escape %}
+      {{ product | img_url: '1024x1024' | img_tag: image_alt | link_to: product.url }}
+      {% endif %}
+    </div>
+
+    <div class="post-content">
+      <div class="meta-data"><span>{{ product.created_at | date: "%b %d, %Y" }}</span></div>
+      <h2 class="post-title"><a  href="{{product.url}}">{{ product.title }}</a>  </h2>   
+      <div class="post-excerpt">{{ product.content | strip_html | truncatewords: 60 }}</div>      
+      <div class="post-to-link"><a class="link-to-post" href="{{article.url}}" title="{{ 'blogs.article.read_more' | t }}">{{ 'blogs.article.read_more' | t }}</a></div>
+      
+    </div>
+    
+  </div>
+
+</article>

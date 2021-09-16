@@ -1,0 +1,191 @@
+{% if settings.show_breabcrumb %}{% include 'breadcrumb' %}{% endif %}
+{% unless section.settings.store_api_key == blank %}
+
+  {% assign _api = 'https://maps.googleapis.com/maps/api/js?key=' | append: section.settings.store_api_key | append: '&libraries=places' %}
+  <script src="{{_api}}"></script>
+
+  <div id="store-locator">
+    <div class="container">
+      <div class="row">
+        <div id="panel" class="col-lg-4 col-12"></div>
+        <div class="col-lg-8 col-12">
+          <div id="map-canvas"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="{{ 'store-locator.min.js' | asset_url }}"></script>
+  {% comment %}<script src="{{ 'CustomGoogleMapMarker.js' | asset_url }}"></script>{% endcomment %}
+
+  <script>
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' === document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+
+
+    {% if section.settings.use_ip_location %}
+      let myLati,myLongi,myCountry;
+      jQuery.ajax  ({
+        url: 'https://get.geojs.io/v1/ip/geo.js',
+        type: 'POST',
+        dataType: 'jsonp',
+        success: function(location) {
+          myLati = location.latitude;
+          myLongi = location.longitude;
+          myCountry = location.country;
+        }
+      });
+      setTimeout(()=>{
+        $('#panel .location-search input').val(myCountry);
+      },3000)
+    {% endif %}
+
+    let initialize = ()=>{
+      var map = new google.maps.Map(document.getElementById('map-canvas'), {
+        {% if section.settings.use_ip_location %}
+        center: new google.maps.LatLng(myLati,myLongi),
+        {% else %}
+        center: new google.maps.LatLng({{ section.settings.contact_latlong }}),
+        {% endif %}
+        zoom: 10,
+        scrollwheel:true,
+        {% unless section.settings.store_style == blank %} styles: {{section.settings.store_style}}, {% endunless %}
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+      });
+
+      var panelDiv = document.getElementById('panel');
+
+      var data = new PlacesDataSource(map);
+
+      var view = new storeLocator.View(map, data);
+
+      view.createMarker = function(store) {
+       return new RichMarker({
+        position: store.getLocation(),
+        map: map,
+        draggable: false,
+        anchor: RichMarkerPosition.MIDDLE,
+        shadow:false,
+        content: '<i class="icon-location"></i>'
+      });
+     };
+
+
+      new storeLocator.Panel(panelDiv, {
+        view: view
+      });
+    }
+
+    google.maps.event.addDomListener(window, 'load', initialize);
+
+    function PlacesDataSource() {
+    }
+
+    PlacesDataSource.prototype.getStores = function(bounds, features, callback) {
+
+      var stores = [];
+      {% if section.blocks.size > 0 %}
+        {% for block in section.blocks %}
+          var latLng = new google.maps.LatLng({{block.settings.store_latlong}}) ;
+          var store = new storeLocator.Store('{{block.settings.title | handleize }}', latLng, null, {
+            title: "{{block.settings.title}}",
+            address: "{{block.settings.store_address | replace: ',','<br>' }}",
+            misc:`{{block.settings.store_features }}`
+          });
+
+          store.getInfoPanelContent = function() { // overide default info panel
+            var details = this.getDetails();
+            return '<div class="list-loca-stores"><i class="icon-location"></i><b>' + details.title + '</b><br>' + details.address + '</div>';
+          };
+
+          // store.getInfoWindowContent = function() {
+          //   var details = this.getDetails();  
+          //   return '<div class="store_overide">'+details.title+' </div>';
+          // };
+
+          stores.push(store);
+        {% endfor %}
+      {% endif %}
+
+
+      this.sortByDistance_(bounds.getCenter(),stores);
+
+      callback(stores);
+    };
+
+    PlacesDataSource.prototype.sortByDistance_ = function(latLng, stores) {
+      stores.sort(function(a, b) {
+        return a.distanceTo(latLng) - b.distanceTo(latLng);
+      });
+    };
+
+  </script>
+{% else %}
+  <p>{{ 'homepage.onboarding.no_content' | t }}</p>
+{% endunless %}
+
+   {% schema %}
+   {
+    "name": "Store Locator Page",
+    "settings": [
+    {
+      "type":"text",
+      "id":"store_api_key",
+      "label":"API Key",
+      "default":"AIzaSyCmqy8wIh9KCnj_WKXqaskSCM-AUpXd01Q",
+      "info": "[How to get API key?](https:\/\/goo.gl\/WgHYih)"
+    },
+    {
+      "type": "checkbox",
+      "id": "use_ip_location",
+      "label": "Geolocation service",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "contact_latlong",
+      "label": "Configure store locator",
+      "info": "When you disable 'Geolocation services'. Type by [Latitude and Longitude](http:\/\/latlong.net)",
+      "default": "51.514863, -0.133689"
+    },
+    {
+      "type":"textarea",
+      "id":"store_style",
+      "label":"Map style",
+      "info":"Add json data here. [How to get json data](http:\/\/snazzymaps.com)"
+    }
+    ],
+    "blocks":[
+    {
+      "type":"store",
+      "name":"Stores",
+      "settings":[
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Store name"
+      },
+      {
+        "type": "textarea",
+        "id": "store_address",
+        "label": "Store info"
+      },
+      {
+        "type": "textarea",
+        "id": "store_features",
+        "label": "Operating hour"
+      },
+      {
+        "type": "text",
+        "id": "store_latlong",
+        "label": "Store location",
+        "info": "Type by [Latitude and Longitude](http:\/\/latlong.net)"
+      }
+      ]
+    }
+    ]
+  }
+  {% endschema %}

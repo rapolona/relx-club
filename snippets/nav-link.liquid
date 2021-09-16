@@ -1,0 +1,143 @@
+<!--nav link-->
+{% assign _sal_menu_html = "" %}
+{% assign _new_menu_html = "" %}
+{% assign _hot_menu_html = "" %}
+
+{% capture _sal_label %}<span class="menu-label label-sal"><span class="sal-text">{{ 'general.header.menus.labels.sal' | t }}</span></span>{% endcapture %}
+{% capture _new_label %}<span class="menu-label label-new"><span class="new-text">{{ 'general.header.menus.labels.new' | t }}</span></span>{% endcapture %}
+{% capture _hot_label %}<span class="menu-label label-hot"><span class="hot-text">{{ 'general.header.menus.labels.hot' | t }}</span></span>{% endcapture %}
+
+{% if section.settings.enable_menu_sal_label %}{% assign _sal_menu_html = _sal_label %}{% endif %}
+{% if section.settings.enable_menu_new_label %}{% assign _hot_menu_html = _hot_label %}{% endif %}
+{% if section.settings.enable_menu_hot_label %}{% assign _new_menu_html = _new_label %}{% endif %}
+
+{% assign _sal_title = section.settings.menu_sal_label_title | newline_to_br | strip_newlines | split: '<br />' | uniq %}
+{% assign _new_title = section.settings.menu_new_label_title | newline_to_br | strip_newlines | split: '<br />' | uniq %}
+{% assign _hot_title = section.settings.menu_hot_label_title | newline_to_br | strip_newlines | split: '<br />' | uniq %}
+
+{% assign _work_titles = "" %}
+{% for _title in _sal_title %}
+  {% capture _striped_title %}{{  _title | strip }}{% endcapture %}
+    {% if _work_titles == blank %}
+    {% assign _work_titles = _striped_title %}
+  {% else %}
+    {% assign _work_titles = _work_titles | append: '[|||]' | append: _striped_title %}
+  {% endif %}
+{% endfor %}
+{% assign _sal_title = _work_titles | split: '[|||]' %}
+
+{% assign _work_titles = "" %}
+{% for _title in _new_title %}
+  {% capture _striped_title %}{{  _title | strip }}{% endcapture %}
+    {% if _work_titles == blank %}
+    {% assign _work_titles = _striped_title %}
+  {% else %}
+    {% assign _work_titles = _work_titles | append: '[|||]' | append: _striped_title %}
+  {% endif %}
+{% endfor %}
+{% assign _new_title = _work_titles | split: '[|||]' %}
+
+{% assign _work_titles = "" %}
+{% for _title in _hot_title %}
+  {% capture _striped_title %}{{  _title | strip }}{% endcapture %}
+    {% if _work_titles == blank %}
+    {% assign _work_titles = _striped_title %}
+  {% else %}
+    {% assign _work_titles = _work_titles | append: '[|||]' | append: _striped_title %}
+  {% endif %}
+{% endfor %}
+{% assign _hot_title = _work_titles | split: '[|||]' %}
+
+{% assign submenu = l.title | handleize %}
+{% if linklists[submenu].links.size > 0 %}
+
+  {% if section.settings.use_super_megamenu == false %}
+    {% include 'dropdown-menu' %}
+
+  {% else %}
+  {% assign have_super_menu = false %}
+
+    {% for block in section.blocks %}
+      {% assign super_menu_handle = block.settings.mega_navigation %}
+
+      {% if super_menu_handle == l.title %}
+        {% assign have_super_menu = true %}
+
+        {% if have_super_menu == true %}
+          {% assign number = forloop.index | plus: 1 %}
+
+          <li class="dropdown mega-menu{% if l.active %} active{% endif %} shopify-block-mega-element"{{block.shopify_attributes}}>
+            <a href="{{ l.url }}" class="dropdown-link"><span>{{ l.title }}</span>
+              <span class="expand"></span>
+              {% include 'include-label-handle' with l_title:l.title %}
+            </a>
+            {% if block.type == 'mega-menu' %}
+              {% include 'horizontal-mega-menu' %}
+            {% else %}
+              {% include 'horizontal-mega-menu-02' %}
+            {% endif %}
+          </li>
+
+        {% break %}
+        {% endif %}
+
+      {% endif %}
+
+    {% endfor %}
+
+  {% unless have_super_menu == true %}
+      {% include 'dropdown-menu' %}
+  {% endunless %}
+
+  {% endif %}
+
+{% else %}
+
+  {% if section.settings.use_super_megamenu == false %}
+    <li class="{% if l.active %}active{% endif %}">
+      <a href="{{ l.url }}"><span>{{ l.title }}</span>
+        {% include 'include-label-handle' with l_title:l.title %}
+      </a>
+    </li>
+
+  {% else %}
+
+  {% assign have_super_menu = false %}
+
+    {% for block in section.blocks %}
+      {% assign super_menu_handle = block.settings.mega_navigation %}
+
+      {% if super_menu_handle == l.title %}
+        {% assign have_super_menu = true %}
+
+        {% if have_super_menu == true %}
+          {% assign number = forloop.index | plus: 1 %}
+
+          <li class="dropdown mega-menu{% if l.active %} active{% endif %} shopify-block-mega-element"{{block.shopify_attributes}}>
+            <a href="{{ l.url }}" class="dropdown-link"><span>{{ l.title }}</span>
+              {% include 'include-label-handle' with l_title:l.title %}
+            </a>
+              <span class="expand"></span>
+            {% if block.type == 'mega-menu' %}
+              {% include 'horizontal-mega-menu' %}
+            {% else %}
+              {% include 'horizontal-mega-menu-02' %}
+            {% endif %}
+          </li>
+
+        {% break %}
+        {% endif %}
+
+      {% endif %}
+
+    {% endfor %}
+
+    {% unless have_super_menu == true %}
+        <li class="{% if l.active %}active{% endif %}">
+          <a href="{{ l.url }}"><span>{{ l.title }}</span>
+            {% include 'include-label-handle' with l_title:l.title %}
+          </a>
+        </li>
+    {% endunless %}
+  {% endif %}
+{% endif %}

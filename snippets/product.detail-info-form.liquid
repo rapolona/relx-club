@@ -1,0 +1,250 @@
+<!-- INCLUDE BY PRODUCT.DETAIL-INFO-FORM -->
+{% if product.available %}
+  {%- if product_layout_gallery -%}
+    <div class="product-info d-lg-none">
+        <div class="prod-title">
+          <h1 itemprop="name" content="{{ product.title }}" class="page-heading">{{product.title}}</h1>
+        </div>
+{% render 'judgeme_widgets', widget_type: 'judgeme_preview_badge', jm_style: '', concierge_install: true, product: product %}
+        <meta itemprop="priceCurrency" content="{{ shop.currency }}" />
+        {% if product_layout_gallery == blank %}{{product_reviews | strip }}{% endif %}
+        {% if product.available %}
+          <div class="group-price-sale">
+            <div class="product-price">
+              <div class="detail-price" itemprop="price" content="{{ bold_variant_price | divided_by: 100.00 }}">
+
+                {% if bold_compare_at_price_max > bold_price %}
+                 <span class="price">{{ bold_price | money }}</span>
+                 <del class="price-compare"> {{ bold_compare_at_price | money }}</del>
+                {% else %}
+                  <span class="price">{{ bold_price | money }}</span>
+                {% endif %}
+
+                <span class="t-price hide">{{ bold_price }}</span>
+              </div>
+              <div class="label-wrapper">{% include 'product-label' %}</div>
+            {%- unless section.settings.tax_text == blank -%}
+              <div class="price-tax">
+                {{-section.settings.tax_text-}}
+              </div>
+            {%- endunless -%}
+            </div>
+          </div>
+        {% endif %}
+        {% if product_layout_gallery != blank %}{{product_reviews | strip }}{% endif %}
+
+    </div>
+  {%- endif -%}
+  <div class="group-cw clearfix">
+    {% form 'product', product, class:'product-form product-action variants' %}
+
+      <div id="product-action-{{ product.id }}" class="options">
+
+        {% assign button_arr = settings.swatch_button | downcase %}
+        {% assign color_arr  = settings.swatch_color  | downcase %}
+        {% assign image_arr  = settings.swatch_image  | downcase %}
+
+        {% assign swatch_styles = button_arr | append: ' , ' | append: color_arr | append: ' , ' | append: image_arr %}
+
+        {% for option in product.options %}
+          {% assign _option = option | downcase %}
+          {% unless _option contains 'title' %}
+            {% if swatch_styles contains _option %}
+              {% assign is_color  = false %}
+              {% assign use_image = false %}
+
+              {% if image_arr contains _option %}
+
+                {% assign swatch_type = 'image' %}
+                {% assign swt_shape   = settings.image_swatch_shape %}
+                {% assign is_color    = true %}
+                {% assign use_image   = true %}
+              {% elsif color_arr contains _option %}
+
+                {% assign swatch_type = 'color' %}
+                {% assign swt_shape   = settings.color_swatch_shape %}
+                {% assign is_color    = true %}
+              {% else %}
+
+                {% assign swatch_type = 'button' %}
+                {% assign swt_shape   = settings.button_swatch_shape %}
+              {% endif %}
+              {% include 'swatch' with option, is_color: is_color, use_image: use_image, swatch_type: swatch_type, swt_shape: swt_shape %}
+            {% else %}
+              <script>
+                jQuery(window).on('load', function(){
+                  setTimeout(function(){jQuery('.selector-wrapper.{{_option}}').css('display','block');},300);
+                });
+              </script>
+            {% endif %}
+          {% endunless %}
+
+          {% if _option contains 'size'  %}
+            {%- render 'product.detail-snippet' ,type: 'size-chart' -%}
+          {% endif %}
+        {% endfor %}
+
+        <div class="variants-wrapper">
+          <select id="product-select-{{ product.id }}" name="id" class="hide">
+            {% for variant in product.variants %}
+{%- include 'bold-variant' with variant, hide_action: 'skip' -%}
+              {% if variant.available %}
+              <option {% if variant == bold_selected_or_first_available_variant %} selected="selected" {% endif %} value="{{ variant.id }}">{{ variant.title }}</option>
+              {% else %}
+              <option disabled="disabled">{{ variant.title }} - {{'products.product.sold_out' | t }}</option>
+              {% endif %}
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+      {% if section.settings.stock_enable %}
+          {% assign current_variant = bold_selected_or_first_available_variant %}
+{%- include 'bold-variant' with current_variant, output: 'none' -%}
+          <div id="ProductStock-{{ section.id }}" class="stock-variant{% unless current_variant.inventory_management and current_variant.inventory_quantity < 10 and current_variant.inventory_quantity > 0 or  current_variant.inventory_management and current_variant.inventory_quantity <= 0 and current_variant.incoming %} hide{% endunless %}">
+            {% if current_variant.inventory_management %}
+              {% if current_variant.inventory_quantity >= 10%}
+                <span>{{ 'products.product.available' | t }}: {{ 'products.product.in_stock' | t }}</span>
+              {% elsif current_variant.inventory_quantity < 10 and current_variant.inventory_quantity > 0 %}
+                {% assign qty = current_variant.inventory_quantity %}
+                <span>{{ 'products.product.stock_available' | t: count: qty }} </span>
+              {% elsif current_variant.inventory_quantity == 0 or current_variant.inventory_quantity < 0 and current_variant.incoming %}
+                {% if current_variant.available %}
+                  {% assign date = current_variant.next_incoming_date | date: "%B %-d, %Y" %}
+                  <span>{{ 'products.product.will_not_ship_until' | t: date: date  }}</span>
+                {% else %}
+                  {% assign date = current_variant.next_incoming_date | date: "%B %-d, %Y" %}
+                  <span>{{ 'products.product.will_be_in_stock_after' | t: date: date  }}</span>
+                {% endif %}
+              {% endif %}
+            {% endif %}
+          </div>
+      {% endif %}
+
+      <ul class="wrap-quantity-add-cart" id="variant-out">
+
+        <li class="quantity-product">
+          <label>{{ 'products.product.quantity' | t }}</label>
+          <div class="qty-wrapper">
+            <span class="qty-inner">
+              <span class="qty-down" title="Decrease" data-src="#quantity">
+                <i class="demo-icon icon-minus5"></i>
+              </span>
+            </span>
+            <input type="number" id="quantity" class="item-quantity" name="quantity" value="1" />
+            <span class="qty-inner">
+              <span class="qty-up" title="Increase" data-src="#quantity">
+                <i class="demo-icon icon-plus06"></i>
+              </span>
+            </span>
+          </div>
+        </li>
+
+
+        {% if section.settings.enable_pre_order_button %}
+          <li class="pre-order hide">
+            <button type="button" class="btn-pre-order btn btn-2{% if section.settings.shaking_cart %} shaking-cart{% endif %}" data-toggle="modal" data-target="#pre-order">
+              {{- 'products.product.pre_order' | t -}}
+            </button>
+          </li>
+        {% endif %}
+
+        <li class="action-button">
+          <button id="add-to-cart" class="add-to-cart btn btn-2{% if section.settings.shaking_cart %} shaking-cart{% endif %}" type="button">
+          <i class="demo-icon icon-{{icon_cart}}"></i>{{ 'products.product.add_to_cart' | t }}</button>
+        </li>
+      </ul>
+      {% if section.settings.enable_payment_button %}{% if product.metafields.product_customizer == empty %}{{ form | payment_button }}{% endif %}{% endif %}
+
+    {% endform %}
+  </div>
+
+{% else %}
+  <meta itemprop="price" content="{{ bold_price | divided_by: 100.00  }}"/>
+  <div class="variants-wrapper hide">
+    <select id="product-select-{{ product.id }}" name="id" class="hide">
+      <option disabled="disabled">None</option>
+    </select>
+  </div>
+  <div class="group-cw clearfix out-stock">
+    {% if section.settings.enable_pre_order_button %}
+      <div class="pre-order">
+        <button type="button" class="btn-pre-order btn btn-2{% if section.settings.shaking_cart %} shaking-cart{% endif %}" data-toggle="modal" data-target="#pre-order">
+          {{- 'products.product.pre_order' | t -}}
+        </button>
+      </div>
+    {% else %}
+      <button id="add-to-cart" class="sold-out btn btn-2" type="button">{{'products.product.out_stock' | t }}</button>
+    {% endif %}
+  </div>
+{% endif %}
+
+{% if section.settings.enable_pre_order_button %}
+  <div class="modal fade" id="pre-order" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-body">
+          {% form 'contact' %}
+
+            <span class="alert-pre-order{% if form.posted_successfully? %} success{% endif %}"></span>
+
+            <div id="pre-order-form">
+
+              <div class="form-group">
+                <label for="contactOrderName">{{'pre_order.form.name' | t }}</label>
+                <input type="text" id="contactOrderName" class="form-control" value="" name="contact[name]" autofocus>
+              </div>
+
+              <div class="form-group">
+                <label for="contactOrderEmail">{{'pre_order.form.email' | t }}</label>
+                <input required="" type="email" id="contactOrderEmail" class="form-control" value="" name="contact[email]">
+              </div>
+
+              <div class="form-group">
+                <label for="contactOrderphone">{{'pre_order.form.phone' | t }}</label>
+                <input type="text" id="contactOrderphone" class="form-control" value="" name="contact[phone]">
+              </div>
+
+              <div class="form-group">
+                <label for="product_name">{{'pre_order.form.prduct_name' | t }}</label>
+                <input id="product_name" class="form-control" value="{{ product.title }}" name="contact[product_name]" />
+              </div>
+
+              <div class="form-group">
+                <label for="contactOrderMessage">{{'pre_order.form.message' | t }}</label>
+                <textarea required="" id="contactOrderMessage" class="form-control" name="contact[body]"></textarea>
+              </div>
+
+              <div class="form-actions">
+                <button type="submit" class="btn btn-2">{{ 'products.product.pre_order' | t }}</button>
+              </div>
+            </div>
+
+          {% endform %}
+
+{%- render 'shappify-bdl-load-bundle' -%}
+
+        </div>
+      </div>
+    </div>
+  </div>
+{% endif %}
+
+<div class="product-sub-action">
+  <ul class="list-inline">
+    {% if settings.enable_product_wishlist %}
+      <li>
+        {% assign wishlist_link = pages["wishlist-page"].url %}
+        <a href="{{ wishlist_link }}" class="add-to-wishlist add-product-wishlist" data-handle-product="{{product.handle}}" title="{{ 'products.product.add_to_wishlist' | t }}"><i class="demo-icon {{ settings.wishlist_font_icon }}"></i>{{ 'products.product.add_to_wishlist' | t }}</a>
+      </li>
+    {% endif %}
+
+    {% if settings.enable_product_compare %}
+      <li>
+        <a href="javascript:void(0);"class="add-to-compare add-product-compare" data-handle-product="{{product.handle}}"{% if customer %} data-user="{{ customer.id }}"{% endif %} title="{{ 'products.product.add_compare' | t }}"><i class="demo-icon {{ settings.compare_font_icon }}"></i>{{ 'products.product.add_compare' | t }}</a>
+      </li>
+    {% endif %}
+  </ul>
+
+  {%- include 'fomo-notify' -%}
+</div>
+<!-- ========== -->

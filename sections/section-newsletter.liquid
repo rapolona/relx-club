@@ -1,0 +1,221 @@
+{% assign _lazyload = settings.use_lazyload %}
+{% if section.settings.boxed_layout %}{% assign _layout = 'boxed' %}{% else %}{% assign _layout = 'full' %}{% endif %}
+{% assign _title    = section.settings.heading_text %}
+{% assign _subtitle = section.settings.subheading_text %}
+{% assign _action   = section.settings.action %}
+
+<div id="newsletter-{{ section.id }}"
+     class="newsletter-section layout-{{ _layout }} section-show-{{section.id}}"      
+     data-section-type="newsletter"
+     data-section-id="{{section.id}}"
+     {% if section.settings.bg_style == 'color' %}style="background:{{section.settings.bg_color}};"{% endif %}>
+  {% if _layout == 'boxed' %}<div class="container">{% endif %}
+    {% if section.settings.bg_style == 'image' %}
+      <div class="bg-image{% if _lazyload %} lazyload{% endif %}"{% if _lazyload %}data-bgset="{{section.settings.bg_image | img_url: '1366x'}} 1366w, {{section.settings.bg_image | img_url: '1920x'}} 1920w"
+        {% else %}style="background:url({{ section.settings.bg_image | img_url: '1920x' }});"{% endif %}>
+      </div>
+    {% endif %}
+
+{% capture style %}
+{%- if settings.enable_rtl -%}
+right: {{section.settings.position | append:'%'}};width: {{section.settings.width}}%;position:relative;transform: translateX({{ section.settings.position | append:'%' }});  
+{%- else -%}
+left: {{section.settings.position | append:'%'}};width: {{section.settings.width}}%;position:relative;transform: translateX(-{{ section.settings.position | append:'%' }});  
+{%- endif -%}
+{% endcapture %}
+  <div class="newsletter-section-content text-center form-style-{{section.settings.style}}" style="{{style}}">
+    {% unless _title == blank and _subtitle == blank %}
+      <div class="title-wrapper">
+        {% unless _title == blank %}<p class="title h3">{{ _title }}</p>{% endunless %}
+        {% unless _subtitle == blank %}<p class="subtitle h5">{{ _subtitle }}</p>{% endunless %}
+      </div>
+    {% endunless %}
+    {%- if section.settings.action_type == 'mailchimp' -%}
+        <form id="mc-form-{{ section.id }}" class="mc-form form-wrapper-3" action="{{ _action }}" method="post" name="mc-embedded-subscribe-form-{{ section.id }}" target="_blank" rel="noopener">
+          <input class="input-block-level input-wrapper-3" type="email" name="EMAIL" placeholder="{{ section.settings.placeholder }}" required />
+          <button class="btn btn-newsletter btn-wrapper-3" type="submit">{{ section.settings.btn_text }}</button>
+        </form>
+      {%- else -%}
+        {% include 'include-klaviyo' %}
+    {%- endif -%}
+  </div>
+
+    {% if _layout == 'boxed' %}</div>{% endif %}
+</div>
+<style>
+  .section-show-{{section.id}}.newsletter-section .title-wrapper .title   { color:{{section.settings.heading_text_color}};    }
+  .section-show-{{section.id}}.newsletter-section .title-wrapper .subtitle{ color:{{section.settings.subheading_text_color}}; }
+  .section-show-{{section.id}}.newsletter-section .btn-newsletter    { background:{{section.settings.btn_bg_color}};          }
+</style>
+{% schema %}
+{
+   "name":"Newsletter",
+   "settings":[
+      {
+         "type":"paragraph",
+         "content":"Created by 'Newsletter' section"
+      },
+      {
+         "id":"title",
+         "type":"text",
+         "label":"Section Label",
+         "default":"Newsletter"
+      },
+      {
+         "type":"header",
+         "content":"LAYOUT"
+      },
+      {
+         "type":"checkbox",
+         "id":"boxed_layout",
+         "label":"Boxed layout",
+         "default":true
+      }, 
+      {
+         "type":"header",
+         "content":"BACKGROUND STYLE"
+      },
+      {
+         "type":"select",
+         "id":"bg_style",
+         "label":"Background Style",
+         "default":"color",
+         "options":[
+            {
+               "value":"color",
+               "label":"Color"
+            },
+            {
+               "value":"image",
+               "label":"Image"
+            }
+         ]
+      },
+      {
+         "type":"color",
+         "id":"bg_color",
+         "label":"Background color"
+      },
+      {
+         "type":"image_picker",
+         "id":"bg_image",
+         "label":"Background image"
+      },
+      {
+         "type":"header",
+         "content":"HEADING CONTENT"
+      },
+      {
+         "type":"text",
+         "id":"heading_text",
+         "label":"Heading",
+         "info":"Blank to hide.",
+         "default":"Sign up for Our Newsletter"
+      },
+      {
+         "type":"textarea",
+         "id":"subheading_text",
+         "label":"Subheading",
+         "info":"Blank to hide."
+      },
+      {
+         "type":"color",
+         "id":"heading_text_color",
+         "label":"Title color",
+         "default":"#000000"
+      },
+      {
+         "type":"color",
+         "id":"subheading_text_color",
+         "label":"Subtitle color",
+         "default":"#000000"
+      },
+      {
+         "type":"header",
+         "content":"LAYOUT CONTENT"
+      },
+      {
+         "type":"range",
+         "id":"width",
+         "label":"Width Form content",
+         "min":0,
+         "max":100,
+         "step":5,
+         "unit":"%",
+         "default":50
+      },
+      {
+         "type":"range",
+         "id":"position",
+         "label":"Horizontal position",
+         "min":0,
+         "max":100,
+         "step":5,
+         "unit":"%",
+         "default":50
+      },
+      {
+         "type"  :"select",
+         "id"    :"action_type",
+         "label" :"Form Type:",
+         "options":[
+           {
+             "value": "mailchimp",
+             "label": "Mailchimp"
+           },
+           {
+             "value": "klaviyo",
+             "label": "Klaviyo"
+           }
+         ],
+         "default":"mailchimp"
+      },
+      {
+         "type":"textarea",
+         "id":"action",
+         "label":"Form Action"
+      },
+      {
+         "type"  :"paragraph",
+         "content":"Mailchimp: [Where do I get my MailChimp Form Action](http:\/\/shopify.barrelny.com\/where-do-i-find-the-mailchimp-signup-url)"
+      },
+      {
+         "type"  :"paragraph",
+         "content":"KLAVIYO: Please copy the hidden input[name='g'] value from the KLAVIYO form and paste here."
+      },
+      {
+         "type":"range",
+         "id":"style",
+         "label":"Form style",
+         "min":1,
+         "max":3,
+         "step":1,
+         "default":1
+      },
+      {
+         "type":"text",
+         "id":"placeholder",
+         "label":"Placeholder",
+         "default":"Email Your Email"
+      },
+      {
+         "type":"text",
+         "id":"btn_text",
+         "label":"Button text",
+         "default":"Subscribe"
+      },
+      {
+         "type":"color",
+         "id":"btn_bg_color",
+         "label":"Button background color",
+         "default":"#000000"
+      }
+   ],
+   "presets":[
+      {
+         "name":"Newsletter",
+         "category":"Information"
+      }
+   ]
+}
+{% endschema %}

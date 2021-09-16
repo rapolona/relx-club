@@ -1,0 +1,30 @@
+<div class="listing-item container-fluid">
+  <div class="row">
+
+    <div class="sb-product-head col-4">
+      <a href="{{ product.url | within: sb_collection }}">
+        {% include 'image-style' with image: product.featured_image, image_size: '240x', _type: 'product', ratio: 'list' %}
+      </a>
+    </div>
+
+    <div class="sb-product-content col-8">
+      <div class="bp-content-inner">
+
+        {% if settings.product_review_type != 'none' %}
+        <div class="product-review">{% include 'include-reviews' with type: 'preview_badge' %}</div>
+        {% endif %}
+        <a href="{{ product.url | within: collection }}">{{ product.title }}</a> 
+        <div class="product-price">
+          {% if bold_compare_at_price and bold_price < bold_compare_at_price %}
+            <span class="price-sale">{{ bold_price | money }}</span>
+            <span class="price-compare"> {{ bold_compare_at_price | money }}</span>
+          {% else %}
+            <span class="price">{{ bold_price | money }}</span>
+          {% endif %}
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>

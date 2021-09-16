@@ -1,0 +1,107 @@
+{%- assign show_search  = section.settings.search -%}
+{%- assign show_cart    = section.settings.cart -%}
+{%- assign show_account = section.settings.account -%}
+{%- assign show_popup   = section.settings.show_popup -%}
+{%- assign search_type  = settings.search_type -%}
+
+{%- if show_search or show_account or show_popup or show_cart -%}
+  <ul class="list-inline">
+
+    {%- if show_search and settings.show_search and _header_style != 3 and _header_style != 5 and _header_style != 6 -%}
+        <li class="search-icon{% if search_type == 'drawer' %} search-drawer{% endif %}"{% if search_type == 'popup' %} data-toggle="modal" data-target="#searchModal"{% endif %}>
+          <a href="javascript:;">{% include 'include-list-icons', type: 'icon_type', f: 'search' %}</a>
+        </li>
+    {%- endif -%}
+
+    {%- if show_account -%}
+      <li class="m-customer-account">
+        {% include 'include-list-icons', type: 'icon_type', f: 'account' %}
+
+        <div class="popup-icons">
+          {% if shop.customer_accounts_enabled %}
+            {% if customer %}
+              <div class="account-login">
+                <a href="/account">{{ 'general.header.account_with_name' | t: name: customer.first_name }}</a>
+              </div>
+            {% else %}
+              <div class="account-signin">
+                <a href="/account/login">Login</a>
+              </div>
+              <div class="account-signup">
+                <a href="/account/register">Register</a>
+              </div>
+            {% endif %}
+          {% endif %}
+
+          {% if settings.enable_product_wishlist %}
+            {% assign wishlist_link = '/pages/wishlist-page'%}
+            <div class="wishlist-target">
+              <a href="{{ wishlist_link }}" class="num-items-in-wishlist show-wishlist" title="{{ 'general.header.wish_list' | t }}">
+                {{- 'general.header.wish_list' | t -}}
+              </a>
+            </div>
+          {% endif %}
+          {% if settings.enable_product_compare %}
+            {% assign i = 0 %}
+            {% for tags in customer.tags %}{% if tags contains 'compare--' %}{% assign i = i | plus: 1 %}{% endif %}{% endfor %}
+            {% assign compare_link = '/pages/compare-page'%}
+            <div class="compare-target">
+              <a href="{{compare_link}}" class="num-items-in-compare show-compare" title="{{'general.header.compare' | t }}">
+              {{- 'general.header.compare' | t -}}
+              </a>
+            </div>
+          {% endif %}
+          {% if shop.customer_accounts_enabled and customer %}
+            <div class="account-logout">
+              <a href="/account/logout">{{ 'general.header.logout' | t }}</a>
+            </div>
+          {% endif %}
+        </div>
+      </li>
+    {%- endif -%}
+
+    {%- if show_popup -%}
+      <li>
+        <div class="topbar-popup currency-{{settings.flag_currency}}">
+          <span class="topbar-config">{% include 'include-list-icons', type: 'icon_type', f: 'currency' %}</span>
+        </div>
+      </li>
+    {%- endif -%}
+    <li>
+      {% capture the_snippet_fave_icon_menu %}{% render 'ssw-widget-faveicon-menu' with product.id %}{% endcapture %}
+      {% unless the_snippet_fave_icon_menu contains 'Liquid error' %}
+      {{ the_snippet_fave_icon_menu }}
+      {% endunless %}  
+    </li>
+    {%- if show_cart -%}
+      <li class="top-cart-holder{% if settings.cart_styles == 'dropdown' %} hover-dropdown{% endif %}">
+        <div class="cart-target">
+          {% if settings.cart_styles == 'dropdown' %}
+            <a href="javascript:void(0);" class="basket dropdown-toggle" title="{{ 'general.header.cart_info.title' | t }}">
+              {% include 'include-list-icons', type: 'icon_type', f: 'cart' %}
+              <span class="number"><span class="n-item">{{ cart.item_count }}</span></span>
+            </a>
+            {% unless template contains 'cart' %}
+              <div class="cart-dd">
+                <form action="/cart" method="post">
+                  <div id="cart-info">
+                    <div id="cart-content" class="cart-content">
+                      <div class="loading"></div>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            {% endunless %}
+          {% else %}
+            <a href="javascript:void(0);" class="basket cart-toggle" title="{{ 'general.header.cart_info.title' | t }}">
+              {% include 'include-list-icons', type: 'icon_type', f: 'cart' %}
+              <span class="number"><span class="n-item">{{ cart.item_count }}</span></span>
+            </a>
+          {% endif %}
+
+        </div>
+      </li>
+    {%- endif -%}
+
+  </ul>
+{%- endif -%}

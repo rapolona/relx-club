@@ -1,0 +1,100 @@
+<!--nav link mobile -->
+{% assign submenu = l.title | handleize %}
+{% if linklists[submenu].links.size > 0 %}
+
+  {% if section.settings.use_super_megamenu == false %}
+    {% include 'dropdown-menu' %}
+
+  {% else %}
+  {% assign have_super_menu = false %}
+
+    {% for block in section.blocks %}
+      {% assign super_menu_handle = block.settings.mega_navigation %}
+
+      {% if super_menu_handle == l.title %}
+        {% assign have_super_menu = true %}
+
+        {% if have_super_menu == true %}
+          {% assign number = forloop.index | plus: 1 %}
+
+          <li class="dropdown mega-menu{% if l.active %} active{% endif %}">
+
+            <a href="{{ l.url }}" class="dropdown-link">
+              <span>{{ l.title }}</span>
+            </a>
+            <span class="expand"></span>
+
+            {% if block.type == 'mega-menu' %}
+              {% include 'horizontal-mega-menu' %}
+            {% else %}
+              {% include 'horizontal-mega-menu-mobile-02' %}
+            {% endif %}
+          </li>
+
+        {% break %}
+        {% endif %}
+
+      {% endif %}
+
+    {% endfor %}
+
+  {% unless have_super_menu == true %}
+      {% include 'dropdown-menu' %}
+  {% endunless %}  
+
+  {% endif %}
+
+{% else %}
+
+  {% if section.settings.use_super_megamenu == false %}
+    <li class="{% if l.active %}active{% endif %}">
+      <a href="{{ l.url }}">
+        <span>{{ l.title }}</span>        
+      </a>
+    </li>
+
+  {% else %}
+
+  {% assign have_super_menu = false %}
+
+    {% for block in section.blocks %}
+      {% assign super_menu_handle = block.settings.mega_navigation %}
+
+      {% if super_menu_handle == l.title %}
+        {% assign have_super_menu = true %}
+
+        {% if have_super_menu == true %}
+          {% assign number = forloop.index | plus: 1 %}
+
+          <li class="dropdown mega-menu{% if l.active %} active{% endif %}">
+
+            <a href="{{ l.url }}" class="dropdown-link">
+              <span>{{ l.title }}</span>
+            </a>
+            <span class="expand"></span>
+
+            {% if block.type == 'mega-menu' %}
+              {% include 'horizontal-mega-menu' %}
+            {% else %}
+              {% include 'horizontal-mega-menu-mobile-02' %}
+            {% endif %}
+          </li>
+
+        {% break %}
+        {% endif %}
+
+      {% endif %}
+
+    {% endfor %}
+
+  {% unless have_super_menu == true %}
+      <li class="{% if l.active %}active{% endif %}">
+        <a href="{{ l.url }}">
+          <span>{{ l.title }}</span>
+        </a>
+      </li>
+  {% endunless %}
+
+  {% endif %}
+
+{% endif %}

@@ -1,0 +1,83 @@
+
+{% assign light-color = settings.light_color %}
+{% assign dark-color = settings.dark_color %}
+
+{% capture menu_sale_label_color %}
+  {% assign color = settings.menu_sale_label_bg  %}
+  {% assign color_brightness = color | color_brightness %}
+  {% if color_brightness >= 129 %}
+    {{ dark-color }}
+  {% else %}
+    {{ light-color }}
+  {% endif %}
+{% endcapture %}
+
+{% capture menu_sale_hot_color %}
+  {% assign color = settings.menu_sale_hot_bg  %}
+  {% assign color_brightness = color | color_brightness %}
+  {% if color_brightness >= 129 %}
+    {{ dark-color }}
+  {% else %}
+    {{ light-color }}
+  {% endif %}
+{% endcapture %}
+
+{% capture menu_sale_new_color %}
+  {% assign color = settings.menu_sale_new_bg  %}
+  {% assign color_brightness = color | color_brightness %}
+  {% if color_brightness >= 129 %}
+    {{ dark-color }}
+  {% else %}
+    {{ light-color }}
+  {% endif %}
+{% endcapture %}
+
+{% capture btn1_txt %}
+  {% assign color = settings.btn1_bg  %}
+  {% assign color_brightness = color | color_brightness %}
+  {% if color_brightness >= 129 %}
+    {{ dark-color }}
+  {% else %}
+    {{ light-color }}
+  {% endif %}
+{% endcapture %}
+
+{% capture btn1_txt_hover %}
+  {% assign color = settings.btn1_bg_hover  %}
+  {% assign color_brightness = color | color_brightness %}
+  {% if color_brightness >= 129 %}
+    {{ dark-color }}
+  {% else %}
+    {{ light-color }}
+  {% endif %}
+{% endcapture %}
+
+{% capture btn2_text %}
+  {% assign color = settings.btn2_bg  %}
+  {% assign color_brightness = color | color_brightness %}
+  {% if color_brightness >= 129 %}
+    {{ dark-color }}
+  {% else %}
+    {{ light-color }}
+  {% endif %}
+{% endcapture %}
+
+{% capture btn2_text_hover %}
+  {% assign color = settings.btn2_bg_hover  %}
+  {% assign color_brightness = color | color_brightness %}
+  {% if color_brightness >= 129 %}
+    {{ dark-color }}
+  {% else %}
+    {{ light-color }}
+  {% endif %}
+{% endcapture %}
+
+{% capture text_collections_list %}
+  {% assign color = settings.body_link_color  %}
+  {% assign color_brightness = color | color_brightness %}
+  {% if color_brightness >= 129 %}
+    {{ dark-color }}
+  {% else %}
+    {{ light-color }}
+  {% endif %}
+{% endcapture %}

@@ -1,0 +1,26 @@
+{% assign img_size = '320x' %}
+{% assign bundle_featured_image = bold_selected_or_first_available_variant.featured_image | default: p_variant.featured_image %}
+<div class="bundled-product bundled-product-{{p_id}}" data-bundled="{{p_id}}" data-id="{{ bold_selected_or_first_available_variant.id }}">
+  <div class="pd-image">
+    <a href="{{p_variant.url}}">{% include 'image-style' with image:bundle_featured_image, image_size: img_size,_type: 'product' %}</a>
+  </div>
+
+  <div class="pb-title"><p class="h4"><a href="{{p_variant.url}}">{{ p_variant.title }}</a></p></div>
+  <div class="pb-price pb-price-{{p_id}}"><span class="price">{{bold_variant_price | money }}</span></div>
+  <div class="t-price t-price-{{p_id}} hide">{{ bold_variant_price }}</div>
+  {% if bold_variants_size > 1 %}
+    <div class="b-prod-select">
+      <select id="b-product-select-{{ p_variant.id }}" name="id">
+        {% for variant in p_variant.variants %}
+{%- include 'bold-variant' with variant, hide_action: 'skip' -%}
+          {% if variant.available %}
+            <option {% if variant == bold_selected_or_first_available_variant %} selected="selected" {% endif %}
+                  value="{{ variant.id }}" data-price="{{bold_variant_price }}">{{ variant.title }}</option>
+          {% else %}
+            <option disabled="disabled">{{ variant.title }} - {{'products.product.sold_out' | t }}</option>
+          {% endif %}
+        {% endfor %}
+      </select>
+    </div>
+  {% endif %}
+</div>

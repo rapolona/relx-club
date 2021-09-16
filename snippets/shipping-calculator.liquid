@@ -1,0 +1,79 @@
+<div id="shipping-calculator">
+  <div class="shipping">
+    
+    <h4>
+      <a href="#cart-shipping" data-toggle="collapse">
+        {{'cart.shipping_text.title' | t }}
+        <i class="demo-icon icon-angle-down float-right d-md-none"></i>
+      </a>
+    </h4>
+
+    <div class="shipping-calculator-form collapse" id="cart-shipping">
+
+      <div class="row">
+        <div class="control-wrapper col-12">
+          <select id="address_country" class="col-sm-12 col-xs-12" name="address[country]" data-default="{% if shop.customer_accounts_enabled and customer %}{{ customer.default_address.country }}{% elsif section.settings.shipping_text_default_country != '' %}{{ section.settings.shipping_text_default_country }}{% endif %}">{{ country_option_tags }}</select>
+        </div>
+        <div class="control-wrapper field col-sm-12 col-12" id="address_province_container" style="display:none;">
+          <select id="address_province" name="address[province]" data-default="{% if shop.customer_accounts_enabled and customer and customer.default_address.province != '' %}{{ customer.default_address.province }}{% endif %}"></select>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="control-wrapper col-12">
+          <input type="text" id="address_zip" name="address[zip]" placeholder="{{'cart.shipping_text.zip' | t}}"{% if shop.customer_accounts_enabled and customer %} value="{{ customer.default_address.zip }}"{% endif %} />
+        </div>
+      </div>
+      <div class="row">
+        <div class="control-wrapper col-12">
+          <input type="button" class="get-rates btn btn-3" value="{{'cart.shipping_text.submit_button' | t }}" />
+        </div>
+      </div>
+
+    <div id="wrapper-response"></div>
+    </div>
+
+    
+  </div>
+</div>
+
+<script id="shipping-calculator-response-template" type="text/template">
+  <p id="shipping-rates-feedback" <% if (success) { %> class="success" <% } else { %> class="error" <% } %>>
+  <% if (success) { %>
+    <% if (rates.length > 1) { %> 
+    There are <%= rates.length %> shipping rates available for <%= address %>, starting at <%= rates[0].price %>.
+    <% } else if (rates.length == 1) { %>
+    There is one shipping rate available for <%= address %>.
+    <% } else { %>
+    We do not ship to this destination.
+    <% } %>
+  <% } else { %>
+    <%= errorFeedback %>
+  <% } %>
+  </p>
+  <ul id="shipping-rates">
+    <% for (var i=0; i<rates.length; i++) { %>
+    <li><%= rates[i].name %> at <%= rates[i].price %></li>
+    <% } %>
+  </ul> 
+</script>
+
+<!--[if lte IE 8]> 
+<style> #shipping-calculator { display: none; } </style> 
+<![endif]--> 
+
+{{ '//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.7.0/underscore-min.js' | script_tag }}
+{{ '/services/javascripts/countries.js' | script_tag }}
+{{ 'shopify_common.js' | shopify_asset_url | script_tag }}
+{{ 'jquery.cart.min.js' | asset_url | script_tag }}
+
+<script>
+
+Shopify.Cart.ShippingCalculator.show( {
+  submitButton: {{ 'cart.shipping_text.submit_button' | t | json }}, 
+  submitButtonDisabled: {{  section.settings.shipping_text_submit_button_label_disabled | default: 'Calculating...' | json }}{% if customer %},
+  customerIsLoggedIn: true{% endif %},
+  moneyFormat: {{ shop.money_with_currency_format | json }}
+} );
+
+</script>

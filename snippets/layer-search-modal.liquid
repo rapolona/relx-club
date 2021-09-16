@@ -1,0 +1,83 @@
+{% if settings.show_search %} 
+  {%- capture search_quick_link -%}
+    {%- unless settings.quick_menu == blank -%}
+    <div class="search-quick-menu">
+      <p>{{'search.general.quick_link' | t }}</p>
+      <ul class="menu-list">{% for l in linklists[settings.quick_menu].links %}{% include 'nav-link' %}{% endfor %}</ul>
+    </div>
+    {%- endunless -%}
+  {%- endcapture -%} 
+
+  {%- if type == 'search_template' -%}
+  
+    <form class="navbar-form search" action="/search" method="get">
+      <input type="hidden" name="type" value="{%- if settings.search_option == 'products' -%}product{%- endif -%}"/>
+      <input type="hidden" name="options[unavailable_products]" value="hide"/>
+      <input type="hidden" name="options[prefix]" value="last"/>
+      <input type="text" name="q" class="form-control" placeholder="{{ 'general.text.search_placeholder' | t }}" autocomplete="off" value=""/>
+      <button type="submit" class="search-icon">{% include 'include-list-icons', type: 'icon_type', f: 'search' %}</button>
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><i class="demo-icon icon-delete"></i></button>
+    </form>
+    <div class="result-ajax-search"><ul class="search-results"></ul></div>
+    {{search_quick_link}}
+
+
+  {%- else -%}  
+    {% if settings.search_type == 'popup' %}
+      <div class="modal fade" id="searchModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog">
+          <div class="searchbox modal-content">
+
+            <div class="content-wrapper container">
+              <form id="search" class="navbar-form search" action="/search" method="get">
+                <input type="hidden" name="type" value="{%- if settings.search_option == 'products' -%}product{%- endif -%}"/>
+                <input type="hidden" name="options[unavailable_products]" value="hide"/>
+                <input type="hidden" name="options[prefix]" value="last"/>
+                <input id="bc-product-search" name="q" type="text" class="form-control"  placeholder="{{ 'general.text.search_placeholder' | t }}" autocomplete="off" />
+                <button type="submit" class="search-icon">
+                  {% include 'include-list-icons', type: 'icon_type', f: 'search' %}
+                </button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><i class="demo-icon icon-delete"></i></button>
+              </form>
+              <div class="result-ajax-search">
+                <ul class="search-results"></ul>
+              </div>
+              {{search_quick_link}}
+            </div>
+          </div>
+        </div>
+      </div>
+      <script>
+        jQuery(document).ready(function($) {
+          $('#searchModal').on('shown.bs.modal', function () {
+            jQuery('#bc-product-search').focus();
+            jQuery('.search-quick-menu').show();
+          })
+        });
+      </script>
+
+    {% else %}
+      <div id="searchModal" class="search-drawer-target">
+        <div class="search-drawer-wrapper">
+          <div class="searchbox search-drawer-content">
+            <button type="button" class="close"><i class="demo-icon icon-delete"></i></button>
+            <p class="h4">{{ 'search.general.search_title' | t }}</p>
+            <div class="content-wrapper">
+              <form id="search" class="navbar-form search" action="/search" method="get">
+                <input type="hidden" name="type" value="{%- if settings.search_option == 'products' -%}product{%- endif -%}"/>
+                <input type="hidden" name="options[unavailable_products]" value="hide"/>
+                <input type="hidden" name="options[prefix]" value="last"/>
+                <input id="bc-product-search" type="text" name="q" class="form-control"  placeholder="" autocomplete="off" />
+                <button type="submit" class="search-icon">{% include 'include-list-icons', type: 'icon_type', f: 'search' %}</button>
+              </form>
+              <div class="result-ajax-search">
+                <ul class="search-results"></ul>
+              </div>
+              {{search_quick_link}}
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+  {%- endif -%}
+{% endif %}

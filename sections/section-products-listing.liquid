@@ -1,0 +1,251 @@
+{% if section.blocks.size > 0 %}
+  {% assign _lazyload = settings.use_lazyload %}
+  {% if section.settings.boxed_layout %}{% assign _layout = 'boxed' %}{% else %}{% assign _layout = 'full' %}{% endif %}
+  {% if section.settings.carousel_layout %}{% assign _block_type = 'carousel' %}{% else %}{% assign _block_type = 'row' %}{% endif %}
+  {% assign _limit = section.settings.limited %}
+
+  {% assign _item_per_row = section.settings.item_per_row %}
+  {% assign _item_per_row_mobile = section.settings.item_per_row_mobile %}
+
+  {% capture emptyProduct %}
+    {% for i in (1.._limit)  %}
+      <div class="listing-item">
+        <div class="row">
+
+          <div class="product-image col-md-5 col-sm-5 col-6">
+            {% capture current %}{% cycle 1, 2, 3, 4, 5, 6 %}{% endcapture %}
+            {{ 'product-' | append: current | placeholder_svg_tag: 'placeholder-svg' }}
+          </div>
+
+          <div class="product-content col-md-7 col-sm-7 col-6">
+            <div class="product-content-inner">
+              <a>{{ 'homepage.onboarding.product_title' | t }}</a>
+              <div class="product-price"><span class="price">{{ 1999 | money }}</span></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    {% endfor %}
+  {% endcapture %}
+
+  <div id="product-listing{{ section.id }}" 
+       class="product-listing-section layout-{{_layout }} section-show-{{section.id}}"        
+       data-section-type="product-listing" 
+       data-section-id="{{section.id}}"
+       {% unless section.settings.background_color == blank %} style="background: {{section.settings.background_color}}"{% endunless %}>
+    {% if _layout == 'boxed' %}<div class="container">{% endif %}      
+      <div class="product-listing-items{% if section.settings.border_item %} border-pimage{% endif %}">
+        <div class="row">
+
+            {% for block in section.blocks %}
+
+              {%- assign collection = collections[block.settings.collection] -%}
+              {%- assign _title = block.settings.title -%}
+
+              {% case _item_per_row %}
+                {% when 1 %}
+                  {% assign _product_col = "col-md-12" %}
+                {% when 2 %}
+                  {% assign _product_col = "col-md-6" %}
+                {% when 3 %}
+                  {% assign _product_col = "col-md-4" %}
+                {% when 4 %}
+                  {% assign _product_col = "col-md-3" %}
+                {% else %}
+                  {% assign _product_col = "col-md-5th" %}
+              {% endcase %}
+
+              {% case _item_per_row_mobile %}
+                {% when 1 %}
+                  {% assign _product_col_mod = "col-12" %}
+                {% when 2 %}
+                  {% assign _product_col_mod = "col-6" %}
+                {% when 3 %}
+                  {% assign _product_col_mob = "col-4" %}
+                {% when 4 %}
+                  {% assign _product_col_mob = "col-3" %}
+                {% else %}
+                  {% assign _product_col_mob = "col-5th" %}
+              {% endcase %}
+
+              <div class="{{_product_col}} {{_product_col_mod}}">
+                {% unless block.settings.collection == blank or collection.products_count == 0 %}
+                  <div class="listing-title list-{{_block_type}}">
+                    <p class="prod-listing h4">{% unless _title == blank %}{{ _title }}{% else %}{{ collection.title }}{% endunless %}</p>
+                  </div>
+                  
+                  {% if _block_type == 'row' %}
+                    <div class="listing-items-col">
+                      {% for product in collection.products limit: _limit %}
+  {% if product.object_type == 'product' and product.type == 'SHOPSTORM_HIDDEN_PRODUCT' %}{% continue %}{% endif %}
+
+  {% if product.object_type == 'product' and product.type == 'SHOPSTORM_HIDDEN_PRODUCT' %}{% continue %}{% endif %}
+
+{%- include 'bold-product' with product, hide_action: 'skip' -%}
+
+                        {% include 'products-listing-item' %}
+                      {% endfor %}
+                    </div>
+
+                  {% else %}
+                    <div class="listing-items-col listing-block-carousel" data-owl-xs="1" data-nav="true">
+
+                      <div class="plist--item">
+
+                        {% assign index = 1 %}
+
+                        {% for product in collection.products limit: section.settings.limited_carousel %}
+  {% if product.object_type == 'product' and product.type == 'SHOPSTORM_HIDDEN_PRODUCT' %}{% continue %}{% endif %}
+
+  {% if product.object_type == 'product' and product.type == 'SHOPSTORM_HIDDEN_PRODUCT' %}{% continue %}{% endif %}
+
+{%- include 'bold-product' with product, hide_action: 'skip' -%}
+
+                          {% include 'products-listing-item' %}
+
+                          {% if index == _limit and forloop.last == false %}
+                            </div>
+                            <div class="plist--item">
+                            {% assign index = 1 %}
+                          {% elsif forloop.last %}
+                            </div>
+                          {% else %}
+                            {% assign index = index | plus: 1 %}
+                          {% endif %}
+
+                        {% endfor %}
+
+                      </div>
+                  {% endif %}
+
+                {% else %}
+                  <p class="h4">{% unless _title == blank %}{{ _title }}{% else %}{{ 'homepage.onboarding.products_listing_title' | t }}{% endunless %}</p>
+                  {{ emptyProduct }}
+                {% endunless%}
+              </div>
+            {% endfor %}
+        </div>
+      </div>
+    {% if _layout == 'boxed' %}</div>{% endif %}
+  </div>
+  {% endif %}
+{% schema %}
+{
+   "name":"Products Listing",
+   "max_blocks":6,
+   "settings":[
+      {
+         "type":"paragraph",
+         "content":"Created by 'Products Listing' section"
+      },
+      {
+         "type":"text",
+         "id":"title",
+         "label":"Section Label",
+         "default":"Products Listing"
+      },
+      {
+         "type":"header",
+         "content":"LAYOUT"
+      },
+      {
+         "type":"checkbox",
+         "id":"boxed_layout",
+         "label":"Boxed layout",
+         "default":true
+      },
+      {
+        "type": "color",
+        "id": "background_color",
+        "label": "Background color"
+      },
+      {
+         "type"  :"checkbox",
+         "id"    :"border_item",
+         "label" :"Show Border Product Image"
+      }, 
+      {
+         "type":"range",
+         "id":"item_per_row",
+         "label":"Desktop: Columns to show",
+         "min":1,
+         "max":6,
+         "default":3,
+         "step":1
+      },
+      {
+         "type":"range",
+         "id":"item_per_row_mobile",
+         "label":"Mobile: Columns to show",
+         "min":1,
+         "max":5,
+         "default":1,
+         "step":1
+      },
+      {
+         "type":"range",
+         "id":"limited",
+         "label":"Items per column",
+         "min":2,
+         "max":5,
+         "default":3,
+         "step":1
+      },
+      {
+         "type":"header",
+         "content":"Carousel settings"
+      },
+      {
+         "type":"checkbox",
+         "id":"carousel_layout",
+         "label":"Enable Carousel Layout"
+      },
+      {
+         "type":"range",
+         "id":"limited_carousel",
+         "label":"Limited items for each collection",
+         "min":1,
+         "max":20,
+         "default":15,
+         "step":1
+      }
+   ],
+   "blocks":[
+      {
+         "type":"collection",
+         "name":"Collection",
+         "settings":[
+            {
+               "type":"text",
+               "id":"title",
+               "label":"Title",
+               "default":"Featured products"
+            },
+            {
+               "id":"collection",
+               "type":"collection",
+               "label":"Collection item"
+            }
+         ]
+      }
+   ],
+   "presets":[
+      {
+         "name":"Products Listing",
+         "category":"Collection",
+         "blocks":[
+            {
+               "type":"collection"
+            },
+            {
+               "type":"collection"
+            },
+            {
+               "type":"collection"
+            }
+         ]
+      }
+   ]
+}
+{% endschema %}

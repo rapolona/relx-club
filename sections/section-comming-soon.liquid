@@ -1,0 +1,359 @@
+{% assign _hide_mobile     = section.settings.hide_mobile %}
+{% assign _lazyload        = settings.use_lazyload %}
+{% assign _layout          = section.settings.layout %}
+{% assign _type            = section.settings.type %}
+{% assign _effect          = section.settings.effect %}
+{% assign _bg_color        = section.settings.bg_color -%}  
+{% assign _text_style      = section.settings.text_style %}
+{% assign _image           = section.settings.image %}
+{% assign _image_size      = section.settings.image_size %}
+{% assign _title           = section.settings.image_title %}
+{% assign _title_color     = section.settings.title_color %}
+{% assign _title_size      = section.settings.title_size %}
+{% assign _subtitle        = section.settings.subtitle %}
+{% assign _subtitle_color  = section.settings.subtitle_color %}
+{% assign _subtitle_size   = section.settings.subtitle_size %}
+{% assign _offer           = section.settings.offer %}
+{% assign _offer_color     = section.settings.offer_color %}
+{% assign _offer_size      = section.settings.offer_size %}
+{% assign _expire          = section.settings.expire %}
+{% assign _banner_class    = section.settings.banner_class %}
+
+{% if _layout == 'full' %}
+      {%- assign _banner_size = "1920x" -%}
+{% else %}
+      {%- assign _banner_size = "1170x" -%}
+{% endif %}
+
+{% if _text_style == 'overlay' %}
+  {%- assign _title_style = "text-box-overlay" -%}
+{% endif %}
+
+{% capture emptyImage %}
+  <div class="image">{{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}</div>
+  <div class="text">
+    <div class="title h5" style="color: #000000;">{{ 'homepage.onboarding.banner_title' | t }}</div>
+  </div>
+{% endcapture %}
+
+<div class="home-banner effect-{{ _effect }}{% if _hide_mobile %} d-none d-md-block{% endif %} commingsoon-banner layout-{{_layout }}" style=" background:{{_bg_color}};">
+  {% if _layout == 'boxed' %}<div class="container">{% endif %}
+
+    <div class="home-banner-items padding-gallery">
+      {% unless _image == blank %}
+      
+      <div class="row row-padding">
+
+        <div class="col-md-{{_banner_class}} col-xs-12">
+          <div class="banner-item {% unless _text_style == "none" %}{{ _title_style }}{% endunless %}">
+
+            {% unless _image == blank %}
+            <div class="image">
+              <a href="{{ _link }}" class="{% if _lazyload %}lazyload waiting{% endif %}">
+
+                {% if _image_size == blank  %}
+                <img {% if _lazyload %}class="lazyload" data-{% endif %}src="{{ _image | img_url: _banner_size }}" alt="Banner" />
+
+                {% else %}
+                <img {% if _lazyload %}class="lazyload" data-{% endif %}src="{{ _image | img_url: _image_size }}" alt="Banner" />
+                {% endif %}
+
+              </a>
+            </div>
+
+
+            <div class="container">
+
+              {% unless _title == blank %}
+              <div class="text title-comming">
+                <div class="title {{ _title_size }} title-comming-soon{% if section.settings.title_text_bold %} bold-text{% endif %}" style="color: {{ _title_color }};"><p>{{ _title }}</p>
+                </div>
+              </div>
+              {% endunless %}
+
+
+              {% unless _subtitle == blank %}
+              <div class="text subtitle-comming">
+                <div class="subtitle {{ _subtitle_size }} subtitle-comming-soon{% if section.settings.subtitle_text_bold %} bold-text{% endif %}" style="color: {{ _subtitle_color }};">{{ _subtitle }}
+                </div>
+              </div>   
+              {% endunless %}
+
+
+              {% unless _expire == blank %}
+              <div class="text offer {{ _offer_size }} offer-comming-soon" style="color: {{ _offer_color }};">
+
+                {% unless _expire == blank %}<span class="text">{{ _offer }}</span>{% endunless %}
+
+                {% assign _dueDate = _expire | split: '/' %}  
+                <div class="countdown_{{ block.id }} {% if _offer != blank %} offer-comming {% endif %}"></div>
+
+
+              </div>
+              {% endunless %}
+
+              <div class="follow-us">
+                <div class="text-follow">
+                  <p>Follow Us</p>
+                </div>
+                <div class="icon-comming-soon">
+                  <ul>
+                    <li class="icon-comming"><i class="fab fa-facebook-f comming_facebook"></i></li>
+                    <li class="icon-comming"><i class="fab fa-twitter comming_twitter"></i></li>
+                    <li class="icon-comming"><i class="fab fa-pinterest-p comming_pinterest"></i></li>
+                  </ul>
+                </div>
+              </div>
+
+            </div> 
+
+            {% else %}
+            {{ emptyImage }}
+
+            {% endunless %}
+
+          </div>
+        </div>
+
+      </div>      
+      {% else %}
+      
+      <div class="row">
+        {% for i in (1.._item_per_row) %}
+        <div class="{{ _banner_class }} col-12">
+          <div class="banner-item">
+            {{ emptyImage }}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+      {% endunless %}
+    </div>
+  {% if _layout == 'boxed' %}</div>{% endif %}
+
+</div>
+
+{% schema %}
+{
+  "name": "Comming Soon",
+  "settings": [
+  {
+    "type": "paragraph",
+    "content": "Created by 'Comming soon' section"
+  },
+  {
+    "type": "checkbox",
+    "id": "hide_mobile",
+    "label": "Visibility: Hide for mobile"
+  },
+  {
+    "type": "checkbox",
+    "id": "lazyload",
+    "label": "Enable Lazy Loading",
+    "default": true
+  },
+  {
+    "type": "select",
+    "id": "layout",
+    "label": "Section Layout Mode",
+    "default": "boxed",
+    "options": [
+    {
+      "value": "boxed",
+      "label": "Boxed"
+    },
+    {
+      "value": "full",
+      "label": "Wide"
+    }
+    ]
+  },
+  {
+    "type":"color",
+    "id": "bg_color",
+    "label": "Background color",
+    "default": "#FFFFFF"
+  },  
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type":"text",
+      "id":"image_size",
+      "label":"Image size"
+    },  
+    {
+      "type": "header",
+      "content": "Title"
+    },
+
+    {
+      "type": "text",
+      "id": "image_title",
+      "label": "Text",
+      "default": "Title"
+    },
+    {
+      "type": "checkbox",
+      "id": "title_text_bold",
+      "label": "Bold text"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "background_text",
+      "label": "Background Text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "select",
+      "id": "title_size",
+      "label": "Font size",
+      "default": "h2",
+      "options": [
+        {
+          "value": "h1",
+          "label": "Heading 1"
+        },
+        {
+          "value": "h2",
+          "label": "Heading 2"
+        },
+        {
+          "value": "h3",
+          "label": "Heading 3"
+        },
+        {
+          "value": "h4",
+          "label": "Heading 4"
+        },
+        {
+          "value": "h5",
+          "label": "Heading 5"
+        },
+        {
+          "value": "h6",
+          "label": "Heading 6"
+        }
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Subtitle"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Text",
+      "default": "Subtitle"
+    },
+    {
+      "type": "checkbox",
+      "id": "subtitle_text_bold",
+      "label": "Bold text"
+    },
+    {
+      "type": "color",
+      "id": "subtitle_color",
+      "label": "Text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "select",
+      "id": "subtitle_size",
+      "label": "Font size",
+      "default": "h5",
+      "options": [
+        {
+          "value": "h1",
+          "label": "Heading 1"
+        },
+        {
+          "value": "h2",
+          "label": "Heading 2"
+        },
+        {
+          "value": "h3",
+          "label": "Heading 3"
+        },
+        {
+          "value": "h4",
+          "label": "Heading 4"
+        },
+        {
+          "value": "h5",
+          "label": "Heading 5"
+        },
+        {
+          "value": "h6",
+          "label": "Heading 6"
+        }
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Offer"
+    },
+    {
+      "type": "text",
+      "id": "offer",
+      "label": "Offer text",
+      "default": "Offer ends in"
+    },
+    {
+      "type": "color",
+      "id": "offer_color",
+      "label": "Offer color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "select",
+      "id": "offer_size",
+      "label": "Offer size",
+      "default": "h5",
+      "options": [
+        {
+          "value": "h1",
+          "label": "Heading 1"
+        },
+        {
+          "value": "h2",
+          "label": "Heading 2"
+        },
+        {
+          "value": "h3",
+          "label": "Heading 3"
+        },
+        {
+          "value": "h4",
+          "label": "Heading 4"
+        },
+        {
+          "value": "h5",
+          "label": "Heading 5"
+        },
+        {
+          "value": "h6",
+          "label": "Heading 6"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "id": "expire",
+      "label": "Expire offer",
+      "info": "(mm/dd/yyyy. E.g. 09/25/2018)"
+    }
+    
+    ]
+}
+{% endschema %}
+

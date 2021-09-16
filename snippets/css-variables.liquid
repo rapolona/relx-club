@@ -1,0 +1,158 @@
+{%- include 'liquid-variables' -%}
+
+<style>
+    :root {
+
+/* Font */
+
+ 
+--font-heading-weight: {{ font-heading.weight }};
+--font-standard-weight: {{ font-standard.weight }};
+
+--font-heading:      {{ settings.header_font_1_1.family }};
+--font-standard:     {{ settings.general_font_1_1.family }};
+
+  --body-font-size:      {{settings.body_font_size}}px;
+  --font-small:  14px;
+  --font-medium: 17px;
+  --font-bold: 300;
+  --size-h1:     {{settings.heading_size_1}}px;
+  --size-h2:     {{settings.heading_size_2}}px;
+  --size-h3:     {{settings.heading_size_3}}px;
+  --size-h4:     {{settings.heading_size_4}}px;
+  --size-h5:     {{settings.heading_size_5}}px;
+  --size-h6:     {{settings.heading_size_6}}px;
+  --top-font-size: {{settings.top_bar_size}}px;
+  --product-font-size: {{settings.product_title_size}}px;
+  --product-price-size: {{settings.product_price_size}}px;
+  --product-detail-size: {{settings.product_detail_price_size}}px;
+  --footer-size: {{ settings.footer_font_size }}px;
+  {% comment %} --home-title-font-size: {{settings.home_title_size}}px; {% endcomment %}
+  --product-detail-title-size: {{settings.product_detail_title_size}}px;
+
+  --font-icon      : 20px;
+  --font-small-icon: 21px;
+ 
+  /* Header */
+  --header-bg:                   {{settings.header_bg_color}};
+  --main-color:                  {{settings.main_color}};
+  --main-color-text:             {{settings.main_text_color}};
+  --logo-color:                  {{settings.logo_color}};
+  --logo-color-hover:            {{settings.logo_hover_color}};
+  --logo-size:                   {{settings.logo_size}};
+  --image-height:                {{settings.image_blance_height}};
+  
+  /*text color*/
+  --light-color: {{ settings.light_color }};
+  --dark-color: {{ settings.dark_color }};
+
+  /* Navigation */
+  --nav-font-size:                 {{settings.nav_size}}px;
+  --nav-sub-font-size:             {{settings.nav_sub_size}}px;
+  --nav-link-color:                {{settings.nav_link_color}};
+  --nav-link-hover-color:          {{settings.nav_hover_color}};
+  --nav-dropdown-background:       {{settings.dropdown_bg_color}};
+  --nav-dropdown-link-color:       {{settings.dropdown_item_color}};
+  --nav-dropdown-link-hover-color: {{settings.dropdown_item_color_hover}};
+  --nav-high-light-color:          {{settings.nav_high_light_color}};
+  --label-sale-color:              {{settings.menu_sale_label_color}};
+  --label-sale-bg:                 {{settings.menu_sale_label_bg}};
+  --label-new-color:              {{settings.menu_new_label_color}};
+  --label-new-bg:                 {{settings.menu_new_label_bg}};
+  --label-hot-color:              {{settings.menu_hot_label_color}};
+  --label-hot-bg:                 {{settings.menu_hot_label_bg}};
+
+
+  /* Body */
+  --body-background-color:        {{settings.body_bg}};
+  --body-second-color:            {{settings.miscellaneous_color}};
+
+  --body-label-deal-color:      {{settings.heading_limited_offers_color}};
+  --body-label-deal-background: {{settings.heading_limited_offers_bg}};
+
+  --body-label-sale-color:      {{settings.menu_sale_label_color}};
+  --body-label-sale-background: {{settings.menu_sale_label_bg}};
+
+  --body-label-new-color:      {{settings.menu_new_label_color}};
+  --body-label-new-background: {{settings.menu_new_label_bg}};
+
+  --body-label-hot-background: {{settings.prod_hot_label_bg}};
+
+
+  --body-label-bp-color:      {{settings.lb_bp_color}};
+  --body-label-bp-background: {{settings.lb_bp_bg_color}};
+
+  --body-general-color:    {{settings.body_general_color}};
+  --body-light-color:      {{settings.body_light_color}};
+  --body-title-color:      {{settings.body_title_color}};
+  --body-link-color:       {{ settings.body_link_color }};
+  --body-border-color:     {{settings.body_border_color}};
+  --body-ratting-color:    {{settings.ratting_color}};
+  --body-ratting-empty-color:{{settings.ratting_color_empty}};
+
+  --body-title-product:        {{settings.product_title_color}};
+  --body-price-color:          {{settings.product_price_color}};
+  --body-price-sale-color:     {{settings.product_sale_price_color}};
+  --body-price-sold-out-color: {{settings.product_sold_out_price_color}};
+
+  --breadcrumb-height:     {{settings.breadcrumb_height}};
+  --breadcrumb-bg-color:       {{settings.breadcrumb_bg_color}};
+
+  /* Footer */
+  --footer-background-color:  {{settings.footer_bg}};
+  --footer-static-text-color: {{ settings.footer_text_color }};
+  --footer-link-color:        {{settings.footer_color}};
+  --footer-hover-color:       {{settings.footer_color_hover}};
+  --footer-copyright-bg:       {{settings.footer_bg_copyright}};
+  --footer-copyright-color:    {{settings.footer_color_copyright}};
+
+  --button-btn1:         {{settings.btn1_bg}};
+  --button-btn1-txt:     {{btn1_txt}};
+  --button-hover-btn1:     {{settings.btn1_bg_hover}};
+  --button-hover-btn1-txt:   {{btn1_txt_hover}};
+
+  --button-btn2:         {{settings.btn2_bg}};
+  --button-btn2-txt:     {{btn2_txt}};
+  --button-btn2-text:     {{btn2_text}};
+  --button-hover-btn2:     {{settings.btn2_bg_hover}};
+  --button-hover-btn2-txt:   {{btn2_txt_hover}};
+  --button-btn2-text-hover:     {{btn2_text_hover}};
+
+  --button-btn3:         {{settings.btn3_bg}};
+  --button-btn3-txt:     {{settings.btn3_txt}};
+  --button-btn3-border:    {{settings.btn3_border}};
+  --button-hover-btn3:     {{settings.btn3_bg_hover}};
+  --button-hover-btn3-txt:   {{settings.btn3_txt_hover}};
+  --button-hover-btn3-border:  {{settings.btn3_border_hover}};
+
+  --button-btn4-txt:     {{settings.btn4_txt}};
+  --button-hover-btn4-txt:   {{settings.btn4_txt_hover}};
+  --button-btn4-bg:     {{settings.btn4_bg}};
+  --button-btn4_bg_hover:     {{settings.btn4_bg_hover}};
+
+  --popup-letter-color:  {{settings.popup_textcolor}};
+
+  --eu-bg:           {{settings.eu_background_color}};
+  --eu-text-color:       {{settings.eu_text_color}};
+  --au-accept:         {{settings.eu_accept_bg}};
+  --au-accept-hover:     {{settings.eu_accept_bg_hover}};
+  --au-disagree:       {{settings.eu_disagree_bg}};
+  --au-disagree-hover:     {{settings.eu_disagree_bg_hover}};
+
+  --ham-text-color: {{settings.ham_text_color }};
+  --ham-text-hover-color: {{settings.ham_text_hover_color }};
+  --ham-bg-color: {{settings.ham_background_menu_color }};
+  --ham-bg-hover-color: {{settings.ham_background_menu_hover_color }};
+
+  --breadcrumb-text-color: {{settings.breadcrumb_text_color}};
+  --body-icons-color: {{ settings.icons_color }};
+  --topbar-color:  {{ settings.topbar_color }};
+  --topbar-header-color: {{ settings.topbar_header_color }};
+  --header-bg-color: {{ settings.header_bg_color }};
+
+  --menu_sale_label_color: {{ menu_sale_label_color }};
+  --menu_sale_new_color: {{ menu_sale_new_color }};
+  --menu_sale_hot_color: {{ menu_sale_hot_color }};
+
+  --text-collections-list: {{ text_collections_list }};
+</style>

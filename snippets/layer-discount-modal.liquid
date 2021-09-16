@@ -1,0 +1,51 @@
+{%- assign _meta_discount_code = product.metafields.c_f -%}
+{%- unless _meta_discount_code.discount_code == blank -%}
+  <div id="discount-modal"{{block.shopify_attributes}}>
+    <div class="underlay"></div>
+    <div class="wrap-modal">
+      <a href="javascript:void(0);"><i class="demo-icon icon-delete"></i></a>
+
+      <div class="modal-body">
+        <div class="image">
+          <img src="{{block.settings.discount_popup | img_url: 'large'}}"/>
+        </div>
+        <div class="content">
+          {% unless block.settings.discount_popup_text_1 == blank %}
+            <h5>{{ block.settings.discount_popup_text_1 }}</h5>
+          {% endunless %}
+
+          {% unless block.settings.discount_popup_text_2 == blank %}
+            <p>{{ block.settings.discount_popup_text_2 }}</p>
+          {% endunless %}
+          <div class="discount-redirect"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    jQuery(document).ready(function($) {
+      var _discount_html = $('.discount-redirect')
+          ,_btn_discount = $('.btn-discount-code')
+
+      _discount_html.html(_btn_discount).html();
+
+      // if you want to use the 'fire' or 'disable' fn,
+      // you need to save OuiBounce to an object
+      var _discount = ouibounce(document.getElementById('discount-modal'), {
+        aggressive: true,
+        timer: 0
+      });
+
+      $('body').on('click', function() {
+        $('#discount-modal').hide();
+      });
+
+      $('#discount-modal .modal').on('click', function(e) {
+        e.stopPropagation();
+      });
+
+    });
+  </script>
+{%- endunless -%}

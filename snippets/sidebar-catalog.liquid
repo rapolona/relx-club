@@ -1,0 +1,164 @@
+{% assign btn_style = section.settings.sidebar_style %}
+
+<div id="sidebar" class="sidebar-column {{ _sb_class }} check-style-{{btn_style}}{% if section.settings.sidebar_border %} sb-border{% endif %}">
+  {% if section.blocks.size > 0 %}
+    {% comment %}{% if _filters_style == 'accordion' %} sb-accordion{% endif %}{% endcomment %}
+    {% capture sb_title %}sb-title h4{% endcapture %}
+    {% capture sb_content %}{% if _filters_style == 'accordion' %} sb-content-accordion hide{% endif %}{% endcapture %}
+
+    {% if section.settings.sb_filters == 'tags' and _filter_pos == 'sidebar_filter' %}
+      <div class="sb-widget d-none d-lg-block" data-filter="{{_filters_style}}" data-prefix="tag">
+        {% include 'filter-tag' %}
+      </div>
+    {% endif %}
+
+    {% for block in section.blocks %}
+      {% case block.type %}
+        {% when 'filter_group' %}
+          {% if _filter_pos == 'sidebar_filter' %}
+            {% if section.settings.sb_filters == 'groups' %}
+              <div class="sb-widget d-none d-lg-block" data-filter="{{_filters_style}}" data-prefix="{{block.settings.filter_prefix | downcase | strip}}">
+                {%- if collectionType == 'collectionanise' -%}
+                  {% include 'collectionanise-item-snippet' ,type: 'filter' %}
+                {%- else -%}
+                  {% include 'filter-group' %}
+                {%- endif -%}
+              </div>
+            {% endif %}
+          {% endif %}
+
+        {% when 'categories' %}
+          {% if _filters_style != 'toggle' %}
+          {% endif %}
+            <div class="sb-widget d-none d-lg-block">
+              <div class="sb-menu icon-{{block.settings.icon}}">
+
+                {% unless block.settings.sb_categories_title == blank %}
+                  <p class="{{sb_title}}">{{ block.settings.sb_categories_title }}</p>
+                {% endunless %}
+
+                <ul class="categories-menu ">
+                  {% if block.settings.sb_categories_type == 'categories' %}
+                    {% assign collection_cur = collection.handle %}
+                    {% for collection in collections limit: block.settings.sb_categories_limit %}
+                      {% unless collection.handle == 'frontpage'  %}
+
+                        <li {% if l.active %} class="match"{% endif %}>
+                          {% include 'include-list-icons' ,type: 'sidebar-icon', c: collection  %}
+                          <a href="{{ collection.url }}">{{ collection.title }}
+                          {%- if collection.products_count > 0 -%}
+                            <span>({{ collection.products_count }})</span>
+                          {%- endif -%}
+                          </a>
+                        </li>
+                      {% endunless %}
+                    {% endfor %}
+
+                  {% else %}
+                    {% for l in linklists[block.settings.sb_categories_menu].links limit: block.settings.sb_categories_limit %}
+                      {% assign submenu    = l.title | handleize %}
+                      {% assign col_handle = l.url | split: 'collections/' | last | handleize %}
+                      {% assign n_col      = collections[col_handle] %}
+
+                      {% if linklists[submenu].links.size > 0 %}
+                        {% include 'sb-dropdown-menu' with n_collection: n_col %}
+                      {% else %}
+                        <li {% if l.active %} class="match"{% endif %}>
+                          {% include 'include-list-icons' ,type: 'sidebar-icon', c: n_col  %}
+                          <a href="{{ l.url }}">{{ l.title }}
+                            {%- if l.type == 'collection_link' or l.type == 'catalog_link' -%}
+                              {%- if n_col.products_count > 0 -%}<span>({{ n_col.products_count }})</span>{%- endif -%}                              
+                            {%- endif -%}
+                          </a>
+                        </li>
+                      {% endif %}
+                   {% endfor %}
+                  {% endif %}
+                </ul>
+
+              </div>
+            </div>
+
+        {% when 'products-listing' %}
+          {% assign _listing_col = block.settings.sb_latest_product_col %}
+          {% assign _listing_collection = collections[_listing_col] %}
+          {% assign _listing_title = block.settings.sb_latest_product_title %}
+          {% assign _style = block.settings.list_type %}
+          {% assign _limit = block.settings.sb_latest_product_limit %}
+
+          {% unless _listing_col == blank %}
+            <div class="sb-widget d-none d-lg-block">
+              <div class="sb-product">
+
+                {% unless _listing_title == blank %}<p class="{{sb_title}}">{{ _listing_title }}</p>{% endunless %}
+
+                <div class="sb-product-list{% if _style == 'carousel' %} sb-product-carousel{% else %}{% endif %}">
+                  {% for product in _listing_collection.products limit: _limit %}
+  {% if product.object_type == 'product' and product.type == 'SHOPSTORM_HIDDEN_PRODUCT' %}{% continue %}{% endif %}
+
+  {% if product.object_type == 'product' and product.type == 'SHOPSTORM_HIDDEN_PRODUCT' %}{% continue %}{% endif %}
+
+
+                    {% include 'sb-product-item' %}
+                  {% endfor %}
+                </div>
+
+              </div>
+            </div>
+          {% endunless %}
+
+        {% when 'banner' %}
+          {% assign _image = block.settings.image_banner %}
+          {% assign _link = block.settings.link %}
+          {% assign _text = block.settings.image_text %}
+          {% assign _button_text = block.settings.button_text %}
+
+          <div class="sb-widget d-none d-lg-block">
+            <div class="sb-banner">
+
+                {% unless _image == blank %}
+                  <a href="{{ _link }}">
+                    {% include 'image-style' with image: _image, image_size: '390x' %}
+                  </a>
+
+                {% else %}
+                  {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+
+                {% endunless %}
+
+                <div class="block-text">
+                  {% unless _text == blank %}<span class="text" style="color: {{ block.settings.title_color }};">{{ _text }}</span>{% endunless %}
+                  {% unless _button_text == blank %}<a class="btn btn-1" href="{{ _link }}">{{ _button_text }}</a>{% endunless %}
+                </div>
+            </div>
+          </div>
+
+        {% when 'tag' %}
+            <div class="sb-widget d-none d-lg-block sb-tag">
+              {% unless block.settings.sidebar_tags_title == blank %}
+                <p class="{{sb_title}}">{{ block.settings.sidebar_tags_title }}</p>
+              {% endunless %}
+
+              <ul class="list-inline">
+                {% for tag in collection.all_tags limit: block.settings.limit %}
+                  <li>{{ tag | link_to_tag: tag }}</li>
+                {% endfor %}
+              </ul>
+            </div>
+
+        {% when 'recently-viewed' %}
+          {% include 'include-recently-viewd', show: true %}
+
+        {% else %}
+      {% endcase %}
+    {% endfor %}
+
+    {% if _filter_pos == 'sidebar_filter' %}
+      <div class="filter-component {{_filter_pos | replace: '_','-'}} {{ _filters_style }} hide">
+        <div class="f-close{% if _filters_style != 'drawer' %} d-lg-none {% endif %}"><i class="demo-icon icon-delete"></i></div>
+      </div>
+    {% endif %}
+  {% else %}
+    <p>{{ 'homepage.onboarding.no_content' | t }}</p>
+  {% endif %}
+</div>

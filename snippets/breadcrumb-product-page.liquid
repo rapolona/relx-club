@@ -1,0 +1,46 @@
+{% if _layout == blank %}{% assign _layout = 'boxed' %}{% endif %}
+<div class="breadcrumb-product-page layout-{{_layout}}" style="background-color: {{ section.settings.background_color }}">
+  {% if _layout == 'boxed' %}<div class="container">{% endif %}
+    <div id="breadcrumb" class="breadcrumb-holder">
+      <ul class="breadcrumb">
+        <li itemscope itemtype="http://data-vocabulary.org/Breadcrumb">
+          <a itemprop="url" href="/">
+            <span itemprop="title" class="d-none">{{ shop.name | escape }}</span>{{ 'general.text.home' | t }}
+          </a>
+        </li>
+
+        {% if collection %}
+          {% if collection.handle %}
+
+            <li itemscope itemtype="http://data-vocabulary.org/Breadcrumb" class="d-none">
+              <a href="{{collection.url}}" itemprop="url">
+                <span itemprop="title">{{ collection.title }}</span>
+              </a>
+            </li>
+
+            <li>{{ collection.title | link_to: collection.url }}</li>
+
+          {% endif %}
+
+          {% else %}
+            {% for collection in product.collections %}
+              {% if forloop.first == true %}
+                <li>
+                  <a itemprop="url" href="{{collection.url}}">
+                    {{ collection.title }}
+                  </a>
+                </li>
+              {% endif %}
+            {% endfor %}
+        {% endif %}
+
+        <li itemscope itemtype="http://data-vocabulary.org/Breadcrumb" class="d-none">
+          <a href="{{product.url}}" itemprop="url">
+            <span itemprop="title">{{ product.title }}</span>
+          </a>
+        </li>
+        <li class="active">{{ product.title }}</li>
+      </ul>
+    </div>
+  {% if _layout == 'boxed' %}</div>{% endif %}
+</div>

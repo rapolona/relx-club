@@ -1,0 +1,11 @@
+{%- comment -%}
+	============
+		The contents of the collection.liquid template can be found in /sections/collection-template.liquid		
+	============
+{%- endcomment-%}
+{%- case settings.collection_template -%}
+  {%- when '2' -%}{% section 'collection-infinite-template' %}
+  {%- when '3' -%}{% section 'collection-order-form-template' %}
+  {%- when '4' -%}{% section 'collection-order-form-template-v2' %}
+  {%- else -%}	  {% section 'collection-template' %}
+{%- endcase -%}

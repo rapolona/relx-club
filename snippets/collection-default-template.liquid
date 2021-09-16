@@ -1,0 +1,186 @@
+{% if section.settings.boxed_layout %}{% assign _layout = 'boxed' %}{% else %}{% assign _layout = 'full' %}{% endif %}
+{% if section.settings.show_breabcrumb and settings.show_breabcrumb %}{% include 'breadcrumb' %}{% endif %}
+
+{% assign i_fil = 0 %}
+{%- capture _all_tags -%}
+{%- for tag in collection.all_tags -%}{% capture _tag %}{{ tag | strip | downcase | prepend: '+++' | append: '+++' }}{% endcapture %}{{_tag}}{%- endfor -%}{{all_vendor}}
+{%- endcapture -%}
+
+{% assign _lazyload             = settings.use_lazyload %}
+{% assign _catalog_sb_placement = section.settings.catalog_sb_placement %}
+{% assign _filter_pos           = section.settings.filter_pos %}
+{% assign _filter_logic         = section.settings.and_logic %}
+{% assign banner_image_position = section.settings.banner_image_position %}
+{% assign _sb_class             = 'col-lg-3' %}
+{% assign _main_class           = 'col-lg-9 col-12' %}
+{% assign _collectionurl        = '/collections/' | append: collection.handle %}
+
+{% if _catalog_sb_placement == 'none' and _filter_pos != 'none' %}
+  {% assign _filter_pos = 'body_filter' %}
+{% endif %}
+
+{% if _filter_pos == 'body_filter' %}
+  {% assign _filters_style = section.settings.body_filter_style %}
+{% else %}
+  {% assign _filters_style = section.settings.sidebar_filter_style %}
+{% endif %}
+
+<div class="page-cata{% if _layout == 'full' %} layout-full{% endif %} sidebar-{{_catalog_sb_placement}} {{ type }}"
+     data-logic="{{ _filter_logic }}"
+     data-mode-view="{{section.settings.show_col_gl}}"
+     data-section-type="collectionPage"
+     data-section-id="{{section.id}}"
+     {% unless section.settings.background_color == blank %} style="background: {{section.settings.background_color}}"{% endunless %}>
+
+  {% if _layout == 'boxed' %}<div class="container">{% endif %}
+    <div class="row">
+      {% if _catalog_sb_placement == 'left' %}{% include 'sidebar-catalog' %}{% endif %}
+
+      {% paginate collection.products by section.settings.item_per_page %}
+        <div class="{% if _catalog_sb_placement == 'none' %}col-12{% else %}{{ _main_class }}{% endif %}">
+
+          {% include 'include-subcollection' %}
+
+          {% if section.settings.col_des_position == 'top' and collection.description != blank %}
+            <div class="cata-description">{{ collection.description }}</div>
+          {% endif %}
+          
+          {% include 'cata-toolbar' %}
+
+          {% if _filter_pos == 'body_filter' %}
+            <div class="filter-component {{_filter_pos | replace: '_','-'}} {{ _filters_style }}">
+              <div class="filter-heading">
+                <span class="h4">{{'collections.general.filter_by' | t }}</span>
+                <a id="clear-all-filter" class="clear-filter hidden" style="float: right;" href="javascript:void(0);">{{'collections.general.clear_all' | t }}</a>
+              </div>
+              <div class="sb-filter-wrapper">
+                <div class="f-close{% if _filters_style != 'drawer' %} d-lg-none {% endif %}"><i class="demo-icon icon-delete"></i></div>
+
+                {% if section.settings.sb_filters == 'groups' %}
+                  {% for block in section.blocks %}
+                    {% if block.type == 'filter_group' %}
+                      {% include 'filter-group' %}
+                    {% endif %}
+                  {% endfor %}
+                {% else %}
+                  {% include 'filter-tag' %}
+                {% endif %}
+              </div>
+            </div>
+          {% endif %}
+          {% if banner_image_position == 'top' %}
+            <div class="collection_banner-images-top">
+            {% include 'image-gallery-layout' with _type: 'masonry',_padding_item: true %}
+            </div>
+          {% endif %}
+
+          {% include 'include-products-grid' with grid_type: type %}
+
+          {% if type == 'infinite' %}
+            {% if paginate.next %}
+              <div class="loading_img" style="display:none;"><i class="demo-icon icon-spinner"></i></div>
+              <div class="load_more"><a href="{{ paginate.next.url }}" class="btn btn-1 btn-load-more">{{'collections.general.load_more' | t }}</a></div>
+            {% endif %}
+          {% else %}
+            {%- unless type contains 'order-form-2' -%}
+              {% include 'pagination' %}
+            {%- endunless -%}
+          {% endif %}
+
+          {% if section.settings.col_des_position == 'bottom' and collection.description != blank %}
+            <div class="cata-description">{{ collection.description }}</div>
+          {% endif %}
+
+          {% if banner_image_position == 'bottom' %}
+            <div class="collection_banner-images-bottom">
+              {% include 'image-gallery-layout' with _type: 'masonry',_padding_item: true %}
+            </div>
+          {% endif %}
+        </div>
+
+      {% endpaginate %}
+
+      {% if _catalog_sb_placement == 'right' %}{% include 'sidebar-catalog' %}{% endif %}
+
+    </div>
+
+  {% if _layout == 'boxed' %}</div>{% endif %}
+</div>
+
+{%- case type -%}
+  {%- when 'infinite' -%}
+    <script type="text/javascript">
+
+      var pInfScrLoading = false;
+      var pInfScrMore = true;
+
+      function pInfScrExecute() {
+        pInfScrNode = jQuery('.load_more').last();
+        pInfScrURL = jQuery('.load_more a').attr("href");
+
+        if(!pInfScrLoading && pInfScrNode.length > 0 && pInfScrMore) {
+          jQuery.ajax({
+            type: 'GET',
+            url: pInfScrURL,
+            beforeSend: function() {
+              pInfScrLoading = true;
+              jQuery('.load_more').fadeOut();
+              jQuery('.loading_img').fadeIn();
+            },
+            success: function(data) {
+              var filteredData = $(data).find(".mode-view-item");
+              jQuery(".cata-product").append(filteredData);
+              AT_Main.handleGridList();
+              {% if settings.show_multiple_currencies %}Currency.convertAll('{{ settings.default_currency }}', Currency.currentCurrency);{% endif %}
+              jQuery('.loading_img').fadeOut();
+              pInfScrLoading = false;
+              AT_Main.init_CountDown();
+
+              if(jQuery(data).find(".load_more a").length){
+                jQuery('.load_more a').last().attr("href", jQuery(data).find(".load_more a").last().attr("href"));
+                jQuery('.load_more').fadeIn();
+              }
+              else{
+                pInfScrMore = false;
+                jQuery('.load_more').hide();
+              }
+            },
+            dataType: "html"
+          });
+        }
+      }
+
+      jQuery(document).on('click','.btn-load-more',function(e){
+        e.preventDefault();
+        pInfScrExecute();
+      })
+    </script>
+  {%- when 'order-form' -%}
+    <script>jQuery(document).ready(function($) {AT_Main.handleOrderFormQty();});</script>
+  {%- when 'order-form-2' -%}
+    <script>
+      jQuery(document).ready(function($) {
+        AT_Main.handleOrderFormQty();
+        $("body").on('click', '.add-all-products', function(){
+            var stop = false;
+            $('#AddToCartForm .product-wrapper').each(function(){
+              var _this = $(this)
+              ,_qty = _this.find('.quantity').val();
+
+              if(_qty > 0 ){
+                stop = true;
+              }
+
+            });
+
+            if (stop == true){
+              $("#AddToCartForm").submit();
+            }
+            else{
+              alert('The total quanlity must be greater than zero');
+            }
+        });
+      });
+    </script>
+  {%- else -%}
+{%- endcase -%}

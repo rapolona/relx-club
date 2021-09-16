@@ -1,0 +1,29 @@
+{%- case type -%}
+  {%- when 'size-chart' -%}
+  	{%- assign _size_chart_page = section.settings.size_chart_page -%}
+  	{%- unless _size_chart_page == blank -%}
+  		{%- assign _size_chart_page_url = _size_chart_page | split: '/' | last -%}
+
+      <div class="size-chart size-chart-page">
+        <a href="javascript:void(0);"  data-fancybox-group="gallery2" title="{{- 'products.product.size_chart' | t -}}" id="btn_size_chart_page" data-toggle="modal" data-target="#size_chart_page">
+          {{- 'products.product.size_chart' | t -}}
+        </a>
+
+        <div class="modal fade" id="size_chart_page" tabindex="-1" role="dialog" aria-labelledby="size_chartPage" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-body">{{pages[_size_chart_page_url].content}}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+  	{%- elsif section.settings.image_size_chart != blank or meta_sizechart.image_size_chart != blank -%}    
+      <div class="size-chart">
+        <a class="fancybox" href="{% unless meta_sizechart.image_size_chart == blank %}{{- meta_sizechart.image_size_chart | split: 'https:' -}}{% else %}{{- section.settings.image_size_chart | img_url: '1024x' -}}{% endunless %}"  data-fancybox-group="gallery1" title="{{- 'products.product.size_chart' | t -}}">
+          {{- 'products.product.size_chart' | t -}}
+        </a>
+      </div>
+    {%- endunless -%}
+
+{%- endcase -%}

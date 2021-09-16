@@ -1,0 +1,570 @@
+{%- assign section_type = 'fomo' -%}
+<div data-section-id="{{section.id}}" data-section-type="{{section_type}}">
+	{%- include 'fomo-notify', section_type: section_type -%}
+</div>
+{% schema %}
+{
+	"name":"Fomo Popup",
+	"tag":"section",
+	"settings": [
+		{
+		   "type":"header",
+		   "content":"Fomo version 2.0"
+		},
+		{
+		   "type":"paragraph",
+		   "content":"[How to configuration ?](https:\/\/help.arenacommerce.com\/customization\/fomo.html)"
+		}
+	],
+	"blocks":[
+		{
+			"type":"fomo_popup",
+			"name":"Fomo Notify",
+			"settings":[
+				{
+					"type":"text",
+					"id":"title",
+					"label":"Block label"
+				},
+				{
+				   "type":"checkbox",
+				   "id":"hide_mobile",
+				   "label":"Hide on Mobile"
+				},
+				{
+				   "type":"header",
+				   "content":"Page Rules"
+				},
+				{
+				   "type":"checkbox",
+				   "id":"show_home",
+				   "label":"Show on Home page",
+				   "default": true
+				},
+				{
+				   "type":"checkbox",
+				   "id":"show_collection",
+				   "label":"Show on Collection page",
+				   "default": true
+				},
+				{
+				   "type":"checkbox",
+				   "id":"show_product",
+				   "label":"Show on Product page",
+				   "default": true
+				},
+				{
+				   "type":"checkbox",
+				   "id":"show_product_vendor",
+				   "label":"Show on Product have Vendor"
+				},
+				{
+				   "type":"text",
+				   "id":"vendor_trigger",
+				   "label":"Vendors name",
+				   "info": "Select Vendors name, separate by comma ','"
+				},
+				{
+				   "type":"checkbox",
+				   "id":"show_product_template",
+				   "label":"Show on Product have Template"
+				},
+				{
+				   "type":"text",
+				   "id":"template_trigger",
+				   "label":"Template name",
+				   "info": "Select Template name, separate by comma ','"
+				},
+				{
+				   "type":"header",
+				   "content":"Time Settings"
+				},
+				{
+					"type":"range",
+					"id":"cookie_history",
+					"label":"Remove cookie every",
+					"min":10,
+					"max":60,
+					"step":5,
+					"default":30,
+					"unit":"s"
+				},
+				{
+					"type":"text",
+					"id":"first_show_time",
+					"label":"Delay to show content after",
+					"default":"0",
+					"info": "In seconds. E.g: 5"
+				},
+				{
+					"type":"text",
+					"id":"loop_time",
+					"label":"Loop timer",
+					"default":"15",
+					"info": "In seconds. E.g: 15"
+				},
+				{
+					"type":"text",
+					"id":"show_time",
+					"label":"How long will fomo content show",
+					"default":"5",
+					"info": "In seconds. E.g: 5"
+				},
+				{
+					"type":"checkbox",
+					"id":"city_manual",
+					"label":"Use Manual Cities List"
+				},
+				{
+				   "type":"paragraph",
+				   "content":"Show manual cities list instead of nearby cities detect with GEOIP service."
+				},
+				{
+				   "type":"paragraph",
+				   "content":"Change list in Theme settings/ Fomo Popups/ Manual Cities List"
+				},
+				{
+				   "type":"header",
+				   "content":"Number Settings"
+				},
+				{
+					"type":"range",
+					"id":"deviation_value",
+					"label":"Standard Deviation",
+					"info":"Value range of counter after reload page (Percent * The previous value)",
+					"min":10,
+					"max":90,
+					"step":10,
+					"default":20,
+					"unit":"%"
+				},
+				{
+					"type":"text",
+					"id":"count_min_max",
+					"label":"Counter Min - Max",
+					"default":"60;100",
+					"placeholder":"Min ; Max"
+				},
+				{
+					"type":"header",
+					"content":"Popup settings"
+				},
+				{
+					"type":"text",
+					"id":"popup_w",
+					"label":"Popup width",
+					"default":"300px"
+				},
+				{
+					"type":"select",
+					"id":"position",
+					"label":"Popup Position",
+					"default":"bottom-left",
+					"options":[
+						{
+							"value":"top-left",
+							"label":"Top Left"
+						},
+						{
+							"value":"top-right",
+							"label":"Top Right"
+						},
+						{
+							"value":"middle-left",
+							"label":"Middle Left"
+						},
+						{
+							"value":"middle-right",
+							"label":"Middle Right"
+						},
+						{
+							"value":"bottom-left",
+							"label":"Bottom Left"
+						},
+						{
+							"value":"bottom-right",
+							"label":"Bottom Right"
+						}
+					]
+				},
+				{
+					"type":"color",
+					"id":"fomo_bg",
+					"label":"Popup background color",
+					"default":"#FFFFFF"
+				},
+				{
+					"type":"range",
+					"id":"fomo_bg_opacity",
+					"label":"Popup background transparent",
+					"min":0,
+					"max":100,
+					"step":10,
+					"unit":"%",
+					"default":80
+				},
+				{
+					"type":"text",
+					"id":"fomo_padding",
+					"label":"Popup Padding",
+					"placeholder":"E.g: 5px 20px 5px 20px",
+					"info":"Order: Top Right Bottom Left"
+				},
+				{
+					"type":"text",
+					"id":"fomo_radius",
+					"label":"Popup rounded corners",
+					"default": "4px"
+				},
+				{
+					"type":"header",
+					"content":"Image settings"
+				},
+				{
+				   "type":"select",
+				   "id":"image_pos",
+				   "label":"Position",
+				   "default":"left",
+				   "options":[
+				   	{
+				   	  "value":"left",
+				   	  "label":"Left"
+				   	},
+				   	{
+				   	  "value":"right",
+				   	  "label":"Right"
+				   	}
+				   ]
+				},
+				{
+					"type":"image_picker",
+					"id":"noti_image",
+					"label":"Image",
+					"info":"Blank to hide"
+				},
+				{
+					"type":"checkbox",
+					"id":"use_product_image",
+					"label":"Use Image from Products random"
+				},
+				{
+				   "type":"text",
+				   "id":"image_radius",
+				   "label":"Image Rounded corners",
+				   "default": "4px"
+				},
+				{
+				   "type":"text",
+				   "id":"image_margin",
+				   "label":"Image margin",
+					"placeholder":"E.g: 5px 20px 5px 20px",
+					"info":"Order: Top Right Bottom Left"
+				},
+				{
+					"type":"header",
+					"content":"Icon settings"
+				},
+				{
+					"type":"text",
+					"id":"icon_name",
+					"label":"Font icon name",
+					"info":"Use [icon] to place in your content"
+				},
+				{
+				   "type":"text",
+				   "id":"ic_fs",
+				   "label":"Icon font size",
+				   "default": "18px"
+				},
+				{
+				   "type":"color",
+				   "id":"ic_cl",
+				   "label":"Icon color",
+				   "default": "#222222"
+				},
+				{
+					"type":"header",
+					"content":"Header settings"
+				},
+				{
+					"type":"text",
+					"id":"fomo_content_lh_1",
+					"label":"Head line height"
+				},
+				{
+					"type":"text",
+					"id":"fomo_content_padding_1",
+					"label":"Head Padding",
+					"placeholder":"E.g: 5px 20px 5px 20px",
+					"info":"Order: Top Right Bottom Left"
+				},
+				{
+					"type":"text",
+					"id":"text_fs_1",
+					"label":"Text font size",
+					"default":"14px"
+				},
+				{
+					"type":"text",
+					"id":"link_fs_1",
+					"label":"Link font size",
+					"default":"14px"
+				},
+				{
+					"type":"select",
+					"id":"text_fw_1",
+					"label":"Text font weight",
+					"default":"300",
+					"options":[
+						{
+							"value":"100",
+							"label":"100 Thin (Hairline)"
+						},
+						{
+							"value":"200",
+							"label":"200 Extra Light (Ultra Light)"
+						},
+						{
+							"value":"300",
+							"label":"300 Light"
+						},
+						{
+							"value":"400",
+							"label":"400 Normal"
+						},
+						{
+							"value":"500",
+							"label":"500 Medium"
+						},
+						{
+							"value":"600",
+							"label":"600 Semi Bold (Demi Bold)"
+						},
+						{
+							"value":"700",
+							"label":"700 Bold"
+						},
+						{
+							"value":"800",
+							"label":"800 Extra Bold (Ultra Bold)"
+						},
+						{
+							"value":"900",
+							"label":"900 Black (Heavy)"
+						}
+					]
+				},
+				{
+					"type":"select",
+					"id":"link_fw_1",
+					"label":"Link font weight",
+					"default":"300",
+					"options":[
+						{
+							"value":"100",
+							"label":"100 Thin (Hairline)"
+						},
+						{
+							"value":"200",
+							"label":"200 Extra Light (Ultra Light)"
+						},
+						{
+							"value":"300",
+							"label":"300 Light"
+						},
+						{
+							"value":"400",
+							"label":"400 Normal"
+						},
+						{
+							"value":"500",
+							"label":"500 Medium"
+						},
+						{
+							"value":"600",
+							"label":"600 Semi Bold (Demi Bold)"
+						},
+						{
+							"value":"700",
+							"label":"700 Bold"
+						},
+						{
+							"value":"800",
+							"label":"800 Extra Bold (Ultra Bold)"
+						},
+						{
+							"value":"900",
+							"label":"900 Black (Heavy)"
+						}
+					]
+				},
+				{
+					"type":"color",
+					"id":"text_color_1",
+					"label":"Text color",
+					"default":"#888888"
+				},
+				{
+					"type":"color",
+					"id":"link_color_1",
+					"label":"Tink color",
+					"default":"#1A1A1A"
+				},
+				{
+					"type":"header",
+					"content":"Body settings"
+				},
+				{
+					"type":"text",
+					"id":"fomo_content_lh_2",
+					"label":"Body line height"
+				},
+				{
+					"type":"text",
+					"id":"fomo_content_padding_2",
+					"label":"Body Padding",
+					"placeholder":"E.g: 5px 20px 5px 20px",
+					"info":"Order: Top Right Bottom Left"
+				},
+				{
+					"type":"text",
+					"id":"text_fs_2",
+					"label":"Text font size",
+					"default":"14px"
+				},
+				{
+					"type":"text",
+					"id":"link_fs_2",
+					"label":"Link font size",
+					"default":"14px"
+				},
+				{
+					"type":"select",
+					"id":"text_fw_2",
+					"label":"Text font weight",
+					"default":"300",
+					"options":[
+						{
+							"value":"100",
+							"label":"100 Thin (Hairline)"
+						},
+						{
+							"value":"200",
+							"label":"200 Extra Light (Ultra Light)"
+						},
+						{
+							"value":"300",
+							"label":"300 Light"
+						},
+						{
+							"value":"400",
+							"label":"400 Normal"
+						},
+						{
+							"value":"500",
+							"label":"500 Medium"
+						},
+						{
+							"value":"600",
+							"label":"600 Semi Bold (Demi Bold)"
+						},
+						{
+							"value":"700",
+							"label":"700 Bold"
+						},
+						{
+							"value":"800",
+							"label":"800 Extra Bold (Ultra Bold)"
+						},
+						{
+							"value":"900",
+							"label":"900 Black (Heavy)"
+						}
+					]
+				},
+				{
+					"type":"select",
+					"id":"link_fw_2",
+					"label":"Link font weight",
+					"default":"300",
+					"options":[
+						{
+							"value":"100",
+							"label":"100 Thin (Hairline)"
+						},
+						{
+							"value":"200",
+							"label":"200 Extra Light (Ultra Light)"
+						},
+						{
+							"value":"300",
+							"label":"300 Light"
+						},
+						{
+							"value":"400",
+							"label":"400 Normal"
+						},
+						{
+							"value":"500",
+							"label":"500 Medium"
+						},
+						{
+							"value":"600",
+							"label":"600 Semi Bold (Demi Bold)"
+						},
+						{
+							"value":"700",
+							"label":"700 Bold"
+						},
+						{
+							"value":"800",
+							"label":"800 Extra Bold (Ultra Bold)"
+						},
+						{
+							"value":"900",
+							"label":"900 Black (Heavy)"
+						}
+					]
+				},
+				{
+					"type":"color",
+					"id":"text_color_2",
+					"label":"Text color",
+					"default":"#888888"
+				},
+				{
+					"type":"color",
+					"id":"link_color_2",
+					"label":"Tink color",
+					"default":"#1A1A1A"
+				},
+				{
+					"type":"header",
+					"content":"Fomo Content"
+				},
+				{
+					"type":"paragraph",
+					"content":"Use keywords to created random content, place in your content. [cities], [number], [products], [time]"
+				},
+				{
+					"type":"textarea",
+					"id":"text_header",
+					"label":"Header content",
+					"default":"Fomo Header"
+				},
+				{
+					"type":"textarea",
+					"id":"text_body",
+					"label":"Body content"
+				},
+				{
+					"type":"collection",
+					"id":"collection",
+					"label":"Collection item",
+					"info":"Blank to use all products in your shop"
+				}
+			]
+		}
+	]
+}
+{% endschema %}

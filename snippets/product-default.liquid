@@ -1,0 +1,187 @@
+{% if section.settings.boxed_layout %}{% assign _layout = 'boxed' %}{% else %}{% assign _layout = 'full' %}{% endif %}
+{%- if settings.show_product_breabcrumb -%}{% include 'breadcrumb-product-page' %}{%- endif -%}
+
+{%- assign _product_layout = 'vertical-thumbnail' -%}
+{%- assign _lazyload       = settings.use_lazyload -%}
+{%- assign product_image   = section.settings.image_pos -%}
+{%- assign icon_cart       = settings.cart_font_icon -%}
+{%- assign zoom_type       = section.settings.zoom_type -%}
+{%- assign meta_bw         = product.metafields.c_f -%}
+{%- assign meta_sizechart = meta_bw -%}
+{%- assign key = 'image_size_chart' -%}
+
+{% if section.settings.thumbnail_pos == 'bottom' %}
+          {% assign _slick_num = '03' %}
+{% else %}{% assign _slick_num = '06' %}
+{% endif %}
+
+<div itemscope itemtype="http://schema.org/Product" itemprop="review" itemscope itemtype="http://schema.org/Review">
+  <meta itemprop="url"         content="{{ shop.url }}{{ product.url }}" />
+  <meta itemprop="image"       content="{{ product.featured_image.src | img_url: 'grande' | prepend: 'https:'}}">
+  <meta itemprop="brand"       content="empty"/>
+  <meta itemprop="description" content="empty"/>
+  <meta itemprop="sku"         content="empty"/>
+  <span itemprop="name" class="hide">{{ product.title }}</span>
+
+  <div data-section-type="product-page" data-section-id="{{section.id}}"  style="background-color: {{ section.settings.background_color }}">
+    <div id="col-main" class="page-product layout-{{ _product_layout }} layout-{{_layout}} product-image-{{product_image}}">
+      {% if _layout == 'boxed' %}<div class="container">{% endif %}
+        <div class="product-content sidebar-position-{{section.settings.sidebar_pos}}">
+          {% if section.settings.sidebar_pos == 'left' %}{% include 'product.detail-sidebar' %}{% endif %}
+
+          <div id="product-main">
+            <div id="product-wrapper-detail" class="product-content-wrapper">
+              <div id="product-image" class="product-image{% if product.images.size > 1 %} thumbnail-position-{{section.settings.thumbnail_pos}}{% endif %}{% if product_image == 'right' %} float-lg-right{% endif %}">
+                <div class="product-image-inner">
+
+                  {% if product.images.size > 0 %}
+
+                    <div class="slider-main-image">
+                      <div class="slider--wrapper">
+                        <div id="slide--main" class="slider-for-{{_slick_num}}" data-zoom="{% if zoom_type == 'hover' %}true{% else %}false{% endif %}">
+
+                          {% for image in product.images %}
+                            <div class="slick-item slick-zoom">
+                              <div class="image-zoom-parent"{% if zoom_type == 'hover' %} data-zoom-size="{{ image.src | img_url: '1024x', scale: 2 }}"{% endif %}>
+                                {% if zoom_type == 'popup' %}<a class="fancybox" href="{{image | img_url: '1024x'}}" data-fancybox-group="productImages">{% endif %}
+                                  {% include 'image-style' with image_class: 'image-zoom', image_size: '1024x' %}
+                                {% if zoom_type == 'popup' %}</a>{% endif %}
+                              </div>
+                            </div>
+                          {% endfor %}
+
+                        </div>
+                      </div>
+
+                      {% if section.settings.thumbnail_pos != 'bottom' %}
+                        <div class="share-icons">{% include 'social-sharing' %}</div>
+                      {% endif %}
+                    </div>
+
+                    <div class="thumb-image">
+                      <div id="slide--thumbs" class="slider-filter slider-thumbs-{{_slick_num}} opacity-0{% if product.images.size < 2 %} d-none{% endif %}">
+                        {% for image in product.images %}
+                          <div class="slick-item" data-match="{% if image.alt == product.title %}none-group{% else %}{{ image.alt | escape }}{% endif %}">
+                            <div class="thumb-zoom" data-zoom-size="{{ image.src | img_url: '1024x', scale: 2 }}">
+                              {% include 'image-style' with image_size: '320x' %}
+                            </div>
+                          </div>
+                        {% endfor %}
+                      </div>
+                      <div class="slick-thumb-btn-03{% if _slick_num == '06' or product.images.size < 2 %} hide{% endif %}">
+                        <span class="btn-prev">
+                          <i class="demo-icon icon-left-open-1"></i>
+                        </span>
+                        <span class="btn-next">
+                          <i class="demo-icon icon-right-open-1"></i>
+                        </span>
+                      </div>
+                    </div>
+                  {% else %}
+                    {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+                  {% endif %}
+                  
+                  {% if section.settings.show_prod_sku or section.settings.show_prod_category or section.settings.show_prod_tags %}
+                    {%- if section.settings.pos_product_sku == '1' -%}
+                      <div class="product-sku-wrapper">
+                        <ul class="product-sku-collection">
+
+                          {%- unless product.vendor == blank -%}
+                          <li class="product-vendor">
+                            {{- 'products.product.vendor' | t -}}: {{product.vendor | link_to_vendor }}
+                          </li>                          
+                          {%- endunless -%}
+                          
+                          {% if section.settings.show_prod_sku %}
+                            <li class="product-code {% if bold_selected_or_first_available_variant.sku == blank %}hide{% endif %}">
+                              <span>{{ 'products.product.product_code' | t }}:</span>
+                              <span class="sku">{{ bold_selected_or_first_available_variant.sku }}</span>
+                            </li>
+                          {% endif %}
+
+                          {% if product.collections.size > 0 and section.settings.show_prod_category %}
+                            <li class="category">
+                              <span>{{ 'products.product.category' | t }}:</span>
+                              {% for p_col in product.collections limit: 4 %}
+                                <a href="{{ p_col.url }}"><span>{{ p_col.title }}{% unless forloop.last %}, {% else %} {% if product.collections.size > 4 %}<span>...</span>{% endif %}{% endunless %}</span></a>
+                              {% endfor %}
+                            </li>
+                          {% endif %}
+
+                          {% if product.tags.size > 0 and section.settings.show_prod_tags %}
+                            <li class="tags">
+                              <span>{{'products.product.tag' | t }}: </span>
+                              {% for tag in product.tags limit: 4 %}
+                                <span>{{ tag | link_to_tag: tag | replace: 'title=', 'class="tags-prd" title=' }} {% unless forloop.last %}, {% else %} {% if product.tags.size > 4 %}<span>...</span>{% endif %}{% endunless %}</span>
+                              {% endfor %}
+                            </li>
+                          {% endif %}
+                        </ul>
+                      </div>
+                      {%- endif -%}
+                  {% endif %}
+                </div>
+{% render 'judgeme_widgets', widget_type: 'judgeme_review_widget', concierge_install: true, product: product %}
+                {% for block in section.blocks %}
+                  {% if block.type == 'video' %}
+                    <div class="product-vid">
+                      <button type="button" class="btn" data-toggle="modal" data-target="#videoModal">
+                        <i class="demo-icon icon-rss-3"></i>
+                      </button>
+                    </div>
+                    <div class="modal fade" id="videoModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 1200px;">
+                        <div class="modal-content">
+                          <div class="modal-body" style="padding: 0;">
+                            <div class="embed-responsive embed-responsive-16by9">
+                              {% unless block.settings.video == blank %}
+                                <video class="embed-responsive-item" controls autoplay muted loop playsinline preload="auto" data-width="0" data-height="0">
+                                  <source src="{{block.settings.video}}" type="video/mp4">
+                                </video>
+                              {%- else -%}
+                                {{block.settings.video_embed}}
+                              {% endunless %}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    {% break %}
+                  {% endif %}
+                {% endfor %}
+              </div>
+              {% include 'product.detail-info' %}
+            </div>
+            <div id="product-wrapper-tabs">
+              {% if meta_bw.bundle_1 != blank or meta_bw.bundle_2 != blank %}{% include 'product.detail-bundled' %}{% endif %}
+
+              {% if section.settings.product_tab_pos == 'block' %}
+                {% case section.settings.product_tab_style %}
+                  {% when '1' %}{% include 'product-toggle' %}
+                  {% when '2' %}{% include 'product-toggle-v2' %}
+                  {% when '3' %}{% include 'product-toggle', border: true %}
+                {% endcase %}
+              {% endif %}
+            </div>
+          </div>
+
+          {% if section.settings.sidebar_pos == 'right' %}{% include 'product.detail-sidebar' %}{% endif %}
+
+        </div>
+
+        {% if section.settings.product_tab_review == 'block' %}
+          <div class="wrap-review">
+            <div class="review-item" id="tab_review_tabbed">
+              <div id="tab-review">{% include 'include-reviews' %}</div>
+            </div>
+          </div>
+        {% endif %}
+{% render 'judgeme_widgets', widget_type: 'judgeme_review_widget', concierge_install: true, product: product %}
+        {% if section.settings.enable_related_product %}{% include 'related-product' %}{% endif %}
+        {% include 'include-recently-viewd', show: section.settings.enable_recently_viewd %}
+      {% if _layout == 'boxed' %}</div>{% endif %}
+    </div>
+  </div>
+</div>
+{% if section.settings.show_sticky_cart %}{% include 'include-cart-sticky' %}{% endif %}
+{% include 'product.detail-script' %}

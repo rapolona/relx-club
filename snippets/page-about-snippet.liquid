@@ -1,0 +1,328 @@
+{% assign _lazyload    = settings.use_lazyload %}
+{% assign team_index   = -1 %}
+{% assign item_per_row = 3 %}
+{% assign _item_class = "col-lg-4" %}
+{% if section.settings.show_breabcrumb and settings.show_breabcrumb %}{% include 'breadcrumb' %}{% endif %}
+
+<div id="col-main" class="page-content page-about-us"{% unless section.settings.background_color == blank %} style="background: {{section.settings.background_color}}"{% endunless %}>
+  {%- if section.settings.boxed -%}
+    <div class="container">
+  {%- endif -%}
+  {% for block in section.blocks %}
+
+    {% case block.type %}
+      {% when 'image' %}
+        {%- assign _image = block.settings.image -%}
+        {% unless _image == blank %}
+          <div class="type-image" {{ block.shopify_attributes }}>
+            {% include 'image-style' with image: _image, image_size: '1920x' %}
+          </div>
+        {% endunless %}
+      
+      {% when 'image_with_link' %}
+        {%- assign _image = block.settings.image -%}
+      	{%- assign _image_link = block.settings.image_link -%}
+        {% unless _image == blank %}
+          <div class="type-image" {{ block.shopify_attributes }}>
+            <a href="{{ _image_link }}">{% include 'image-style' with image: _image, image_size: '1920x' %}</a>
+          </div>
+        {% endunless %}
+      
+      {% when 'text' %}
+        {%- assign width       = block.settings.width -%}
+        {%- assign heading     = block.settings.heading -%}
+        {%- assign subheading  = block.settings.subheading -%}
+        {%- assign text_align  = block.settings.content_align -%}
+        {%- assign second_show = block.settings.show_second_content -%}
+        {%- assign btn_1       = block.settings.btn_1 -%}
+        {%- assign btn_1_link  = block.settings.btn_1_link -%}
+        {%- assign ver_align   = block.settings.content_align_ver -%}
+        
+
+        <div class="type-text block-{{block.id}}" {{ block.shopify_attributes }}>
+          <div class="container">
+            <div class="row">
+              <div class="col-md-{{width}} col-12 align-md-{{ver_align}}">
+                <div class="text text-{{text_align}}">
+                  {%- unless heading == blank -%}<p class="title">{{heading}}</p>{%- endunless -%}
+                  {%- unless subheading == blank -%}<p>{{subheading}}</p>{%- endunless -%}
+                  {%- unless btn_1 == blank -%}
+                    <div class="btn-group">
+                      <a class="btn btn-1" href="{{ btn_1_link }}"><span class="button-text">{{ btn_1 }}</span></a>
+                    </div>
+                  {%- endunless -%}
+                </div>
+              </div>
+
+              {%- if second_show -%}
+                {%- assign width2      = block.settings.width_2 -%}
+                {%- assign heading2    = block.settings.heading2 -%}
+                {%- assign subheading2 = block.settings.subheading2 -%}
+                {%- assign text_align2 = block.settings.content_2_align -%}
+                {%- assign btn_2       = block.settings.btn_2 -%}
+                {%- assign btn_2_link  = block.settings.btn_2_link -%}
+                {%- assign ver_align2  = block.settings.content_2_align_ver -%}
+
+                <div class="col-md-{{width2}} col-12 align-md-{{ver_align2}}">
+                  <div class="text text-{{text_align2}}">
+                    {%- unless heading2 == blank -%}<p class="title2">{{heading2}}</p>{%- endunless -%}
+                    {%- unless subheading2 == blank -%}<p>{{subheading2}}</p>{%- endunless -%}
+                    {%- unless btn_2 == blank -%}
+                      <div class="btn-group">
+                        <a class="btn btn-1" href="{{ btn_2_link }}"><span class="button-text">{{ btn_2 }}</span></a>
+                      </div>
+                    {%- endunless -%}
+                  </div>
+                </div>
+              {%- endif -%}
+            </div>
+          </div>
+        </div>
+        <style>
+          .page-about-us .type-text.block-{{block.id}} .title{font-size: {{block.settings.title_fontsize | append: 'px' }};}
+          .page-about-us .type-text.block-{{block.id}} .title2{font-size: {{block.settings.title_fontsize2 | append: 'px' }};}
+        </style>
+      
+      {% when 'text_image_overlay' %}
+        {%- assign _image              = block.settings.image -%}
+        {%- assign _top                = block.settings.position_top | append: '%' -%}
+        {%- assign _left               = block.settings.position_left | append: '%' -%}
+        {%- assign _width              = block.settings.width | append: '%' -%}
+        {%- assign _width_mobile       = block.settings.width_mobile | append: '%' -%}
+		{%- assign _text_content_style = block.settings.text_content_style -%}
+        {%- assign _text_font_scale_d  = block.settings.text_font_scale_d | append: '%' -%}
+        {%- assign _text_font_scale_m  = block.settings.text_font_scale_m | append: '%' -%}
+        {%- assign _text_align         = block.settings.text_align -%}
+      	{%- assign _text_color         = block.settings.text_color -%}
+        {%- assign _text_content       = block.settings.text_content -%}
+      
+        
+        <div class="block-{{block.id}} banner-item text-box-{{_text_content_style}}" {{ block.shopify_attributes }}>
+
+          {% unless _image == blank %}
+            <div class="image" {{ block.shopify_attributes }}>
+              {% include 'image-style' with image: _image, image_size: '1920x' %}
+            </div>
+            {% else %}
+            {{ emptyImage }}
+          {% endunless %}
+
+          {% if _text_content == blank %}
+            {% assign _text_content_style = 'hidden'  %}
+          {% endif %}
+
+          {% unless _text_content_style == 'hidden' %}
+
+            <div class="text text-{{_text_align}}" style="{% if 'overlay' contains _text_content_style %}left:{{_left}}; top:{{_top}}; transform: translate(-{{_left}},-{{_top}});{% endif %}">
+              <div class="text-container">{{_text_content}}</div>
+            </div>
+
+            <style>
+              .block-{{block.id}} .banner-item .text-box-overlay .text { width: auto; }
+              .block-{{block.id}} .text{ width: {{ _width }} !important; }
+              .block-{{block.id}} .text-container{ color: {{ _text_color }}; font-size: {{ _text_font_scale_d }}; }
+              @media only screen and (max-width: 1095px) {
+              }
+			  @media only screen and (max-width: 48em) {
+                .block-{{block.id}} .text{ width: {{ _width_mobile }} !important; }
+                .block-{{block.id}} .text-container{ font-size: {{ _text_font_scale_m }}; }
+              }
+            </style>
+          {% endunless %}
+        </div>
+
+      {% when 'text_image' %}
+        {%- assign heading     = block.settings.heading -%}
+        {%- assign subheading  = block.settings.subheading -%}
+        {%- assign caption     = block.settings.caption -%}
+        {%- assign text_right  = block.settings.text_right -%}
+        {%- assign right_image = block.settings.image_right -%}
+        {%- assign ver_align   = block.settings.content_align_ver -%}
+
+        <div class="type-text-and-image block-{{block.id}}{% if right_image %} image-right{% endif %}" {{ block.shopify_attributes }}>
+          <div class="left-content">
+            <div class="image">
+              {% include 'image-style' with image: block.settings.image %}
+            </div>
+          </div>
+          <div class="right-content align-self-md-{{ver_align}}">
+            <div class="text">
+              {% unless heading == blank %}<p class="title">{{heading}}</p>{% endunless %}
+              {% unless subheading == blank %}<p>{{subheading}}</p>{% endunless %}
+              {% unless caption == blank %}<p {% if text_right %}class="text-right"{% endif %}>{{caption}}</p>{% endunless %}
+            </div>
+          </div>
+        </div>
+        <style>
+          .page-about-us .type-text-and-image.block-{{block.id}} .title{font-size: {{block.settings.title_fontsize | append: 'px' }};}
+        </style>
+
+      {% when 'team' %}
+        {%- assign team_index = forloop.index -%}
+        {%- assign _title     = block.settings.team_title -%}
+        {%- assign _subtitle  = block.settings.team_subtitle -%}
+        {%- assign _align     = block.settings.alignment -%}
+        {% assign _layout = block.settings.layout %}
+        {% include 'include-item-per-row' with type: 'block' %}
+        <div class="type-team style-{{_layout}}" {{ block.shopify_attributes }}>
+        {% include 'head-title' with _title: _title, _subtitle: _subtitle, _title_alignment: _align %}
+        <div class="container">
+          <div class="wapper-group row">
+            {%- for block in section.blocks offset: team_index -%}
+              {%- if block.type == 'team_member' -%}
+                {%- assign image       = block.settings.image -%}
+                {%- assign name        = block.settings.name -%}
+                {%- assign major       = block.settings.major -%}
+                {%- assign description = block.settings.description -%}
+                {%- assign fb_link     = block.settings.fb_link -%}
+                {%- assign tt_link     = block.settings.tt_link -%}
+                {%- assign is_link     = block.settings.is_link -%}
+
+                <div class="type-team-member {{_item_class}} col-12" {{ block.shopify_attributes }}>
+                  <div class="wrap-member">
+                    <div class="image">
+                      {%- unless image == blank -%}
+                        {% include 'image-style' with image: image %}
+                      {%- else -%}
+                        {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+                      {%- endunless -%}
+                    </div>
+
+                    <div class="member-info">
+                      {%- unless name == blank -%}
+                      <div class="member-name">
+                        <p class="bold h4">{{name}}</p>
+                      </div>
+                      {%- endunless -%}
+
+                      {%- unless major == blank -%}
+                        <div class="member-major">{{major}}</div>
+                      {%- endunless -%}
+
+                      {%- unless description == blank -%}
+                        <div class="member-des">{{description}}</div>
+                      {%- endunless -%}
+                    </div>
+                    {%- if block.settings.show_social -%}
+                      <div class="member-social">
+                        <a href="{{ fb_link | default: 'javascript:void(0);'}}"><i class="demo-icon icon-facebook"></i></a>
+                        <a href="{{ tt_link | default: 'javascript:void(0);'}}"><i class="demo-icon icon-twitter"></i></a>
+                        <a href="{{ is_link | default: 'javascript:void(0);'}}"><i class="demo-icon icon-instagram"></i></a>
+                      </div>
+                    {%- endif -%}
+                  </div>
+                </div>
+              {%- else -%}{% break %}
+              {%- endif -%}
+
+            {%- endfor -%}
+          </div>
+        </div>
+        </div>
+
+      {% when 'text_image_2' %}
+        {%- comment -%}
+          ============
+            Inherit from Handy
+          ============
+        {%- endcomment-%}
+        {%- assign _image   = block.settings.image -%}
+        {%- assign _title   = block.settings.heading -%}
+        {%- assign _caption = block.settings.caption -%}
+        {%- assign right_image = block.settings.image_right -%}
+        <div class="type-image-text{% if right_image %} image-right{% endif %}" {{ block.shopify_attributes }}>
+          <div class="image-text">
+            <div class="row">
+
+              {% unless _image == blank %}
+                <div class="item-image col-md-6 col-12">
+                  <img src="{{ _image | img_url: '550x' }}" alt="Image" />
+                </div>
+              {% endunless %}
+
+              <div class="item-text col-md-6 col-12">
+                <div class="text-box">
+                  {% unless _title == blank %}<h6>{{ _title }}</h6>{% endunless %}
+                  {% unless _caption == blank %}<div class="caption">{{ _caption }}</div>{% endunless %}
+                </div>
+
+                <ul class="textbox-list">
+                  {% for i in (1..3) %}
+                    {%- assign _show = 'show_textbox_' | append: i -%}
+
+                    {% if block.settings[_show] %}
+                      {%- assign _icon = 'icon_' | append: i -%}
+                      {%- assign _title = 'heading_' | append: i -%}
+                      {%- assign _caption = 'caption_' | append: i -%}
+
+                      <li>
+                        {% unless block.settings[_icon] == blank %}
+                        <div class="icon"><i class="demo-icon {{  block.settings[_icon] }}"></i></div>
+                        {% endunless %}
+
+                        <div class="text">
+                          {% unless  block.settings[_title] == blank %}<h5>{{  block.settings[_title] }}</h5>{% endunless %}
+                          {% unless  block.settings[_caption] == blank %}<div class="caption">{{  block.settings[_caption] }}</div>{% endunless %}
+                        </div>
+                      </li>
+
+                    {% endif %}
+                  {% endfor %}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      {% when 'group_text' %}
+        {%- assign index     = forloop.index -%}
+        {%- assign _title    = block.settings.team_title -%}
+        {%- assign _subtitle = block.settings.team_subtitle -%}
+        {%- assign _align    = block.settings.alignment -%}
+        {% include 'include-item-per-row' with type: 'block' %}
+        <div class="type-group-text" {{ block.shopify_attributes }}>
+          {% include 'head-title' with _title: _title, _subtitle: _subtitle, _title_alignment: _align %}
+          <div class="container">
+            <div class="wapper-group row">
+              {%- for block in section.blocks offset: index -%}                
+                {% if block.type == 'textbox' %}
+
+                  <div class="type-textbox {{_item_class}} col-sm-6 col-12" {{ block.shopify_attributes }}>
+                    <div class="ig_text">
+                     
+                      <div class="pt-special-3">
+                        {%- assign _icon        = block.settings.icon -%}
+                        {%- assign _title       = block.settings.heading -%}
+                        {%- assign _caption     = block.settings.caption -%}
+                        {%- assign _button_text = block.settings.button_text -%}
+                        {%- assign _link        = block.settings.link -%}
+                        
+                        {% unless _icon == blank %}
+                        <div class="icon"><i class="demo-icon {{ _icon }}"></i></div>
+                        {% endunless %}
+                        
+                        {% unless _title == blank %}<h6>{{ _title }}</h6>{% endunless %}
+                        {% unless _caption == blank %}<p>{{ _caption }}</p>{% endunless %}
+                        
+                        {% unless _button_text == blank %}
+                        <a href="{{ _link}}" class="btn btn-1">{{ _button_text }}</a>
+                        {% endunless %}
+                        
+                      </div>
+
+                    </div>
+                  </div>
+
+                {% endif %}
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+
+      {% else %}
+    {% endcase %}
+  {% endfor %}
+  {%- if section.settings.boxed -%}
+    </div>
+  {%- endif -%}
+</div>

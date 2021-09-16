@@ -1,0 +1,196 @@
+{%- if related_case == 'collection' -%}
+
+	{% if collection == null or collection.handle == 'frontpage' or collection.handle == 'all' %}
+	  {% assign found_a_collection = false %}
+
+	  {% for c in product.collections %}
+	    {% if found_a_collection == false and c.handle != 'frontpage' and c.handle != 'all' and c.all_products_count > 1 %}
+	      {% assign found_a_collection = true %}
+	      {% assign collection = c %}
+	    {% endif %}
+	  {% endfor %}
+	{% endif %}
+
+	{% if collection and collection.products_count > 1 %}
+		    {% assign current_product = product %}
+		    {% for product in collection.products limit: limit %}
+  {% if product.object_type == 'product' and product.type == 'SHOPSTORM_HIDDEN_PRODUCT' %}{% continue %}{% endif %}
+
+  {% if product.object_type == 'product' and product.type == 'SHOPSTORM_HIDDEN_PRODUCT' %}{% continue %}{% endif %}
+
+{%- include 'bold-product' with product, hide_action: 'skip' -%}
+
+		        {% if product.handle == current_product.handle %}
+		        	{% assign i = limit | plus: forloop.index %}
+			        	{% unless collection.products[i] == blank %}
+					        {% if type == 'block' %}
+					        	{% include 'product-item' with collection.handle, product: collection.products[i], product_style:4, product_button:2 %}
+					        {% else %}
+					        	{% include 'product-item' with collection.handle, product: collection.products[i] %}
+					        {% endif %}
+			        	{% endunless %}
+				    {% continue %}
+		        {% endif %}
+				{% if type == 'block' %}
+					{% include 'product-item' with collection.handle, product_style: 4, product_button: 2 %}
+				{% else %}
+			  		{% include 'product-item' with collection.handle %}
+				{% endif %}
+		    {% endfor %}
+	{% endif %}
+{%- else -%}
+
+	{% if type == 'block' %}
+		{% assign _case 	  = 'collection' %}
+		{% assign title 	  = block.settings.heading_related_product %}
+		{% assign limit 	  = block.settings.related_product_limit %}
+	{% else %}
+		{% assign _case 	  = section.settings.related_product_data %}
+		{% assign title 	  = section.settings.heading_related_product %}
+		{% assign limit 	  = section.settings.related_product_limit %}
+	{% endif %}
+
+	<div class="related-wrapper{% if border %} related-border{% endif %} hide" data-relate-type="{{_case}}" data-type="{{ type }}">
+		<div class="related-wrapper hide" data-relate-type="{{_case}}">
+			{% unless title == blank %}
+				{%- assign _sh_h_size = settings.section_heading_size | prepend: 'h' -%}
+				<div class="title-wrapper">
+					<p class="title {{_sh_h_size}}">{{title}}</p>
+				</div>
+			{% endunless %}
+			{% unless  type == 'block' %}
+				<div class="related-items related-carousel related-dynamic"{%- include 'include-carousel-attr', _type: 'carousel' -%}>
+					{%- if _case == 'collection' -%}
+						{%- include 'related-product', related_case: 'collection' -%}
+					{%- endif -%}
+				</div>
+			{% else %}
+				<div class="related-items related-dynamic">
+					{%- if _case == 'collection' -%}
+						{%- include 'related-product', related_case: 'collection' -%}
+					{%- endif -%}
+				</div>
+			{% endunless %}
+		</div>
+
+		{%- if _case != "vendors" and _case != "tags" -%}
+			<script>
+				jQuery(document).ready(function($) {
+					var i_sections = new theme.Sections();
+					i_sections.register('product-page', function(){
+						jQuery('.related-wrapper').removeClass('hide');
+						{% if type != 'block' %}
+						AT_Main.init_carousel(jQuery('.related-items.related-carousel'));
+						{% endif %}
+					});
+				});
+			</script>
+		{%- endif -%}
+	</div>
+
+	{% if _case != 'collection' %}
+		{% assign _querry 		= "" %}
+		{% assign _operators 	= " OR " %}
+		{% assign _search_uri 	= shop.secure_url | append:"/search?type=product&q=" %}
+
+		{% assign _all_tags 	= "" %}
+		{% assign _all_vendors 	= "" %}
+		{% assign _all_handle 	= "" %}
+
+		{% capture current_product_vendor %}{{ product.vendor}}{% endcapture %}
+		{% capture current_product_handle %}{{ product.handle}}{% endcapture %}
+
+		{% if current_product_vendor != blank %}
+		  {% unless _all_vendors contains current_product_vendor %}
+		    {% assign _all_vendors = _all_vendors | append:current_product_vendor | append:"|"  %}
+		  {% endunless %}
+		{% endif %}
+
+		{% unless _all_handle contains current_product_handle %}
+		    {% assign _all_handle = _all_handle | append:current_product_handle | append:"|"  %}
+		{% endunless %}
+
+		{% for _tag in product.tags %}
+		  {% unless _all_tags contains _tag %}
+		    {% assign _all_tags = _all_tags | append:_tag | append:"|" %}
+		  {% endunless %}
+		{% endfor %}
+
+		{% assign _tags_array = _all_tags | split: '|' %}
+		{% assign _vendor_array = _all_vendors | split: '|' %}
+		{% assign _handle_array = _all_handle | split: '|' %}
+
+		{% if _case == "vendors" %}
+
+			{% if _vendor_array.size > 0 %}
+			  {% for _vendor in _vendor_array %}
+
+			    {%if _querry == "" %}
+			        {% assign _querry = _querry | append:" vendor:" | append: _vendor  %}
+			    {% else %}
+			        {% assign _querry = _querry | append:" OR vendor:" | append:_vendor  %}
+			    {% endif %}
+
+			  {% endfor %}
+			{% endif %}
+
+		{% endif %}
+
+		{% if _case == "tags" %}
+			{% if _tags_array.size > 0 %}
+				{% for _tag in _tags_array %}
+
+					{% if _querry != "" %}
+						{% assign _querry = _querry | append:_operators | append:"tag:" | append:_tag  %}
+					{% else %}
+						{% assign _querry = _querry | append:" tag:" | append:_tag  %}
+					{% endif %}
+
+				{% endfor %}
+			{% endif %}
+		{% endif %}
+
+		{% unless _tags_array.size < 1 and _vendor_array.size < 1 %}
+
+			{% for _handle in _handle_array %}
+			{% assign _querry = _querry | append:" NOT handle:" | append:_handle  %}
+			{% endfor %}
+
+			{% assign _search_uri = _search_uri | append:_querry  %}
+			<script>
+			//<![CDATA[
+			jQuery(document).ready(function($) {
+				var i_sections = new theme.Sections();
+				i_sections.register('product-page', function(){
+
+					var _callback_uri = "{{_search_uri}}";
+					if (location.protocol !== 'https:') {
+						_callback_uri = _callback_uri.replace("https:", "http:");
+					}
+
+					jQuery.ajax({
+						type: 'GET',
+						url: _callback_uri,
+						success: function ( json_reponse ) {
+							var _result_wrapper = jQuery(json_reponse).find(".page-search .cata-product")
+							,_is_found = _result_wrapper.length > 0 ? true : false;
+
+							if( _is_found ){
+								jQuery(".related-items").html( _result_wrapper.html() );
+								jQuery('.related-wrapper').removeClass('hide');
+								if( !jQuery(".related-items").hasClass("owl-loaded") ){
+									{% if settings.show_multiple_currencies %}currenciesCallbackSpecial('.related-items span.money');{% endif %}
+									{% unless type == 'block' %}AT_Main.init_carousel(jQuery('.related-items.related-carousel'));{% endunless %}
+									AT_Main.switchImgProduct();
+								}
+							}
+						}
+					});
+				});
+			});
+			//]]>
+			</script>
+
+		{% endunless %}
+	{% endif %}
+{%- endif -%}

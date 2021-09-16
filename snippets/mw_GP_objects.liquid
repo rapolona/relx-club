@@ -1,0 +1,13 @@
+<script>
+window.mwGroupedProductsObjects = {
+    product: {{ product | json }},
+    cart: {{ cart | json }},
+    template_name: {{ template.name | json }},
+    shop: {
+    domain: {{ shop.permanent_domain | json }},
+    money_format : {{ shop.money_format  | json }},
+    money_with_currency_format : {{ shop.money_with_currency_format  | json }},
+    },
+    jqForce: false
+};
+</script>

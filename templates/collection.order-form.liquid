@@ -1,0 +1,13 @@
+{% comment %}
+Source: https://gist.github.com/carolineschnapp/9122054
+If you are not on a collection page, do define which collection to use in the order form.
+Use the following assign statement, replace 'your-collection-handle-here' with your collection handle.
+{% assign collection = collections.your-collection-handle-here %}
+Use the assign statement outside of this comment block at the top of your template.
+{% endcomment %}
+
+{% comment %}
+  The contents of the collection.liquid template can be found in /sections/collection-order-form-template.liquid
+{% endcomment %}
+
+{% section 'collection-order-form-template' %}

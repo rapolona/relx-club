@@ -1,0 +1,49 @@
+
+{% comment %} PLEASE DON'T MAKE CHANGES IN THIS FILE IT'S AFFECT THE CODE IF YOU NEED ANY HELP PLEASE CONTACT TO FLITS TEAM support@getflits.com {% endcomment %}
+{% layout none %}
+<div class="flits-account-page-content">
+	<div class="flits-account-container"> 
+		<div class="flits-account-section flits-desktop-view">
+			<div class="flits-greeting-header">
+				{% render 'flits_capture_code' with 'component',template:'comp_greeting' %}
+			</div>
+			{% render 'flits_capture_code' with 'component',template:'comp_menuNav' %}
+			{% render 'flits_capture_code' with 'component',template:'comp_accountBody' %}
+			<div class="flits-clearfix"></div>
+		</div>
+		<div class="flits-account-section flits-mobile-view">
+			{% render 'flits_capture_code' with 'component',template:'comp_mobile_menuNav' %}
+			{% render 'flits_capture_code' with 'component',template:'comp_mobile_accountBody' %}
+		</div>
+		<div style="width:0px;height:0px">
+			<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 94 94">
+				<defs>
+					<linearGradient id="linear-gradient" x1="57.64" y1="39.36" x2="40.25" y2="85.02" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#fcc444"/><stop offset="1" stop-color="#eb5b28"/></linearGradient>
+					<linearGradient id="linear-gradient-3" x1="20.43" y1="38.67" x2="74.76" y2="38.67" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#ffde1f"/><stop offset="1" stop-color="#f6a128"/></linearGradient>
+					<linearGradient id="linear-gradient-4" x1="26.82" y1="38.67" x2="68.37" y2="38.67" xlink:href="#linear-gradient"/><linearGradient id="linear-gradient-5" x1="45.76" y1="23.24" x2="50.81" y2="58.41" xlink:href="#linear-gradient"/>
+					<linearGradient id="linear-gradient-share" x1="-0.97" y1="7.5" x2="15.05" y2="7.5" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#529eff"/><stop offset="1" stop-color="#4244ff"/></linearGradient>
+					<linearGradient id="New_Gradient_Swatch" y1="12.5" x2="24.98" y2="12.5" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#7252ff"/><stop offset="1" stop-color="#17a2ff"/></linearGradient>
+					<linearGradient id="Áåçûìÿííûé_ãðàäèåíò_154" y1="12.5" x2="25" y2="12.5" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#7252ff"/><stop offset="1" stop-color="#17a2ff"/></linearGradient>
+				</defs>
+				<defs><radialGradient id="smile-radial-gradient" cx="37.47" cy="56.53" r="20.74" gradientTransform="translate(0 49.93) scale(1 0.12)" gradientUnits="userSpaceOnUse"><stop offset="0.03" stop-color="#f6d1a8"/><stop offset="1" stop-color="#fff"/></radialGradient><linearGradient id="smile-linear-gradient" x1="10.93" y1="6.22" x2="21.91" y2="17.47" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#fef9dd"/><stop offset="1" stop-color="#f7e887"/></linearGradient><linearGradient id="smile-linear-gradient-2" y1="42.42" x2="37.93" y2="42.42" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#edbd36"/><stop offset="1" stop-color="#e7a52e"/></linearGradient><linearGradient id="smile-linear-gradient-3" x1="29.31" y1="4.25" x2="48" y2="57.46" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#edbd36"/><stop offset="0.52" stop-color="#f6e162"/><stop offset="1" stop-color="#f3d943"/></linearGradient><linearGradient id="smile-linear-gradient-4" x1="37.73" y1="34.39" x2="37.73" y2="49.96" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#89552e"/><stop offset="1" stop-color="#b8784b"/></linearGradient><linearGradient id="smile-linear-gradient-5" x1="23.97" y1="23.24" x2="33.41" y2="23.24" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8b572e"/><stop offset="1" stop-color="#c17d4f"/></linearGradient><linearGradient id="smile-linear-gradient-6" x1="42.18" y1="23.24" x2="51.62" y2="23.24" xlink:href="#smile-linear-gradient-5"/><linearGradient id="smile-linear-gradient-7" x1="21.97" y1="15.52" x2="32.29" y2="15.52" xlink:href="#smile-linear-gradient-5"/><linearGradient id="smile-linear-gradient-8" x1="17.08" y1="29.34" x2="58.37" y2="29.34" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#d3512e"/><stop offset="1" stop-color="#e18234"/></linearGradient><linearGradient id="smile-linear-gradient-9" x1="28.35" y1="44.72" x2="47.11" y2="44.72" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#e88d5d"/><stop offset="1" stop-color="#ffcbb8"/></linearGradient></defs>
+			</svg>
+		</div>
+		<div class=flits-templates-list style="width:0px;height:0px">
+			{% render 'flits_capture_code' with 'component',template:'comp_itemCard' class:'flits-product-card-template'%}
+			{% render 'flits_capture_code' with 'component',template:'comp_addressCard' class:'flits-address-card-template'%}
+			{% render 'flits_capture_code' with 'component',template:'comp_topOrderProductCard', class:'flits-top-order-card-template' %}	
+			{% render 'flits_capture_code' with 'component',template:'comp_mobile_topOrderProductCard', class:'flits-top-order-card-mobile-template' %}
+			{% render 'flits_capture_code' with 'component',template:'comp_ruleCard', class:'flits-rule-card-template' %}		
+			{% render 'flits_capture_code' with 'component',template:'comp_SnackBarCard' %}
+			{% liquid 
+				assign adminCreditIcon= '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Outline" x="0px" y="0px" viewBox="0 0 25 25" style="enable-background:new 0 0 25 25;" xml:space="preserve"> <path d="M16.5,7.7V4c0-0.2-0.2-0.4-0.4-0.4c-0.1,0-0.1,0-0.1,0L8,6.8H3.2c-0.8,0-1.5,0.4-2,1.1c-0.5,0.7-0.8,1.6-0.8,2.5  s0.3,1.8,0.8,2.5c0.5,0.6,1,1,1.7,1.1l1,6.9c0,0.2,0.2,0.3,0.4,0.3h2.2c0.2,0,0.4-0.2,0.4-0.4c0,0,0,0,0-0.1l-1-6.8H8l8,3.2  c0.2,0.1,0.4,0,0.5-0.2c0,0,0-0.1,0-0.1v-3.7c0.9-0.3,1.6-1.4,1.6-2.8S17.5,8,16.5,7.7z M1.2,10.5c0-1.4,0.7-2.5,1.6-2.8v5.5  C1.9,13,1.2,11.8,1.2,10.5z M6,20.6H4.6l-1-6.5H5L6,20.6z M7.7,13.3h-4V7.7h4V13.3z M15.7,16.3l-7.3-2.9V7.5l7.3-2.9V16.3z   M16.5,12.4V8.6c0.5,0.3,0.8,1,0.8,1.9S17,12.1,16.5,12.4z M24.2,10.1h-4.8c-0.2,0-0.4,0.2-0.4,0.4s0.2,0.4,0.4,0.4h4.8  c0.2,0,0.4-0.2,0.4-0.4S24.4,10.1,24.2,10.1z M19.4,6c0.1,0,0.1,0,0.1,0l4-1.6c0.2-0.1,0.3-0.3,0.2-0.5s-0.3-0.3-0.5-0.2l-4,1.6  C19,5.3,18.9,5.6,19,5.8C19,5.9,19.2,6,19.4,6z M23.5,16.6l-4-1.6c-0.2-0.1-0.4,0-0.5,0.2s0,0.4,0.2,0.5l4,1.6  c0.2,0.1,0.4,0,0.5-0.2S23.8,16.6,23.5,16.6z M19,8.1c0,0.2,0.2,0.3,0.4,0.3c0,0,0.1,0,0.1,0l2-0.4c0.2,0,0.4-0.3,0.3-0.5  c0-0.2-0.3-0.4-0.5-0.3l-2,0.4C19.1,7.7,18.9,7.9,19,8.1C19,8.1,19,8.1,19,8.1z M19.3,13.3l2,0.4c0,0,0.1,0,0.1,0  c0.2,0,0.4-0.2,0.4-0.4c0-0.2-0.1-0.4-0.3-0.4l-2-0.4c-0.2,0-0.4,0.1-0.5,0.3C18.9,13,19.1,13.3,19.3,13.3L19.3,13.3z"/> </svg>'
+				render 'flits_capture_code' with 'component',template:'comp_menuItem',href:"#fromAdmin",text:'From Store Owner',attr:'data-flits-lang="navigation.from_admin" data-flits-lang-default="From Store Owner"', img:adminCreditIcon, class: 'flits-template'
+			%}
+		</div>
+		<div class="flits-hide">
+			{% render 'flits_capture_code' with 'component',template:'comp_addressCard' attr:'id="flits-address-list-item-template"'%}
+		</div>
+	</div>
+	{% render 'flits_capture_code' with 'component',template:'comp_contactUsForm' %}
+	
+</div>

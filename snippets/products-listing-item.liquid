@@ -1,0 +1,41 @@
+<div class="listing-item">
+  <div class="row no-gutters">
+    <div class="product-image col-4">
+      <a href="{{ product.url | within: collection }}">
+        {% include 'image-style' with image: product.featured_image, image_size: '180x', _type: 'product', ratio: 'list' %}
+      </a>
+    </div>
+
+    <div class="product-content col-8">
+      <div class="product-content-inner">
+
+        <a href="{{ product.url | within: collection }}">{{ product.title }}</a>
+        
+        {% if settings.product_review_type != 'none' %}
+          <div class="product-review">{% include 'include-reviews' with type: 'preview_badge' %}</div>
+        {% endif %}
+
+        <div class="product-price notranslate">
+          {% if bold_compare_at_price and bold_price < bold_compare_at_price %}
+          <span class="price">
+            <span class="money">
+              {{ bold_price | money }}
+            </span>
+          </span>
+          <span class="price-compare">
+            <span class="money">
+              {{ bold_compare_at_price | money }}
+            </span>
+          </span>
+          {% else %}
+          <span class="price">
+            <span class="money">
+              {{ bold_price | money }}
+            </span>
+          </span>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

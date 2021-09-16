@@ -1,0 +1,12 @@
+<div class="load-comment">
+  <div class="comment-avatar">
+    <img src = "{{ 'avatar_blog.png' | asset_url }}" alt="" style="width:auto"/>
+  </div>
+  
+  <div class="comment-text">
+    <span class="author">{{ comment.author }}</span>
+    <span class="date">- {{ comment.created_at | date: " %b %d, %Y " }}</span>
+    <p>{{ comment.content }}</p>
+  </div>
+</div>
+

@@ -1,0 +1,342 @@
+{% if section.settings.boxed_layout %}{% assign _layout = 'boxed' %}{% else %}{% assign _layout = 'full' %}{% endif %}
+{% if section.settings.carousel_layout %}{% assign _type = 'carousel' %}{% else %}{% assign _type = 'row' %}{% endif %}
+
+{% assign _lazyload             = settings.use_lazyload       %}
+{% assign _message_color        = section.settings.message_color  %}
+{% assign _name_color           = section.settings.name_color     %}
+{% assign _customer_color       = section.settings.customer_color %}
+{% assign _rating_color         = section.settings.rating_color   %}
+{% assign _layout_style         = section.settings.layout_style   %}
+{% assign _padding_item         = section.settings.padding_item   %}
+
+{% include 'include-item-per-row' %}
+
+<div class="home-customer layout-{{_layout }} section-show-{{section.id}}"      
+     data-section-type="customer"
+     data-section-id="{{section.id}}"
+     {% unless section.settings.background_color == blank %} style="background: {{section.settings.background_color}}"{% endunless %}>
+  {% if _layout == 'boxed' %}<div class="container">{% endif %}
+
+    {% include 'head-title' %}
+
+    <div class="wrapper-customer">
+
+        {% if section.blocks.size > 0 %}
+
+            <div class="customer-profile padding-item-{{_padding_item}}{% if _type == 'row' %} row{% else %} customer-carousel{% endif %}" {% include 'include-carousel-attr' %}>
+              {% for block in section.blocks %}
+                {% assign image     = block.settings.image    %}
+                {% assign _name     = block.settings.name     %}
+                {% assign _caption  = block.settings.caption  %}
+                {% assign _message  = block.settings.message  %}
+                {% assign _rating   = block.settings.rating   %}
+                
+                {% capture cus_rate %}
+                  {% if section.settings.show_rating %}
+                    <div class="customer-rating">
+                      <p class="rating" style="color: {{ _rating_color }};">
+                        {% case _rating %}
+                          {% when 1 %}
+                          <span>★</span>
+                          {% when 2 %}
+                          <span>★</span><span>★</span>
+                          {% when 3 %}
+                          <span>★</span><span>★</span><span>★</span>
+                          {% when 4 %}
+                          <span>★</span><span>★</span><span>★</span><span>★</span>
+                          {% else %}
+                          <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                        {% endcase %}
+                      </p>
+                    </div>
+                  {% endif %}
+                {% endcapture %}
+
+                {% capture cus_name %}
+                  <div class="custom-name">
+                    {% unless _name == blank %}<span class="name" style="color: {{ _name_color }};">{{ _name }}</span>{% endunless %}
+                    {% unless _caption == blank %}<span class="caption" style="color: {{ _customer_color }};">{{ _caption }}</span>{% endunless %}
+                  </div>
+                {% endcapture %}
+
+                {% capture cus_image %}
+                  <div class="customer-image">
+                    {% unless image == blank %}
+                    <div class="image">{% include 'image-style' with image_size: '130x130x' %}</div>
+                    {% else %}
+                    <div class="image">{{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}</div>
+                    {% endunless %}
+                  </div>
+                {% endcapture %}
+
+                {% capture cus_mess %}
+                  <div class="message">
+                    {% unless _message == blank %}
+                    <span style="color: {{ _message_color }};"><i class="demo-icon icon-quote-left"></i>{{ _message }}</span>
+                    {% endunless %}
+                  </div>
+                {% endcapture %}
+
+                <div class="customer-item customer-style-{{_layout_style}}{% if _type == 'row' %} {{ items_class }}{% endif %}">
+                  <div class="item-content">
+                    {% if _layout_style == 1 or _layout_style == 3 or _layout_style == 4 %}
+
+                     {{cus_image}}
+
+                      <div class="customer-content">
+                        {% if _layout_style == 4 %}
+                          {{cus_rate}}
+                          {{cus_mess}}
+                          {{cus_name}}
+                        {% else %}
+                          {{cus_name}}
+                          {{cus_mess}}
+                          {{cus_rate}}
+                        {% endif %}
+                      </div>
+                    {% else %}
+
+                      {{cus_mess}}
+                      <div class="customer-content">
+                        {{cus_image}}
+                        <div class="customer-info">
+                          {{cus_name}}
+                          {{cus_rate}}
+                        </div>
+                      </div>
+                    {% endif %}
+                  </div>
+                </div>
+
+              {% endfor %}
+            </div>
+
+        {% endif %}
+    </div>
+  {% if _layout == 'boxed' %}</div>{% endif %}
+</div>
+{% if _layout_style == 4 %}
+<style>
+  .home-customer.section-show-{{section.id}} .customer-content .custom-name:before{
+    background:{{_name_color}};
+  }
+</style>
+{% endif %}
+{% schema %}
+{
+   "name":"Customer",
+   "settings":[
+      {
+         "type":"paragraph",
+         "content":"Created by 'Customer' section"
+      },
+      {
+         "type":"text",
+         "id":"title",
+         "label":"Section Label",
+         "default":"Testimonial"
+      },
+      {
+         "type":"header",
+         "content":"LAYOUT"
+      },
+      {
+         "type":"checkbox",
+         "id":"boxed_layout",
+         "label":"Boxed layout",
+         "default":true
+      }, 
+      {
+         "type":"color",
+         "id":"background_color",
+         "label":"Background color"
+      },
+      {
+         "type":"checkbox",
+         "id":"padding_item",
+         "label":"Padding items",
+         "default":true
+      },
+      {
+         "type":"header",
+         "content":"Carousel settings"
+      },
+      {
+         "type":"checkbox",
+         "id":"carousel_layout",
+         "label":"Enable Carousel Layout"
+      },
+      {
+         "type":"checkbox",
+         "id":"autoplay",
+         "label":"Enable Autoplay"
+      },
+      {
+         "type":"checkbox",
+         "id":"loop",
+         "label":"Enable Loop"
+      },
+      {
+         "type":"checkbox",
+         "id":"nav",
+         "label":"Show Next & Prev arrows",
+         "default":true
+      },
+      {
+         "type":"checkbox",
+         "id":"dot",
+         "label":"Show Dots",
+         "default":false
+      },
+      {
+         "type":"header",
+         "content":"Heading content"
+      },
+      {
+         "type":"select",
+         "id":"heading_content_align",
+         "label":"Heading alignment",
+         "options":[
+            {
+               "value":"left",
+               "label":"Left"
+            },
+            {
+               "value":"center",
+               "label":"Center"
+            },
+            {
+               "value":"right",
+               "label":"Right"
+            }
+         ],
+         "default":"center"
+      },
+      {
+         "type":"text",
+         "id":"heading_text",
+         "label":"Heading",
+         "default":"Heading"
+      },
+      {
+         "type":"text",
+         "id":"subheading_text",
+         "label":"Subheading",
+         "default":"Subheading"
+      },
+      {
+         "type":"header",
+         "content":"LAYOUT CONTENT"
+      },
+      {
+         "type":"range",
+         "id":"layout_style",
+         "label":"Layout content style",
+         "min":1,
+         "max":4,
+         "default":1
+      },
+      {
+         "type":"checkbox",
+         "id":"show_rating",
+         "label":"Show rating",
+         "default":true
+      },
+      {
+         "type":"color",
+         "id":"message_color",
+         "label":"Message color",
+         "default":"#888888"
+      },
+      {
+         "type":"color",
+         "id":"rating_color",
+         "label":"Rating Color",
+         "default":"#fdd835"
+      },
+      {
+         "type":"color",
+         "id":"name_color",
+         "label":"Name color",
+         "default":"#222328"
+      },
+      {
+         "type":"color",
+         "id":"customer_color",
+         "label":"Customer color",
+         "default":"#888888"
+      },
+      {
+         "type"  :"text",
+         "id"    :"items_resp",
+         "label":"Responsive number of items",
+         "placeholder": "xl,lg,md,sm,xs",
+         "info": "You can define the number of slides to display for various breakpoint settings. e.g. 4 items on desktop, 3 items on tablet and 2 items on mobile. Input: 4,3,2. [Read more](https:\/\/help.arenacommerce.com\/customization\/grid.html)",
+         "default": "4,2,1"
+      }
+   ],
+   "blocks":[
+      {
+         "type":"image",
+         "name":"Testimonial",
+         "settings":[
+            {
+               "type":"range",
+               "id":"rating",
+               "label":"Rating",
+               "min":1,
+               "max":5,
+               "unit":"★",
+               "default":5
+            },
+            {
+               "type":"image_picker",
+               "id":"image",
+               "label":"Image",
+               "info":"Image size is 130x130 pixels"
+            },
+            {
+               "label":"Message",
+               "id":"message",
+               "type":"textarea",
+               "default":"The idea that beautiful and functional everydayobjects should not only be affordable to the wealthy"
+            },
+            {
+               "label":"Name",
+               "id":"name",
+               "type":"text",
+               "info":"Blank to hide",
+               "default":"Igor ten"
+            },
+            {
+               "label":"Customer",
+               "id":"caption",
+               "type":"text",
+               "info":"Blank to hide",
+               "default":"/ Caption"
+            }
+         ]
+      }
+   ],
+   "presets":[
+      {
+         "name":"Testimonials",
+         "category":"Advanced layout",
+         "blocks":[
+            {
+               "type":"image"
+            },
+            {
+               "type":"image"
+            },
+            {
+               "type":"image"
+            },
+            {
+               "type":"image"
+            }
+         ]
+      }
+   ]
+}
+{% endschema %}

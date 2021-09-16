@@ -1,0 +1,454 @@
+{% if section.settings.boxed_layout %}{% assign _layout = 'boxed' %}{% else %}{% assign _layout = 'full' %}{% endif %}
+{% if section.settings.carousel_layout %}{% assign _type = 'carousel' %}{% else %}{% assign _type = 'row' %}{% endif %}
+
+{% assign _lazyload            = settings.use_lazyload %}
+{% assign _text_align          = section.settings.text_align %}
+{% assign _padding_item        = section.settings.padding_item %}
+{% assign _total_items         = section.settings.total_items %}
+{% assign middle_index         = section.settings.total_items | divided_by: 2 | round %}
+{% assign collection           = collections[section.settings.collection] %}
+{% include 'include-item-per-row' %}
+
+<div id="ps-{{ section.id }}"
+     class="product-slider-section layout-{{_layout }} section-show-{{section.id}}"
+     data-section-type="product-grid"
+     data-section-id="{{section.id}}"
+     {% unless section.settings.background_color == blank %} style="background: {{section.settings.background_color}}"{% endunless %}>
+  {% if _layout == 'boxed' %}<div class="container">{% endif %}
+
+    {% include 'head-title' %}
+
+    {% unless section.settings.collection == blank or collection.products_count == 0 %}
+
+      <div class="product-slider-content" data-test="{{items_class}}">
+        <div class="padding-item-{{_padding_item}}{% if _type == 'row' %} row{% else %} ps-list owl-carousel ps-list-{{ section.id }}{% endif %}" {% include 'include-carousel-attr' %}>
+
+          {% if _type == 'row' %}
+            {% for block in section.blocks %}
+              {% if block.settings.position == '1' %}{% include 'include-special-block' with type: 'block' %}{% endif %}
+            {% endfor %}
+          {% endif %}
+
+          {% for product in collection.products limit: _total_items %}
+  {% if product.object_type == 'product' and product.type == 'SHOPSTORM_HIDDEN_PRODUCT' %}{% continue %}{% endif %}
+
+  {% if product.object_type == 'product' and product.type == 'SHOPSTORM_HIDDEN_PRODUCT' %}{% continue %}{% endif %}
+
+{%- include 'bold-product' with product, hide_action: 'skip' -%}
+            {% assign index = forloop.index %}
+            {% if _type == 'row' %}<div class="products-grid-item {{ items_class }}">{% endif %}
+              {% include 'product-item' %}
+            {% if _type == 'row' %}</div>{% endif %}
+            {% if _type == 'row' %}
+              {% for block in section.blocks %}
+                {% if block.settings.position == '2' and index == middle_index %}
+                  {% include 'include-special-block' with type: 'block' %}
+                {% endif %}
+              {% endfor %}
+            {% endif %}
+
+          {% endfor %}
+
+          {% if _type == 'row' %}
+            {% for block in section.blocks %}
+              {% if block.settings.position == '3' %}{% include 'include-special-block' with type: 'block' %}{% endif %}
+            {% endfor %}
+          {% endif %}
+        </div>        
+      </div>
+
+    {% else %}
+
+      <div class="product-slider-content">
+        <div class="row">
+          {% for i in (1.._item_per_row)  %}
+            <div class="{{ items_class }}">
+              <div class="product-wrapper">
+
+                <div class="product-head">
+                  <div class="product-image">
+
+                    <div class="featured-img">
+                      {% capture current %}{% cycle 1, 2, 3, 4, 5, 6 %}{% endcapture %}
+                      {{ 'product-' | append: current | placeholder_svg_tag: 'placeholder-svg' }}
+                    </div>
+
+                  </div>
+                </div>
+
+                <div class="product-content text-{{ section.settings.text_align }}">
+                  <div class="pc-inner">
+                    <h5 class="product-name">{{ 'homepage.onboarding.product_title' | t }}</h5>{% render 'judgeme_widgets', widget_type: 'judgeme_preview_badge', jm_style: '', concierge_install: true, product: product %}
+                    <div class="product-price"><span class="price">{{ 1999 | money }}</span></div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+
+    {% endunless %}
+
+  {% if _layout == 'boxed' %}</div>{% endif %}
+</div>
+{% schema %}
+{
+   "name":"Products Grid",
+   "settings":[
+      {
+         "type":"paragraph",
+         "content":"Created by 'Products Grid' section"
+      },
+      {
+         "type":"text",
+         "id":"title",
+         "label":"Section Label",
+         "default":"Products Grid"
+      },
+      {
+         "type":"header",
+         "content":"LAYOUT"
+      },
+      {
+         "type":"checkbox",
+         "id":"boxed_layout",
+         "label":"Boxed layout",
+         "default":true
+      },
+      {
+         "type":"color",
+         "id":"background_color",
+         "label":"Background color",
+         "default":"#FFFFFF"
+      },
+      {
+         "type":"checkbox",
+         "id":"padding_item",
+         "label":"Padding items",
+         "default":true
+      },
+      {
+         "type":"header",
+         "content":"Carousel settings"
+      },
+      {
+         "type":"checkbox",
+         "id":"carousel_layout",
+         "label":"Enable Carousel Layout"
+      },
+      {
+         "type":"checkbox",
+         "id":"autoplay",
+         "label":"Enable Autoplay"
+      },
+      {
+         "type":"checkbox",
+         "id":"loop",
+         "label":"Enable Loop"
+      },
+      {
+         "type":"checkbox",
+         "id":"nav",
+         "label":"Show Next & Prev arrows",
+         "default":true
+      },
+      {
+         "type":"checkbox",
+         "id":"dot",
+         "label":"Show Dots",
+         "default":false
+      },
+      {
+         "type":"header",
+         "content":"Heading content",
+         "info":"Blank to hide."
+      },
+      {
+         "type":"select",
+         "id":"heading_content_align",
+         "label":"Heading alignment",
+         "options":[
+            {
+               "value":"left",
+               "label":"Left"
+            },
+            {
+               "value":"center",
+               "label":"Center"
+            },
+            {
+               "value":"right",
+               "label":"Right"
+            }
+         ],
+         "default":"center"
+      },
+      {
+         "type":"text",
+         "id":"heading_text",
+         "label":"Heading",
+         "default":"Heading"
+      },
+      {
+         "type":"text",
+         "id":"subheading_text",
+         "label":"Subheading",
+         "default":"Subheading"
+      },
+      {
+         "type":"header",
+         "content":"LAYOUT CONTENT"
+      },
+      {
+         "type":"select",
+         "id":"text_align",
+         "label":"Text align for product content",
+         "options":[
+            {
+               "value":"left",
+               "label":"Left"
+            },
+            {
+               "value":"center",
+               "label":"Center"
+            },
+            {
+               "value":"right",
+               "label":"Right"
+            }
+         ],
+         "default":"left"
+      },
+      {
+         "id":"collection",
+         "type":"collection",
+         "label":"Collection item"
+      },
+       {
+          "type"  :"text",
+          "id"    :"items_resp",
+          "label":"Responsive number of items",
+          "placeholder": "xl,lg,md,sm,xs",
+          "info": "You can define the number of slides to display for various breakpoint settings. e.g. 4 items on desktop, 3 items on tablet and 2 items on mobile. Input: 4,3,2. [Read more](https:\/\/help.arenacommerce.com\/customization\/grid.html)",
+          "default": "2,1"
+       },
+      {
+         "type":"range",
+         "id":"total_items",
+         "label":"Total items",
+         "default":12,
+         "min":1,
+         "max":30,
+         "step":1
+      }
+   ],
+   "blocks":[
+      {
+         "type":"product",
+         "name":"Big Product",
+         "settings":[
+            {
+               "type":"paragraph",
+               "content":"Only for type 'Row"
+            },
+            {
+               "type":"select",
+               "id":"position",
+               "label":"Position",
+               "default":"1",
+               "options":[
+                  {
+                     "value":"1",
+                     "label":"First"
+                  },
+                  {
+                     "value":"2",
+                     "label":"Middle"
+                  },
+                  {
+                     "value":"3",
+                     "label":"Last"
+                  }
+               ]
+            },
+            {
+               "type":"range",
+               "id":"width",
+               "label":"Width on Desktop",
+               "min":0,
+               "max":12,
+               "step":1,
+               "unit":"/12",
+               "default":4,
+               "info":"0 to Hide"
+            },
+            {
+               "type":"range",
+               "id":"width_mobile",
+               "label":"Width on Mobile",
+               "min":0,
+               "max":12,
+               "step":1,
+               "unit":"/12",
+               "default":2,
+               "info":"0 to Hide"
+            },
+            {
+               "type":"product",
+               "id":"bproduct",
+               "label":"Product"
+            },
+            {
+               "type":"select",
+               "id":"image_height",
+               "label":"Image Height",
+               "default":"auto",
+               "options":[
+                  {
+                     "value":"auto",
+                     "label":"Auto"
+                  },
+                  {
+                     "value":"fill",
+                     "label":"Fill"
+                  }
+               ]
+            },
+            {
+               "type":"text",
+               "id":"b_title",
+               "label":"Title",
+               "default":"Daily deal"
+            },
+            {
+               "type":"text",
+               "id":"b_subtitle",
+               "label":"Subtitle",
+               "default":"end in:"
+            },
+            {
+               "type":"text",
+               "id":"countdown",
+               "label":"Date countdown",
+               "placeholder":"MM/DD/YYYY"
+            }
+         ]
+      },
+      {
+         "type":"image",
+         "name":"Big Image",
+         "settings":[
+            {
+               "type":"paragraph",
+               "content":"Only for type 'Row"
+            },
+            {
+               "type":"select",
+               "id":"position",
+               "label":"Position",
+               "default":"1",
+               "options":[
+                  {
+                     "value":"1",
+                     "label":"First"
+                  },
+                  {
+                     "value":"2",
+                     "label":"Middle"
+                  },
+                  {
+                     "value":"3",
+                     "label":"Last"
+                  }
+               ]
+            },
+            {
+               "type":"range",
+               "id":"width",
+               "label":"Width on Desktop",
+               "min":0,
+               "max":12,
+               "step":1,
+               "unit":"/12",
+               "default":4,
+               "info":"0 to Hide"
+            },
+            {
+               "type":"range",
+               "id":"width_mobile",
+               "label":"Width on Mobile",
+               "min":0,
+               "max":12,
+               "step":1,
+               "unit":"/12",
+               "default":2,
+               "info":"0 to Hide"
+            },
+            {
+               "type":"image_picker",
+               "id":"image",
+               "label":"Image"
+            },
+            {
+               "type":"url",
+               "id":"link",
+               "label":"Image link",
+               "default":"/collections"
+            },
+            {
+               "type":"select",
+               "id":"image_height",
+               "label":"Image Height",
+               "default":"auto",
+               "options":[
+                  {
+                     "value":"auto",
+                     "label":"Auto"
+                  },
+                  {
+                     "value":"fill",
+                     "label":"Fill"
+                  }
+               ]
+            },
+            {
+               "type":"text",
+               "id":"b_title",
+               "label":"Title",
+               "default":"Daily deal"
+            },
+            {
+               "type":"text",
+               "id":"b_subtitle",
+               "label":"Subtitle",
+               "default":"end in:"
+            },
+            {
+               "type":"text",
+               "id":"countdown",
+               "label":"Date countdown",
+               "placeholder":"MM/DD/YYYY"
+            },
+            {
+               "type":"text",
+               "id":"button_text",
+               "label":"Button label"
+            },
+            {
+               "type":"url",
+               "id":"button_link",
+               "label":"Button link"
+            }
+         ]
+      }
+   ],
+   "presets":[
+      {
+         "name":"Products Grid",
+         "category":"Collection"
+      }
+   ]
+}
+{% endschema %}

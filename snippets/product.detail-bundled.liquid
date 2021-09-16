@@ -1,0 +1,118 @@
+{%- unless meta_bw.bundle_1 == blank -%}
+  {%- assign accessory_handle_1 = meta_bw.bundle_1 -%}
+  {%- assign accessory_1 = all_products[accessory_handle_1] -%}
+{%- endunless -%}
+{%- unless meta_bw.bundle_2 == blank -%}
+  {%- assign accessory_handle_2 = meta_bw.bundle_2 -%}
+  {%- assign accessory_2 = all_products[accessory_handle_2] -%}
+{%- endunless -%}
+
+{% unless meta_bw.bundle_1 == blank and meta_bw.bundle_2 == blank %}
+  <div id="product-bundled">
+    <p class="bundled-title">{{'products.product.add_bundle_to_cart' | t}}</p>
+    <form action="/cart/add" method="post" id="bundledAddToCart-meta">
+      {% assign img_size = '320x' %}
+
+      <div id="crust-items" class="crust-items">
+        <ul class="list-inline">
+          <li>{% include 'product.detail-bundled-items' with p_variant: product, p_id: 0 %}</li>
+          
+          {% unless meta_bw.bundle_1 == blank %}
+            <li>{% include 'product.detail-bundled-items' with p_variant: accessory_1, p_id: 1 %}</li>
+          {% endunless %}
+
+          {% unless meta_bw.bundle_2 == blank %}
+            <li>{% include 'product.detail-bundled-items' with p_variant: accessory_2, p_id: 2 %}</li>
+          {% endunless %}
+        </ul>
+        <div class="b-total-price">
+          <div class="bundled-total-price">
+            <button id="add-bundle-to-cart" class="add-bundle-to-cart btn btn-2" type="button">{{ 'products.product.bundled_button' | t }}</button>
+            <div id="bundled-tp-{{ product.id }}" class="total-price">
+              <span class="price">{{ bold_price | money }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+
+{%- render 'shappify-bdl-load-bundle' -%}
+
+  </div>
+
+  <script>
+    let updateTotalPrice = function(){
+      let _price0 = 0,
+          _price1 = 0,
+          _price2 = 0;
+
+      if (jQuery('.bundled-product-0 .t-price-0').length)
+        _price0 = Number(jQuery('.bundled-product-0 .t-price-0').html());
+      if (jQuery('.bundled-product-1 .t-price-1').length)
+        _price1 = Number(jQuery('.bundled-product-1 .t-price-1').html());
+      if (jQuery('.bundled-product-2 .t-price-2').length)
+        _price2 = Number(jQuery('.bundled-product-2 .t-price-2').html());
+
+      $('.b-total-price .total-price').html('Total price: <span class="price">' + Shopify.formatMoney(_price0 + _price1 + _price2, '{{shop.money_format}}') + '</span>');
+      {% if settings.show_multiple_currencies %}currenciesCallbackSpecial('.bundled-total-price span.money');{% endif %}
+   }
+
+   jQuery(document).ready(function($) {
+      updateTotalPrice();
+
+      $('.b-prod-select select').on('change',function(){
+        var id_bundled = $(this).parents('.bundled-product').data('bundled')
+            ,parent_elem = $('.bundled-product-'+id_bundled)
+            ,price = parent_elem.find('select option:selected').data('price');
+        parent_elem.find('.pb-price').html('<span class="price">'+Shopify.formatMoney(price, '{{ shop.money_format }}')+'</span>');
+        parent_elem.find('.t-price').html(price);
+        parent_elem.attr('data-id', parent_elem.find('select option:selected').val());
+
+        updateTotalPrice();
+        {% if settings.show_multiple_currencies %}
+        currenciesCallbackSpecial('.bundled-product-'+id_bundled+' span.money');
+        {% endif %}
+      })
+
+      $('.add-bundle-to-cart').on('click', function(){
+        $('.new-loading').addClass('loading');
+
+          let bool = false;
+          $('.bundled-product').each(function(){
+            var _current_id = $(this).attr('data-id');
+            $.ajax({
+              type: 'POST',
+              url: '/cart/add.js',
+              async: false,
+              data: { id : _current_id,quantity: 1},
+              dataType: 'json',
+              success: function(response){bool = true;},
+              error: function(data){alert("All items are in your cart");},
+              cache: false
+            });
+          });
+          
+          if (bool) {
+            {% if settings.cart_styles == 'dropdown' %}
+            AT_Main.updateLayerCart('All bundle',null);
+            {% else %}
+            setTimeout(function(){
+              AT_Main.fixNoScroll();
+              $('.new-loading').removeClass('loading');
+              jQuery('.cart-sb').toggleClass('opened');
+              jQuery('body').toggleClass('cart-opened');
+            }, 3000);
+            {% endif %}
+
+            Shopify.getCart(function(cart) {
+              Shopify.updateCartInfo(cart, '#cart-info #cart-content');
+            });
+          }else{
+           setTimeout(function(){
+            $('.new-loading').removeClass('loading');
+          }, 3000);
+         }
+      });
+    });
+  </script>
+{% endunless %}

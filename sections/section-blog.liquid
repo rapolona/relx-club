@@ -1,0 +1,276 @@
+{% if section.settings.boxed_layout %}{% assign _layout = 'boxed' %}{% else %}{% assign _layout = 'full' %}{% endif %}
+{% if section.settings.carousel_layout %}{% assign _type = 'carousel' %}{% else %}{% assign _type = 'row' %}{% endif %}
+{% assign _lazyload      = settings.use_lazyload %}
+{% assign _total_items   = section.settings.total_items %}
+{% assign _padding_item  = section.settings.padding_item %}
+{% assign _bold_title    = section.settings.bold_title %}
+{% include 'include-item-per-row' %}
+
+{% capture emptyBlog %}
+  {% for i in (1..3)  %}
+    <div class="post-item {{ items_class }}">
+      <div class="post-item-inner">
+
+        <div class="post-image">
+          {% capture current %}{% cycle 1, 2, 3, 4, 5, 6 %}{% endcapture %}
+          {{ 'collection-' | append: current | placeholder_svg_tag: 'placeholder-svg' }}
+        </div>
+
+        <div class="post-content text-center">
+          <div class="meta-data">
+            <span class="date">{{ 'homepage.onboarding.blog_title' | t }}</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  {% endfor %}
+{% endcapture %}
+
+{%- if settings.disqus_enabled and section.settings.show_comment -%}
+  <script id="dsq-count-scr" src="//{{ settings.disqus_shortname }}.disqus.com/count.js" async></script>
+{%- endif -%}
+
+<div  id="blog-container-{{ section.id }}"
+      class="blog-container layout-{{_layout }} section-show-{{section.id}}{% if section.settings.hide_mobile %} d-none d-md-block{% endif %}"
+      data-section-type="blog-section"
+      data-section-id="{{section.id}}"
+      {% unless section.settings.background_color == blank %} style="background: {{section.settings.background_color}}"{% endunless %}>
+  {% if _layout == 'boxed' %}<div class="container">{% endif %}
+
+   <div class="blog-content">
+      {% include 'head-title' %}
+      <div class="padding-item-{{_padding_item}} {% if _type == 'row' %}row"{% else %}owl-carousel blog-carousel" {% include 'include-carousel-attr' %}{% endif %}>
+        {%- assign blog = blogs[section.settings.blog] -%}
+
+        {% if blog != blank and blog.articles_count > 0 %}
+          {% for article in blog.articles limit: _total_items %}
+
+            <div class="post-item{% if _type == 'row' %} {{ items_class }}{% endif %}{% if section.settings.border %} border{% endif %}{% if section.settings.shadow %} shadow{% endif %}">
+              {% include 'featured-blog-item' %}
+            </div>
+          {% endfor %}
+
+        {% else %}
+          {{ emptyBlog }}
+        {% endif %}
+
+      </div>
+   </div>
+
+  {% if _layout == 'boxed' %}</div>{% endif %}
+</div>
+{% schema %}
+{
+   "name":"Blog",
+   "settings":[
+      {
+         "type":"paragraph",
+         "content":"Created by 'Blog' section"
+      },
+      {
+         "id":"title",
+         "type":"text",
+         "label":"Section Label",
+         "default":"Blog posts"
+      },
+      {
+         "type":"header",
+         "content":"LAYOUT"
+      },
+      {
+         "type":"checkbox",
+         "id":"boxed_layout",
+         "label":"Boxed layout",
+         "default":true
+      },
+      {
+         "type"  :"checkbox",
+         "id"    :"hide_mobile",
+         "label" :"Hide on Mobile"
+      },
+      {
+        "type":"color",
+        "id":"background_color",
+        "label":"Background color"
+      },
+      {
+         "type":"checkbox",
+         "id":"padding_item",
+         "label":"Padding items",
+         "default":true
+      },
+      {
+         "type":"header",
+         "content":"Carousel settings"
+      },
+      {
+         "type":"checkbox",
+         "id":"carousel_layout",
+         "label":"Enable Carousel Layout"
+      },
+      {
+         "type":"checkbox",
+         "id":"autoplay",
+         "label":"Enable Autoplay"
+      },
+      {
+         "type":"checkbox",
+         "id":"loop",
+         "label":"Enable Loop"
+      },
+      {
+         "type":"checkbox",
+         "id":"nav",
+         "label":"Show Next & Prev arrows",
+         "default":true
+      },
+      {
+         "type":"checkbox",
+         "id":"dot",
+         "label":"Show Dots",
+         "default":false
+      },
+      {
+         "type":"header",
+         "content":"Heading content"
+      },
+      {
+         "type":"select",
+         "id":"heading_content_align",
+         "label":"Heading alignment",
+         "options":[
+            {
+               "value":"left",
+               "label":"Left"
+            },
+            {
+               "value":"center",
+               "label":"Center"
+            },
+            {
+               "value":"right",
+               "label":"Right"
+            }
+         ],
+         "default":"center"
+      },
+      {
+         "type":"text",
+         "id":"heading_text",
+         "label":"Heading"
+      },
+      {
+         "type":"text",
+         "id":"subheading_text",
+         "label":"Subheading"
+      },
+      {
+         "type":"header",
+         "content":"Layout content"
+      },
+      {
+         "type":"blog",
+         "id":"blog",
+         "label":"Blog"
+      },
+      {
+         "type":"select",
+         "id":"show_date_style",
+         "label":"Show Date Created Style",
+         "default":"1",
+         "options":[
+            {
+               "value":"1",
+               "label":"Style 1"
+            },
+            {
+               "value":"2",
+               "label":"Style 2"
+            }
+         ]
+      },
+      {
+         "type"  :"select",
+         "id"    :"title_pos",
+         "label" :"Blog Title Position:",
+         "options":[
+           {
+             "value": "above",
+             "label": "Above Author, Date Create, Tag"
+           },
+           {
+             "value": "below",
+             "label": "Below Author, Date Create, Tag"
+           }
+         ]
+      },
+      {
+         "type":"checkbox",
+         "id":"bold_title",
+         "label":"Bold Blog Title",
+         "default":true
+      },
+      {
+         "type":"checkbox",
+         "id":"show_author",
+         "label":"Show Author",
+         "default":true
+      },
+      {
+         "type":"checkbox",
+         "id":"border",
+         "label":"Show Border"
+      },
+      {
+         "type":"checkbox",
+         "id":"show_comment",
+         "label":"Show Comment Count"
+      },
+      {
+         "type":"checkbox",
+         "id":"show_excerpt",
+         "label":"Show Excerpt"
+      },
+      {
+         "type":"checkbox",
+         "id":"show_readmore",
+         "label":"Show Readmore button"
+      },
+      {
+         "type":"checkbox",
+         "id":"shadow",
+         "label":"Show Shadow"
+      },
+      {
+         "type":"checkbox",
+         "id":"show_tags",
+         "label":"Show Tags"
+      },
+      {
+         "type"  :"text",
+         "id"    :"items_resp",
+         "label":"Responsive number of items",
+         "placeholder": "xl,lg,md,sm,xs",
+         "info": "You can define the number of slides to display for various breakpoint settings. e.g. 4 items on desktop, 3 items on tablet and 2 items on mobile. Input: 4,3,2. [Read more](https:\/\/help.arenacommerce.com\/customization\/grid.html)",
+         "default": "4,2,1"
+      },
+      {
+         "type":"range",
+         "id":"total_items",
+         "label":"Total items",
+         "default":12,
+         "min":1,
+         "max":30,
+         "step":1
+      }
+   ],
+   "presets":[
+      {
+         "name":"Blog Grid",
+         "category":"Advanced layout"
+      }
+   ]
+}
+{% endschema %}
+

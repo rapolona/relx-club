@@ -1,0 +1,98 @@
+{% capture p_image %}
+  {% include 'image-style' with image: product.featured_image, image_size: '390x', image_class: 'featured-image front', _type: 'product' %}
+  {%- if settings.product_item_hover_effect == 'fade_in_back' or settings.product_item_hover_effect == 'zoom_in' -%}
+    {%- if product.images.size > 1 -%}    
+      <span class="img-back d-none d-lg-block">
+        {% include 'image-style' with image: product.images[1], image_size: '390x', _type: 'product' %}
+      </span>
+    {%- endif -%}
+  {%- endif -%}
+{% endcapture %}
+
+{% capture p_name %}
+	<div class="prod-name">
+		<h5 class="product-name{% if settings.product_title_string != 'none' %} max-{{settings.product_title_string}}-str{% endif %}">
+			<a href="{{ product.url | within: collection }}" title="{{ product.title }}">{{ product.title }}</a>
+		</h5>{% render 'judgeme_widgets', widget_type: 'judgeme_preview_badge', jm_style: '', concierge_install: true, product: product %}
+	</div>
+{% endcapture %}
+
+{% capture p_cart %}
+  <div class="product-add-cart{% unless product.available %} sold-out hide{% endunless %}">
+    {% if product.available %}
+      {% unless settings.disable_ajax_cart %}
+        {% if bold_variants_size > 1 %}
+          <a href="{{ product.url | within: collection }}" class="btn-add-cart btn-1 select-options" title="{{ 'products.product.select_options' | t }}">
+            <i class="demo-icon icon-right"></i>
+            {{- 'products.product.select_options' | t -}}
+          </a>
+
+        {% else %}
+          <form action="/cart/add" method="post" enctype="multipart/form-data">
+            <a href="javascript:void(0);" class="btn-add-cart btn-1 add-to-cart" title="{{ 'products.product.add_to_cart' | t }}">
+              <i class="demo-icon {{ settings.cart_font_icon }}"></i>
+              {{- 'products.product.add_to_cart' | t -}}
+            </a>
+            <select class="d-none" name="id">
+              {% for variant in product.variants %}
+{%- include 'bold-variant' with variant, hide_action: 'skip' -%}
+              <option value="{{ variant.id }}">{{ variant.title | escape }}</option>
+              {% endfor %}
+            </select>
+          </form>
+
+{%- render 'shappify-bdl-load-bundle' -%}
+
+        {% endif %}
+
+      {% else %}
+        <a href="{{ product.url | within: collection }}" class="btn-add-cart btn-1 select-options" title="{{ 'products.product.select_options' | t }}">
+          <i class="demo-icon {{ settings.cart_font_icon }}"></i>
+          {{- 'products.product.select_options' | t -}}
+        </a>
+      {% endunless %}
+    {% else %}
+      <a href="javascript:void(0);" class="btn-add-cart btn-1 sold-out"><i class="demo-icon {{ settings.cart_font_icon }}"></i>{{ 'products.product.sold_out' | t }}</a>
+    {% endif %}
+  </div>
+{% endcapture %}
+
+{% capture p_wishlist %}
+	{% if settings.enable_product_wishlist %}
+		{% assign wishlist_link = pages["wishlist-page"].url %}
+		<div class="product-wishlist">
+		<a href="{{ wishlist_link }}" class="add-to-wishlist add-product-wishlist" data-handle-product="{{product.handle}}"{% if customer %} data-user="{{ customer.id }}"{% endif %} title="{{ 'products.product.add_to_wishlist' | t }}"><i class="demo-icon {{ settings.wishlist_font_icon }}"></i></a>
+		</div>
+	{% endif %}
+{% endcapture %}
+
+{% capture p_quick_view %}
+	{% if settings.use_quick_view %}
+		<div data-target="#quick-shop-popup" data-handle="{{product.handle}}" class="quick_shop" data-toggle="modal" title="{{ 'products.product.quick_shop' | t }}">
+      <i class="demo-icon icon-view-2"></i>
+		</div>
+	{% endif %}
+{% endcapture %}
+
+{% capture p_review %}
+	{% if settings.product_review_type != 'none' and settings.show_product_review %}
+		<div class="product-review">{% include 'include-reviews' with type: 'preview_badge' %}</div>
+	{% endif %}
+{% endcapture %}
+
+{% capture p_sh_description %}
+	{% assign meta_shortdes = product.metafields.c_f %}
+	{% assign key = 'description_excerpt' %}
+
+	{% unless meta_shortdes.description_excerpt == blank %}
+		<div class="product-description"><p>{{ meta_shortdes.description_excerpt }}</p></div>
+	{% endunless %}
+{% endcapture %}
+
+{% capture p_compare %}
+{% if settings.enable_product_compare %}
+  <div class="product-compare">
+  <a href="javascript:void(0);"class="add-to-compare add-product-compare" data-handle-product="{{product.handle}}"{% if customer %} data-user="{{ customer.id }}"{% endif %} title="{{ 'products.product.add_compare' | t }}"><i class="demo-icon {{ bold_compare_font_icon }}"></i></a>
+  </div>
+{% endif %}
+{% endcapture %}

@@ -1,0 +1,94 @@
+<div class="text-box position-{{ _text_box_position }}"
+style="width: {{section.settings.width }}%; {% if _text_box_backgound == 'color' %}background-color: {{ _text_box_bg_color }}{% else %}background-image:url({{ _text_box_bg_image | img_url: _text_box_bg_size }};{% endif %}">
+  {% for block in section.blocks %}
+
+    {% unless block.type == 'image' %}
+    
+      <div class="text-box-content block-{{ block.type }}{% if block.settings.hide_mobile %} d-none d-lg-block{% endif %}" {{ block.shopify_attributes }}>
+    
+        {% case block.type %}
+
+          {% when 'text' %}
+            {%- assign _text      = block.settings.text -%}
+            {%- assign _color     = block.settings.color -%}
+            {%- assign _font_size = block.settings.font_size -%}
+            {%- assign _bold_text = block.settings.bold_text -%}
+
+            {% unless _text == blank %}
+              <div class="text bold-text-{{ _bold_text }}" style="font-size: {{ _font_size }}px; color: {{ _color }};">{{ _text }}</div>
+            {% endunless %}
+
+          {% when 'form' %}
+            {%- assign _signup_url      = block.settings.action -%}
+            {%- assign _placeholder     = block.settings.placeholder -%}
+            {%- assign _button_text     = block.settings.button_text -%}
+            {%- assign _button_position = block.settings.button_position -%}
+
+            <div class="box button-position-{{ _button_position }}">
+              {%- if block.settings.action_type == 'mailchimp' -%}
+              <form id="mc-form" action="{{ _signup_url }}" method="post" name="mc-embedded-subscribe-form" target="_blank" rel="noopener">
+                <input id="mc-email" class="input-block-level" type="email" name="EMAIL" placeholder="{{ _placeholder }}" required />
+                <button id="mc-button" class="btn btn-1" type="submit">{{ _button_text }}</button>
+              </form>
+              {%- else -%}
+              {% include 'include-klaviyo' with type: 'block'%}
+              {%- endif -%}
+            </div>
+
+          {% when 'countdown' %}
+            {%- assign _expire     = block.settings.expire -%}
+            {%- assign _dueDate    = _expire | split: '/' -%}
+            {%- assign _background = block.settings.bg_color -%}
+            {%- assign _color      = block.settings.color -%}
+            {%- assign _text       = block.settings.text -%}
+
+            {% unless _expire == blank %}
+              <div class="box-countdown box-{{block.id}}">
+                <div class="block-countdown countdown-content hide">
+                  {% unless _text == blank %}<div class="offer-text">{{ _text }}</div>{% endunless %}
+                  <div class="wrapper-countdown" data-id="{{block.id}}" data-date="{{_expire}}">
+                    <div class="popup-countdown countdown_{{ block.id }}"></div>
+                  </div>
+                </div>
+              </div>
+              <style>
+                .box-countdown.box-{{block.id}} .wrapper-countdown{
+                  color: {{_color}};
+                }
+                .box-countdown.box-{{block.id}} .popup-countdown > span{
+                  background-color: {{ _background }};
+                }
+              </style>
+              <script>
+                jQuery(document).ready(function($) {AT_Main.init_CountDown();});
+              </script>
+            {% endunless %}
+
+          {% when 'coupon' %}
+            {%- assign _image      = block.settings.image -%}
+            {%- assign _image_size = block.settings.image_size -%}
+
+            <div class="coupon-placeholder">
+              {% unless _image == blank %}
+                <div class="coupon-image">
+                  {% include 'image-style' with image: _image, image_size: _image_size  %}
+                </div>
+              {% endunless %}
+            </div>
+
+          {% when 'social' %}
+            {%- assign _border_top = block.settings.border_top -%}
+
+            <div class="widget-social border-top-{{ _border_top }}">
+              {% include 'social-media-icons' %}
+            </div>
+
+          {% else %}
+
+        {% endcase %}
+        
+      </div>
+    {% endunless %}
+
+  {% endfor %}
+</div>

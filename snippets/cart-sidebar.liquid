@@ -1,0 +1,19 @@
+<div class="cart-sb" lock-ignore>
+  
+  <form action="/cart" method="post">
+
+    <div class="cart-sb-title">
+      <a href="/cart" class="c-title">
+        <i class="demo-icon {{ settings.cart_font_icon }}"></i>
+        {{ "general.header.cart_info.view_shopping_bag" | t }} (<span class="number">{{ cart.item_count }}</span>)
+      </a>
+      <span class="c-close"><i class="demo-icon icon-delete" aria-hidden="true"></i></span>
+    </div>
+
+    <div id="cart-info">
+      <div id="cart-content" class="cart-content">
+        <div class="loading"></div>
+      </div>
+    </div>
+  </form>
+</div>

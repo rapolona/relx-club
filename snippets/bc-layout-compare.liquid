@@ -1,0 +1,139 @@
+<div class="product-comparison-template-wrapper" id="product-compare">
+  <table class="table table-bordered product_comparison_template">
+     <tbody>
+        <tr class="features">
+            <td class="heading-col feature-features"> <span>{{ compare_translate.t_features_title }}</span></td>
+            {% for product in prodlist %}
+  {% if product.object_type == 'product' and product.type == 'SHOPSTORM_HIDDEN_PRODUCT' %}{% continue %}{% endif %}
+
+  {% if product.object_type == 'product' and product.type == 'SHOPSTORM_HIDDEN_PRODUCT' %}{% continue %}{% endif %}
+
+              <td class="product-col comparison_features product-{{product.id}}">
+                <div class="remove"> 
+                  <a class="compare_remove remove-product-compare" href="#" title="Remove" data-handle-product="{{product.handle}}" data-id-product="{{product.id}}"> 
+                    <i class="fa fa-ban"></i> 
+                  </a>
+                </div>
+                <div class="product-image-block">
+                  <a class="product_image" href="{{product.uri}}" title="{{product.title}}"> 
+                    <img class="img-responsive cmp-product-image" src="{{product.featured_image}}" alt="{{product.title}}">
+                  </a>
+                  <div class="label-box">{{product.sale_label}}   {{product.new_label}}</div>
+                </div>
+                <h5 class="product-name">
+                  <a class="product-title" href="{{product.uri}}" title="{{product.title}}">{{product.title}}</a>
+                </h5>
+                <div class="product-price">
+                  <span class="price price-compare product-old-price hidden">{{product.compare_price}}</span>
+                  <span class="price">{{product.price}}</span>
+                </div>
+                <div class="comparison_product_infos">
+                  <p class="comparison_availability_statut">
+                    <span class="availability_label">{{ compare_translate.t_availability_title }}</span>
+                    <span class="availability_value">{{ product.available }}</span>
+                  </p>
+                  <div class="clearfix">
+                    <div class="button-container"> 
+                      <a class="button lnk_view btn view-btn" href="{{product.uri}}" title="{{ compare_translate.t_view_detail }}">
+                        <span>{{ compare_translate.t_view_detail }}</span>
+                      </a>
+                    </div>
+                   </div>
+                </div>
+              </td>
+            {% endfor %}
+        </tr>
+        
+        {% if compare_showing_options.show_availability %}
+        <tr class="availability">
+          <td class="heading-col feature-availability">
+            <strong>{{ compare_translate.t_availability_title }}</strong>
+          </td>
+          {% for product in prodlist %}
+  {% if product.object_type == 'product' and product.type == 'SHOPSTORM_HIDDEN_PRODUCT' %}{% continue %}{% endif %}
+
+  {% if product.object_type == 'product' and product.type == 'SHOPSTORM_HIDDEN_PRODUCT' %}{% continue %}{% endif %}
+
+            <td class="product-col comparison_availability product-{{product.id}}">{{product.available}}</td>
+          {% endfor %} 
+        </tr>
+        {% endif %}     
+        
+        {% if compare_showing_options.show_option %}
+        <tr class="options">
+          <td class="heading-col feature-options">
+            <strong>{{ compare_translate.t_option_title }}</strong>
+          </td>
+          {% for product in prodlist %}
+  {% if product.object_type == 'product' and product.type == 'SHOPSTORM_HIDDEN_PRODUCT' %}{% continue %}{% endif %}
+
+  {% if product.object_type == 'product' and product.type == 'SHOPSTORM_HIDDEN_PRODUCT' %}{% continue %}{% endif %}
+
+            <td class="product-col comparison_options product-{{product.id}}">
+            {% for option in product.options %}
+              {% assign _valKey = "option" | append: forloop.index | strip %}
+              {% assign _valLen = product.option_value[_valKey] | size | plus: 0 %}
+              
+              {% if _valLen > 0 and option != 'Title' %}
+              <div>
+                <strong>{{ option }}: </strong>
+                {% for _val in product.option_value[_valKey] %}
+                <span>
+                    {% assign index = forloop.index | plus: 0 %}
+                  {% if forloop.index < _valLen %}
+                      {{_val}}, 
+                    {% else %} 
+                      {{_val}}
+                    {% endif %}
+                </span>
+                {% endfor %}
+              </div>
+              {% endif %}
+            {% endfor %}
+            </td>
+          {% endfor %}
+        </tr>
+        {% endif %} 
+        
+        {% if compare_showing_options.show_vendor %}
+        <tr class="vendor">
+          <td class="heading-col feature-vendor"> <strong>{{ compare_translate.t_vendor_title }}</strong></td>
+          {% for product in prodlist %}
+  {% if product.object_type == 'product' and product.type == 'SHOPSTORM_HIDDEN_PRODUCT' %}{% continue %}{% endif %}
+
+  {% if product.object_type == 'product' and product.type == 'SHOPSTORM_HIDDEN_PRODUCT' %}{% continue %}{% endif %}
+
+            <td class="product-col comparison_vendor product-{{product.id}}">{{product.vendor}}</td>
+          {% endfor %}
+        </tr>
+        {% endif %}
+        
+        {% if compare_showing_options.show_collection %}
+        <tr class="collection">
+          <td class="heading-col feature-collection"> <strong>{{ compare_translate.t_collection_title }}</strong></td>
+          {% for product in prodlist %}
+  {% if product.object_type == 'product' and product.type == 'SHOPSTORM_HIDDEN_PRODUCT' %}{% continue %}{% endif %}
+
+  {% if product.object_type == 'product' and product.type == 'SHOPSTORM_HIDDEN_PRODUCT' %}{% continue %}{% endif %}
+
+            <td class="product-col comparison_collection product-{{product.id}}">{{product.collections}}</td>
+          {% endfor %}
+        </tr>
+        {% endif %}
+        
+        {% if compare_showing_options.show_rating %}
+        <tr class="rating">
+          <td class="heading-col feature-rating"> <strong>{{ compare_translate.t_rating_title }}</strong></td>
+          {% for product in prodlist %}
+  {% if product.object_type == 'product' and product.type == 'SHOPSTORM_HIDDEN_PRODUCT' %}{% continue %}{% endif %}
+
+  {% if product.object_type == 'product' and product.type == 'SHOPSTORM_HIDDEN_PRODUCT' %}{% continue %}{% endif %}
+
+            <td class="product-col comparison_rating product-{{product.id}}">{{product.rating}}</td>
+          {% endfor %}
+        </tr>
+        {% endif %}
+
+     </tbody>
+  </table>  
+</div>

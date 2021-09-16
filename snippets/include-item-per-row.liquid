@@ -1,0 +1,81 @@
+{%- assign _item_resp = section.settings.items_resp -%}
+{%- if _item_resp == blank -%}{%- assign _item_resp = '2' -%}{%- endif -%}
+{%- if section.settings.items_resp -%}
+  {%- if type == 'block' -%}{%- assign _s = block -%}{%- else -%}{%- assign _s = section -%}{%- endif -%}
+  {%- if item_resp == blank -%}{%- assign item_resp = _s.settings.items_resp -%}{%- endif -%}
+
+  {%- unless item_resp == blank -%}  
+    {%- assign _item_resp = item_resp | split: ',' -%}
+
+    {%- if _item_resp.size == 1 -%}
+      {%- include 'set-width-bootstrap', number: _item_resp[0] -%}
+      {%- assign _class_xs = _out | strip | prepend: 'col-' -%}
+      {%- if _out == '5' -%}{%- assign _class_xs = _class_xs | append: 'th' -%}{%- endif -%}
+      {%- capture items_resp -%}{{_class_xs}}{%- endcapture -%}
+
+    {%- else -%}
+      {%- case _item_resp.size -%}  
+        {%- when 2 -%}{%- assign ii = 1 -%}{%- assign arClass = 'col-md-, col-' -%}
+        {%- when 3 -%}{%- assign ii = 2 -%}{%- assign arClass = 'col-lg-, col-md-, col-' -%}  
+        {%- when 4 -%}{%- assign ii = 3 -%}{%- assign arClass = 'col-lg-, col-md-, col-sm-, col-' -%}
+        {%- when 5 -%}{%- assign ii = 4 -%}{%- assign arClass = 'col-xl-, col-lg-, col-md-, col-sm-, col-' -%}
+        {%- else -%}  {%- assign ii = 5 -%}{%- assign arClass = 'col-xl-, col-lg-, col-md-, col-sm-, col-xxs-, col-' -%}
+      {%- endcase -%}
+
+      {%- assign items_resp  = '' -%}
+      {%- assign arrClass    = arClass | split: ',' -%}
+      {%- for i in (0..ii) -%}
+        {%- include 'set-width-bootstrap', number: _item_resp[i] -%}
+        {%- assign _classItem = _out | prepend: arrClass[i] -%}
+        {%- if _out == '5' -%}{%- assign _classItem = _classItem | append: 'th' -%}{%- endif -%}
+        {%- assign items_resp = items_resp | append: _classItem -%}
+      {%- endfor -%}  
+    {%- endif -%}
+    {%- capture items_class -%}{{items_resp}}{%- endcapture -%}
+    
+  {%- endunless -%}
+  
+{%- else -%}
+  {%- if type == 'block' -%}
+    {%- assign item_per_row_        = block.settings.item_per_row        -%}
+    {%- assign item_per_row_tab_    = block.settings.item_per_row_tab    -%}
+    {%- assign item_per_row_mobile_ = block.settings.item_per_row_mobile -%}
+  {%- else -%}
+    {%- assign item_per_row_        = section.settings.item_per_row        -%}
+    {%- assign item_per_row_tab_    = section.settings.item_per_row_tab    -%}
+    {%- assign item_per_row_mobile_ = section.settings.item_per_row_mobile -%}
+  {%- endif -%}
+
+  {%- case item_per_row_ -%}
+    {%- when 1 -%} {%- assign _item_class = "col-lg-12"  -%}
+    {%- when 2 -%} {%- assign _item_class = "col-lg-6"   -%}
+    {%- when 3 -%} {%- assign _item_class = "col-lg-4"   -%}
+    {%- when 4 -%} {%- assign _item_class = "col-lg-3"   -%}
+    {%- when 5 -%} {%- assign _item_class = "col-lg-5th" -%}
+    {%- when 6 -%} {%- assign _item_class = "col-lg-2"   -%}
+    {%- else -%}
+  {%- endcase -%}
+
+  {%- case item_per_row_tab_ -%}
+    {%- when 1 -%} {%- assign _item_class_tab = "col-md-12"  -%}
+    {%- when 2 -%} {%- assign _item_class_tab = "col-md-6"   -%}
+    {%- when 3 -%} {%- assign _item_class_tab = "col-md-4"   -%}
+    {%- when 4 -%} {%- assign _item_class_tab = "col-md-3"   -%}
+    {%- when 5 -%} {%- assign _item_class_tab = "col-md-5th" -%}
+    {%- when 6 -%} {%- assign _item_class_tab = "col-md-2"   -%}
+    {%- else -%}
+  {%- endcase -%}
+
+  {%- case item_per_row_mobile_ -%}
+    {%- when 1 -%} {%- assign _item_class_mob = "col-12"  -%}
+    {%- when 2 -%} {%- assign _item_class_mob = "col-6"   -%}
+    {%- when 3 -%} {%- assign _item_class_mob = "col-4"   -%}
+    {%- when 4 -%} {%- assign _item_class_mob = "col-3"   -%}
+    {%- when 5 -%} {%- assign _item_class_mob = "col-5th" -%}
+    {%- when 6 -%} {%- assign _item_class_mob = "col-2"   -%}
+    {%- else -%}
+  {%- endcase -%}
+  {%- capture items_class -%}{{_item_class}} {{_item_class_tab}} {{_item_class_mob}}{%- endcapture -%}
+  {%- capture b_items_class -%}{{_item_class}} {{_item_class_tab}} {{_item_class_mob}}{%- endcapture -%}
+
+{%- endif -%}

@@ -1,0 +1,252 @@
+{% assign _lazyload = settings.use_lazyload %}
+{% if section.settings.boxed_layout %}{% assign _layout = 'boxed' %}{% else %}{% assign _layout = 'full' %}{% endif %}
+{%- assign _title_h_size        = section.settings.product_title_h_size | prepend: 'h' -%}
+{%- assign _subtitle_h_size     = section.settings.product_subtitle_h_size | prepend: 'h' -%}
+{%- assign _button_style     = section.settings.button_style -%}
+
+{% capture emptyProduct %}
+  <div class="sp-product-wrapper" style="width: 25%;background: #fff;">
+    <div class="product-image">
+      <div class="image">
+        {{ 'product-1' | append: current | placeholder_svg_tag: 'placeholder-svg' }}
+      </div>
+    </div>
+    <div class="product-content text-center">
+      <div class="sp-title h5">
+         {{ 'homepage.onboarding.product_title' | t }}
+      </div>
+      <div class="sp-subtitle">Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.</div>
+    </div>
+  </div>
+{% endcapture %}
+
+<div id="single-product-{{ section.id }}"
+     class="single-product-section section-show-{{section.id}}"
+     data-section-type="single-product"
+     data-section-id="{{section.id}}"
+     data-parallax="{{section.settings.parallax}}"
+     {% if section.settings.bg_style == 'color' %}style="background:{{section.settings.bg_color}};"{% endif %}>
+  {% if _layout == 'boxed' %}<div class="container">{% endif %}
+    {% if section.settings.bg_style == 'image' %}
+    <div class="parallax">
+      <div class="bg-image{% if _lazyload %} lazyload{% endif %}"{% if _lazyload %}data-bgset="{{section.settings.bg_image | img_url: '1366x'}} 1366w, {{section.settings.bg_image | img_url: '1920x'}} 1920w"
+      {% else %}style="background:url({{ section.settings.bg_image | img_url: '1920x' }});"{% endif %}></div>
+      </div>
+      {% endif %}
+
+      <div class="single-product-list single-product-{{ section.id }}">
+        {% assign product          = all_products[section.settings.product] %}
+        {% assign product_title    = section.settings.product_title %}
+        {% assign product_subtitle = section.settings.product_subtitle %}
+        {% assign position         = section.settings.position %}
+        {% unless product == blank %}
+          {%- capture style -%}
+          {%- if settings.enable_rtl -%}
+          right: {{position | append:'%'}};width: {{section.settings.width}}%;position:relative;transform: translateX({{ position | append:'%' }});  
+          {%- else -%}
+          left: {{position | append:'%'}};width: {{section.settings.width}}%;position:relative;transform: translateX(-{{ position | append:'%' }});
+          {%- endif -%}
+          {%- endcapture -%}
+          <div class="sp-product-wrapper" style="{{style}}">
+            <div class="sp-product-item">
+              <div class="product-image">
+                {% if section.settings.show_image %}
+                  <div class="image">{% include 'image-style' with image:product.featured_image, image_size: '390x' %}</div>
+                {% endif %}
+              </div>
+              <div class="product-content text-center">
+                <div class="sp-title {{_title_h_size}}">{% unless product_title == blank %}{{product_title}}{% else %}{{product.title}}{% endunless %}</div>
+                {% unless product_subtitle == blank %}<div class="sp-subtitle {{_subtitle_h_size}}">{{product_subtitle}}</div>{% endunless %}
+
+                {% if section.settings.show_price %}{% include 'product-price' %}{% endif %}
+                <div class="sp-btn">
+                  <a href="{{ product.url | within: collection }}" class="btn btn-{{_button_style}}" title="{{ 'products.product.shop_now' | t }}">{{ 'products.product.shop_now' | t }}</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% else %}
+          {{emptyProduct}}
+        {% endunless %}
+
+      </div>
+    {% if _layout == 'boxed' %}</div>{% endif %}
+
+</div>
+<style>
+  .section-show-{{section.id}}.single-product-section .sp-title{
+    {% if section.settings.title_bold %}font-weight: 600;{% endif %}
+    color:{{section.settings.product_title_text_color}};
+  }
+  .section-show-{{section.id}}.single-product-section .sp-subtitle{
+    color:{{section.settings.product_subtitle_text_color}};
+  }
+  .section-show-{{section.id}} .sp-product-wrapper{
+    background: {{section.settings.bg_product}};
+  }
+</style>
+{% schema %}
+{
+   "name":"Single Product",
+   "settings":[
+      {
+         "type":"paragraph",
+         "content":"Created by 'Single Product' section"
+      },
+      {
+         "type":"text",
+         "id":"title",
+         "label":"Section Label",
+         "default":"Single Product"
+      },
+      {
+         "type":"header",
+         "content":"LAYOUT"
+      },
+      {
+         "type":"checkbox",
+         "id":"boxed_layout",
+         "label":"Boxed layout",
+         "default":true
+      },
+      {
+         "type":"select",
+         "id":"bg_style",
+         "label":"Background style",
+         "options":[
+            {
+               "value":"color",
+               "label":"Color"
+            },
+            {
+               "value":"image",
+               "label":"Image"
+            }
+         ],
+         "default":"color"
+      },
+      {
+         "type":"color",
+         "id":"bg_color",
+         "label":"Background color"
+      },
+      {
+         "type":"image_picker",
+         "id":"bg_image",
+         "label":"Background image"
+      },
+      {
+         "type":"header",
+         "content":"LAYOUT CONTENT"
+      },
+      {
+         "type":"checkbox",
+         "id":"title_bold",
+         "label":"Title Bold"
+      },
+      {
+         "type":"checkbox",
+         "id":"show_image",
+         "label":"Show Image Product",
+         "default":true
+      },
+      {
+         "type":"checkbox",
+         "id":"show_price",
+         "label":"Show Price Product",
+         "default":true
+      },
+      {
+         "type":"checkbox",
+         "id":"parallax",
+         "label":"Use Parallax"
+      },
+      {
+         "id":"product",
+         "type":"product",
+         "label":"Product item"
+      },
+      {
+         "type":"range",
+         "id":"width",
+         "label":"Width",
+         "min":0,
+         "max":100,
+         "step":5,
+         "unit":"%",
+         "default":20
+      },
+      {
+         "type":"range",
+         "id":"position",
+         "label":"Horizontal position",
+         "min":0,
+         "max":100,
+         "step":5,
+         "unit":"%",
+         "default":50
+      },
+      {
+         "type":"text",
+         "id":"product_title",
+         "label":"Title",
+         "info":"Blank to use Product title."
+      },
+      {
+         "type":"text",
+         "id":"product_subtitle",
+         "label":"Subtitle",
+         "info":"Blank to hide."
+      },
+      {
+         "type":"range",
+         "id":"product_title_h_size",
+         "label":"Title font size (h1 -> h6)",
+         "min":1,
+         "max":6,
+         "step":1,
+         "default":3
+      },
+      {
+         "type":"range",
+         "id":"product_subtitle_h_size",
+         "label":"Subtitle font size (h1 -> h6)",
+         "min":1,
+         "max":6,
+         "step":1,
+         "default":5
+      },
+      {
+         "type":"range",
+         "id"   :"button_style",
+         "label":"Button style",
+         "min"   :1,
+         "max"   :3,
+         "default":1
+      },
+      {
+         "type":"color",
+         "id":"product_title_text_color",
+         "label":"Title color",
+         "default":"#000000"
+      },
+      {
+         "type":"color",
+         "id":"product_subtitle_text_color",
+         "label":"Subtitle color",
+         "default":"#000000"
+      },
+      {
+         "type":"color",
+         "id":"bg_product",
+         "label":"Background product color"
+      }
+   ],
+   "presets":[
+      {
+         "name":"Single Product",
+         "category":"Collection"
+      }
+   ]
+}
+{% endschema %}

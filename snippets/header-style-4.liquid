@@ -1,0 +1,37 @@
+<div class="header-main">
+  <div class="table-row">
+    <div class="wrap-header-left">
+      <div class="custom-text">
+        {% unless section.settings.icon_custom == blank %}
+          <div class="custom-icon"><i class="iconfont {{section.settings.icon_custom}}"></i></div>
+        {% endunless %}
+        <div class="custom--text">
+          {{section.settings.custom_text}}
+        </div>
+      </div>
+    </div>
+
+    {% include 'include-logo' %}
+
+    <div class="wrap-header-right">
+      <div class="header-icons">
+       {% include 'include-header-icons' %}
+      </div>
+    </div>
+  </div>
+  {% unless section.settings.nav_linklist == blank %}
+      <div class="horizontal-menu">
+        <div class="sidemenu-holder">
+          <nav class="navbar navbar-expand-lg">
+            <div class="collapse navbar-collapse">
+              <ul class="menu-list {{section.settings.menu_align}}">
+                {% for l in linklists[section.settings.nav_linklist ].links %}
+                  {% include 'nav-link' %}
+                {% endfor %}
+              </ul>
+            </div>
+          </nav>
+        </div>
+      </div>
+    {% endunless %}
+</div>

@@ -1,0 +1,221 @@
+{% if settings.show_breabcrumb and section.settings.show_breabcrumb %}{% include 'breadcrumb' with hide_breadcrumb_title: true %}{% endif %}
+{% assign _title      = section.settings.heading_text %}
+{% assign _subtitle   = section.settings.subheading_text %}
+{% assign faq_group   = section.settings.faq_group %}
+{% assign group_style = section.settings.group_style %}
+
+<div id="col-main" class="page-content page-faq"{% unless section.settings.background_color == blank %} style="background: {{section.settings.background_color}}"{% endunless %}>
+  <div class="faq-heading"{% unless section.settings.heading_background == blank %} style="background: {{section.settings.heading_background}}"{% endunless %}>
+    <div class="heading-icon">
+      <i class="demo-icon icon-chat-2"></i>
+    </div>
+    {% if _title != blank or _subtitle != blank %}
+      <div class="title-wrapper">
+        {% unless _title == blank %}<p class="title h2">{{ _title }}</p>{% endunless %}
+        {% unless _subtitle == blank %}<p class="subtitle h5">{{ _subtitle }}</p>{% endunless %}
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="container">
+    {% if section.blocks.size > 0 %}
+
+      {% unless faq_group == blank %}
+        <div class="faq-group-style-{{group_style}}">
+          {% assign group = faq_group | split: ',' %}
+          {% if group_style == '1' %}
+            {% for name in group %}
+              {% assign name_c = name | handle | strip %}
+              <div class="faq-row-heading">
+                <p class="h3"> {{name | capitalize }} </p>
+                {% for block in section.blocks %}
+                  {%- assign f_heading   = block.settings.title | handle | strip -%}
+
+                  {% if f_heading == name_c %}
+                    <div class="faq-row">
+                      {%- assign f_title = block.settings.block_title -%}
+                      {%- assign f_content = block.settings.block_content -%}
+                      <div class="faq-title">
+                        <i class="demo-icon icon-plus"></i>
+                        <span class="h4">{{f_title}}</span>
+                      </div>
+                      <div class="faq-text" style="display: none;">
+                        <p>{{f_content}}</p>
+                      </div>
+                    </div>
+                  {% endif %}
+                {% endfor %}
+              </div>
+            {% endfor %}
+          {% else %}
+            <div class="row">
+              <div class="col-md-3">
+                <div class="faq-tab-title">
+                  <p>{{'general.text.faq_text'|t}}</p>
+                  <ul>
+                    {% for name in group %}
+                    <li class="faq-tb-title{% if forloop.first %} active{% endif %}" data-value="{{name |handle|strip}}">{{name | capitalize}}</li>
+                    {% endfor %}
+                  </ul>
+                </div>
+              </div>
+              <div class="col-md-9 faq-table-content">
+                {% for name in group %}
+                  {% assign name_c = name | handle | strip %}
+                  <div class="tab-name tab-{{name_c}}{% if forloop.first %} active{% endif %}">
+                    {% for block in section.blocks %}
+                      {% assign f_heading   = block.settings.title | handle | strip %}
+
+                      {% if f_heading == name_c %}
+                        <div class="faq-row">
+                          {%- assign f_title = block.settings.block_title -%}
+                          {%- assign f_content = block.settings.block_content -%}
+                          <div class="faq-title">
+                            <i class="demo-icon icon-plus"></i>
+                            <span class="h4">{{f_title}}</span>
+                          </div>
+                          <div class="faq-text" style="display: none;">
+                            <p>{{f_content}}</p>
+                          </div>
+                        </div>
+                      {% endif %}
+                    {% endfor %}
+                  </div>
+                {% endfor %}
+              </div>
+            </div>
+
+          {% endif %}
+
+        </div>
+      {% else %}
+        {% for block in section.blocks %}
+          <div class="faq-row">
+            {%- assign f_title   = block.settings.block_title -%}
+            {%- assign f_content = block.settings.block_content -%}
+
+            <div class="faq-title">
+              <i class="demo-icon icon-plus"></i>
+              <span class="h4">{{f_title}}</span>
+            </div>
+            <div class="faq-text" style="display: none;">
+              <p>{{f_content}}</p>
+            </div>
+          </div>
+        {% endfor %}
+      {% endunless %}
+    {% else %}
+        <p>{{'general.text.no_content' | t}}</p>
+    {% endif %}
+  </div>
+</div>
+<script>
+  jQuery(document).ready(function($) {
+    jQuery(document).on('click','.page-faq .faq-title',function(){
+      var $this = jQuery(this);
+      $this.toggleClass('show').children('.demo-icon').toggleClass('icon-plus icon-minus');
+      $this.parent().find('.faq-text').slideToggle();
+    });
+    jQuery(document).on('click','.faq-group-style-2 .faq-tb-title',function(){
+      var $this = jQuery(this);
+      jQuery('.faq-group-style-2 .faq-tb-title').removeClass('active');
+      $this.addClass('active');
+
+       jQuery('.faq-table-content .tab-name').removeClass('active');
+       jQuery('.faq-table-content .tab-name.tab-'+$this.data('value')).addClass('active');
+    });
+
+  });
+</script>
+{% schema %}
+  {
+    "name": "FAQ Page",
+    "settings": [
+      {
+         "type":"checkbox",
+         "id":"show_breabcrumb",
+         "label":"Show Breadcrumb",
+         "default":true
+      },
+      {
+         "type":"image_picker",
+         "id":"breadcrumb_image",
+         "label":"Breadcrumb image"
+      },
+      {
+         "type":"color",
+         "id":"background_color",
+         "label":"Background Color"
+      },
+      {
+         "type":"header",
+         "content":"Heading content"
+      },
+      {
+         "type":"color",
+         "id":"heading_background",
+         "label":"Heading Background Color"
+      },
+      {
+         "type":"text",
+         "id":"heading_text",
+         "label":"Heading",
+         "default":"FAQs"
+      },
+      {
+         "type":"text",
+         "id":"subheading_text",
+         "label":"Subheading",
+         "default":"Frequently Asked Questions"
+      },
+      {
+         "type":"header",
+         "content":"FAQ Group (Optional)"
+      },
+      {
+        "type":"radio",
+        "id":"group_style",
+        "label":"Group style",
+        "options":[
+          {
+            "value":"1",
+            "label":"#1"
+          },
+          {
+            "value":"2",
+            "label":"#2"
+          }
+        ]
+      },
+      {
+         "type":"textarea",
+         "id":"faq_group",
+         "label":"Group Name",
+         "placeholder":"Service, Payment, etc.."
+      }
+    ],
+    "blocks": [
+    {
+      "type": "text",
+      "name": "Text",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Group Name"
+        },
+        {
+          "type": "textarea",
+          "id": "block_title",
+          "label": "Title"
+        },
+        {
+          "type": "textarea",
+          "id": "block_content",
+          "label": "Content"
+        }
+      ]
+    }
+    ]
+  }
+{% endschema %}

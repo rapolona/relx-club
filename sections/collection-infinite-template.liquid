@@ -1,0 +1,752 @@
+{% include 'collection-default-template' with type: 'infinite' %}
+
+{% schema %}
+{
+   "name":"Collection Infinite",
+   "settings":[
+      {
+         "type":"checkbox",
+         "id":"show_breabcrumb",
+         "label":"Show Breadcrumb",
+         "default":true
+      },
+      {
+         "type":"image_picker",
+         "id":"breadcrumb_image",
+         "label":"Breadcrumb Image"
+      },
+      {
+         "type":"header",
+         "content":"LAYOUT"
+      },
+      {
+         "type":"checkbox",
+         "id":"boxed_layout",
+         "label":"Boxed layout",
+         "default":true
+      },
+      {
+         "type":"color",
+         "id":"background_color",
+         "label":"Background Color"
+      },
+      {
+         "type":"checkbox",
+         "id":"show_col_gl",
+         "label":"Show View Mode",
+         "default":true
+      },
+      {
+         "type":"checkbox",
+         "id":"show_col_sort_by",
+         "label":"Show Sort",
+         "default":true
+      },
+      {
+        "type": "range",
+        "id": "number_product_per_row",
+        "label": "Number of products per row",
+        "min": 1,
+        "max": 5,
+        "step": 1,
+        "default": 4
+      },
+      {
+         "type":"range",
+         "id":"item_per_page",
+         "label":"Total products per Page",
+         "min":1,
+         "max":60,
+         "step":1,
+         "default":12
+      },
+      {
+         "type":"header",
+         "content":"COLLECTION FILTER",
+         "info":"For customize Collection Filter content, please click Add content."
+      },
+      {
+         "type":"checkbox",
+         "id":"and_logic",
+         "label":"Disable 'AND' operator in a group filter",
+         "default":true
+      },
+      {
+         "type":"checkbox",
+         "id":"color_filter_show_color",
+         "label":"Show color in Color filter",
+         "info":"Make sure you had insert Color filter in block 'Filter group'"
+      },
+      {
+         "type":"select",
+         "id":"sb_filters",
+         "label":"Filter Type",
+         "options":[
+            {
+               "value":"tags",
+               "label":"Filter by Tags"
+            },
+            {
+               "value":"groups",
+               "label":"Filter by Groups"
+            }
+         ],
+         "default":"groups"
+      },
+      {
+         "type":"select",
+         "id":"filter_pos",
+         "label":"Filter Position",
+         "info":"When Sidebar placement is None, Filter position must be Body",
+         "options":[
+            {
+               "value":"body_filter",
+               "label":"Body"
+            },
+            {
+               "value":"sidebar_filter",
+               "label":"Sidebar"
+            },
+            {
+               "value":"none",
+               "label":"None"
+            }
+         ]
+      },
+      {
+         "type":"select",
+         "id":"body_filter_style",
+         "label":"Body Filter Style",
+         "default":"toggle",
+         "options":[
+            {
+               "value":"select",
+               "label":"Select"
+            },
+            {
+               "value":"drawer",
+               "label":"Drawer"
+            },
+            {
+               "value":"toggle",
+               "label":"Toggle"
+            }
+         ]
+      },
+      {
+         "type":"select",
+         "id":"sidebar_filter_style",
+         "label":"Sidebar Filter Style",
+         "default":"accordion",
+         "options":[
+            {
+               "value":"full",
+               "label":"Full"
+            },
+            {
+               "value":"accordion",
+               "label":"Accordion"
+            }
+         ]
+      },
+      {
+         "type":"header",
+         "content":"Sidebar Placement",
+         "info":"To customize your sidebar content, please click Add content."
+      },
+      {
+         "type":"select",
+         "id":"catalog_sb_placement",
+         "label":"Sidebar Placement",
+         "default":"none",
+         "options":[
+            {
+               "value":"left",
+               "label":"Left"
+            },
+            {
+               "value":"right",
+               "label":"Right"
+            },
+            {
+               "value":"none",
+               "label":"None"
+            }
+         ]
+      },
+      {
+        "type": "range",
+        "id": "sidebar_style",
+        "label": "Sidebar style",
+        "min": 1,
+        "max": 3,
+        "step": 1,
+        "default": 1
+      },
+      {
+         "type"  :"header",
+         "content" :"Banner Images"
+      },
+      {
+         "type"  :"select",
+         "id"    :"banner_image_position",
+         "label" :"Bannner Images Position",
+         "options":[
+           {
+             "value": "none",
+             "label": "None"
+           },
+           {
+             "value": "top",
+             "label": "Top"
+           },
+           {
+             "value": "bottom",
+             "label": "Bottom"
+           }
+         ]
+      },
+      {
+         "type"  :"header",
+         "content" :"Collection Description"
+      },
+      {
+         "type"  :"select",
+         "id"    :"col_des_position",
+         "label" :"Collection Description Position",
+         "options":[
+           {
+             "value": "none",
+             "label": "None"
+           },
+           {
+             "value": "top",
+             "label": "Top"
+           },
+           {
+             "value": "bottom",
+             "label": "Bottom"
+           }
+         ]
+      }
+   ],
+   "blocks":[
+      {
+         "type":"filter_group",
+         "name":"Filter group",
+         "settings":[
+            {
+               "type":"range",
+               "id":"toggle_width",
+               "label":"Filter width",
+               "info":"Only for Toggle style",
+               "min":1,
+               "max":12,
+               "unit":"/12",
+               "default":3
+            },
+            {
+               "type":"text",
+               "id":"filter_prefix",
+               "label":"Name"
+            },
+            {
+               "type":"textarea",
+               "id":"filter_prefix_prop",
+               "label":"Tags",
+               "info":"Separate by comma. Eg: Blue, M, L, etc"
+            },
+            {
+               "type":"checkbox",
+               "id"    :"two_columns",
+               "label":"Show two columns"
+            }
+         ]
+      },
+      {
+         "type":"subcollection",
+         "name":"Sub collections",
+         "limit":1,
+         "settings":[
+            {
+               "type":"link_list",
+               "id":"subcategory_menu",
+               "label":"Menu item"
+            },
+            {
+               "type":"range",
+               "id":"subcollection_per_row",
+               "label":"Sub-Collections per row",
+               "min":2,
+               "max":8,
+               "step":1,
+               "default":6
+            }
+         ]
+      },
+      {
+         "type":"image",
+         "name":"Banner Image",
+         "settings":[
+            {
+               "type":"image_picker",
+               "id":"image",
+               "label":"Image"
+            },
+            {
+               "type":"url",
+               "id":"img_link",
+               "label":"Image link",
+               "default":"/collections"
+            },
+            {
+               "type":"range",
+               "id":"image_width_desk",
+               "label":"Desktop item Width",
+               "min":1,
+               "max":12,
+               "unit":"/12",
+               "default":3,
+               "info":"Only for Masonry"
+            },
+            {
+               "type":"range",
+               "id":"image_width_mobile",
+               "label":"Mobile item Width",
+               "min":1,
+               "max":12,
+               "unit":"/12",
+               "default":4,
+               "info":"Only for Masonry"
+            },
+            {
+               "type":"header",
+               "content":"Text content"
+            },
+            {
+               "type":"select",
+               "id":"text_content_style",
+               "label":"Text content style",
+               "default":"default",
+               "options":[
+                  {
+                     "value":"default",
+                     "label":"Default"
+                  },
+                  {
+                     "value":"next_to_image",
+                     "label":"Next to Image"
+                  },
+                  {
+                     "value":"prev_to_image",
+                     "label":"Prev to Image"
+                  },
+                  {
+                     "value":"overlay",
+                     "label":"Overlay"
+                  },
+                  {
+                     "value":"hidden",
+                     "label":"Hidden"
+                  }
+               ]
+            },
+            {
+               "type":"range",
+               "id":"content_with",
+               "label":"Content width",
+               "min":0,
+               "max":100,
+               "unit":"%",
+               "default":0,
+               "info":"0 is Auto. Only for Style Overlay"
+            },
+            {
+               "type":"range",
+               "id":"position_top",
+               "label":"Vertical position",
+               "min":0,
+               "max":100,
+               "step":1,
+               "unit":"%",
+               "default":50,
+               "info":"Use for Content style is 'Overlay'"
+            },
+            {
+               "type":"range",
+               "id":"position_left",
+               "label":"Horizontal position",
+               "min":0,
+               "max":100,
+               "step":1,
+               "unit":"%",
+               "default":50,
+               "info":"Use for Content style is 'Overlay'"
+            },
+            {
+               "type":"checkbox",
+               "id":"border",
+               "label":"Show Border"
+            },
+            {
+               "type":"color",
+               "id":"border_color",
+               "label":"Border color"
+            },
+            {
+               "type":"color",
+               "id":"background_text",
+               "label":"Background text content"
+            },
+            {
+               "type":"range",
+               "id":"opacity",
+               "label":"Background text content opacity",
+               "default":100,
+               "min":0,
+               "max":100,
+               "step":10,
+               "unit":"%"
+            },
+            {
+               "type":"header",
+               "content":"Text"
+            },
+            {
+               "type":"paragraph",
+               "content":"Use <b></b>, <i></i>, <u></u> tags to wrap the content which you want to have more styles (b = Bold, i = Italic, u = Underline) E.g: <b>Title</b>, this is a<br>paragraph."
+            },
+            {
+               "type":"select",
+               "id":"text_align",
+               "label":"Text align",
+               "options":[
+                  {
+                     "value":"left",
+                     "label":"Left"
+                  },
+                  {
+                     "value":"center",
+                     "label":"Center"
+                  },
+                  {
+                     "value":"right",
+                     "label":"Right"
+                  }
+               ],
+               "default":"left"
+            },
+            {
+               "type":"text",
+               "id":"title_text",
+               "label":"Title"
+            },
+            {
+               "type":"textarea",
+               "id":"subtitle_text",
+               "label":"Subtitle"
+            },
+            {
+               "type":"text",
+               "id":"offer_text",
+               "label":"Offer"
+            },
+            {
+               "type":"text",
+               "id":"expire_text",
+               "label":"Expire offer",
+               "placeholder":"MM/DD/YYYY"
+            },
+            {
+               "type":"text",
+               "id":"button_text",
+               "label":"Button"
+            },
+            {
+               "type":"url",
+               "id":"button_link",
+               "label":"Button link"
+            },
+            {
+               "type":"checkbox",
+               "id":"button_rounded",
+               "label":"Button Rounded Corners"
+            },
+            {
+               "type":"header",
+               "content":"Color & Background color"
+            },
+            {
+               "type":"color",
+               "id":"title_text_color",
+               "label":"Title text color",
+               "default":"#000"
+            },
+            {
+               "type":"color",
+               "id":"subtitle_text_color",
+               "label":"Subtitle text color",
+               "default":"#000"
+            },
+            {
+               "type":"color",
+               "id":"offer_text_color",
+               "label":"Offer text color",
+               "default":"#000"
+            },
+            {
+               "type":"color",
+               "id":"button_text_color",
+               "label":"Button text color",
+               "default":"#000000"
+            },
+            {
+               "type":"color",
+               "id":"button_text_bg_color",
+               "label":"Button background color"
+            },
+            {
+               "type":"header",
+               "content":"Text font size"
+            },
+            {
+               "type":"range",
+               "id":"title_font_size",
+               "label":"Title font size",
+               "min":10,
+               "max":40,
+               "step":1,
+               "default":36,
+               "unit":"px"
+            },
+            {
+               "type":"range",
+               "id":"subtitle_font_size",
+               "label":"Subtitle font size",
+               "min":10,
+               "max":40,
+               "step":1,
+               "default":36,
+               "unit":"px"
+            },
+            {
+               "type":"range",
+               "id":"offer_font_size",
+               "label":"Offer font size",
+               "min":10,
+               "max":40,
+               "step":1,
+               "default":36,
+               "unit":"px"
+            },
+            {
+               "type":"range",
+               "id":"button_font_size",
+               "label":"Button font size",
+               "min":10,
+               "max":40,
+               "step":1,
+               "default":36,
+               "unit":"px"
+            }
+         ]
+      },
+      {
+         "type":"banner",
+         "name":"Sidebar - Banner",
+         "settings":[
+            {
+               "type":"image_picker",
+               "id":"image_banner",
+               "label":"Image"
+            },
+            {
+               "type":"url",
+               "id":"link",
+               "label":"Link to"
+            },
+            {
+               "type":"text",
+               "id":"image_text",
+               "label":"Text"
+            },
+            {
+               "type":"color",
+               "id":"title_color",
+               "label":"Text color",
+               "default":"#ffffff"
+            },
+            {
+               "type":"text",
+               "id":"button_text",
+               "label":"Button text",
+               "default":"Shop now"
+            }
+         ]
+      },
+      {
+         "type":"categories",
+         "name":"Sidebar - Categories",
+         "limit":1,
+         "settings":[
+            {
+               "type":"range",
+               "id":"toggle_width",
+               "label":"Width",
+               "min":1,
+               "max":12,
+               "unit":"/12",
+               "default":3,
+               "info":"Only for Filter position is 'Body' and Filter style is 'Toggle'"
+            },
+            {
+               "type":"text",
+               "id":"sb_categories_title",
+               "label":"Heading",
+               "default":"Categories"
+            },
+            {
+               "type":"select",
+               "id":"sb_categories_type",
+               "label":"Content Components",
+               "options":[
+                  {
+                     "value":"categories",
+                     "label":"Categories"
+                  },
+                  {
+                     "value":"menu",
+                     "label":"Menu"
+                  }
+               ],
+               "default":"categories"
+            },
+            {
+               "type":"select",
+               "id":"icon",
+               "label":"Thumbnail icon",
+               "options":[
+                  {
+                     "value":"collection-image",
+                     "label":"Use collection image"
+                  },
+                  {
+                     "value":"upload",
+                     "label":"Upload from Assets - png format"
+                  },
+                  {
+                     "value":"upload-svg",
+                     "label":"Upload from Assets - svg format"
+                  },
+                  {
+                     "value":"none",
+                     "label":"None"
+                  }
+               ],
+               "default":"collection-image",
+               "info":"If you select 'Upload from Assets', please go to Assets folder, then click 'Add a new asset' to upload the image. The image size is 25x25 pixels, syntax is xxx.png. 'xxx' is collection handle."
+            },
+            {
+               "type":"link_list",
+               "id":"sb_categories_menu",
+               "label":"Menu item",
+               "info":"Only for Content Component is Menu"
+            },
+            {
+               "type":"range",
+               "id":"sb_categories_limit",
+               "label":"Limited items",
+               "min":1,
+               "max":50,
+               "default":6
+            }
+         ]
+      },
+      {
+         "type":"products-listing",
+         "name":"Sidebar - Products",
+         "settings":[
+            {
+               "type":"text",
+               "id":"sb_latest_product_title",
+               "label":"Heading"
+            },
+            {
+               "type":"select",
+               "id":"list_type",
+               "label":"Type",
+               "default":"row",
+               "options":[
+                  {
+                     "value":"row",
+                     "label":"Row"
+                  },
+                  {
+                     "value":"carousel",
+                     "label":"Carousel"
+                  }
+               ]
+            },
+            {
+               "type":"collection",
+               "id":"sb_latest_product_col",
+               "label":"Collection"
+            },
+            {
+               "type":"range",
+               "id":"sb_latest_product_limit",
+               "label":"Total items",
+               "default":4,
+               "min":1,
+               "max":9,
+               "step":1
+            }
+         ]
+      },
+      {
+         "type":"recently-viewed",
+         "name":"Sidebar - Recently viewed",
+         "limit":1,
+         "settings":[
+            {
+               "type":"text",
+               "id":"sb_recently_viewed_heading",
+               "label":"Heading",
+               "default":"Recently viewed"
+            },
+            {
+               "type":"range",
+               "id":"sb_recently_viewed_limit",
+               "label":"Total items",
+               "default":3,
+               "min":1,
+               "max":6,
+               "step":1
+            }
+         ]
+      },
+      {
+         "type":"tag",
+         "name":"Sidebar - Tags",
+         "limit":1,
+         "settings":[
+            {
+               "type":"text",
+               "id":"sidebar_tags_title",
+               "label":"Text",
+               "default":"Popular Tags"
+            },
+            {
+               "type":"range",
+               "id":"limit",
+               "label":"Limit tags show",
+               "min":5,
+               "max":20,
+               "step":1,
+               "default":7
+            }
+         ]
+      }
+   ]
+}
+{% endschema %}

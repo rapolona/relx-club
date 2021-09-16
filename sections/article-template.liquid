@@ -1,0 +1,406 @@
+{% if section.settings.boxed_layout %}{% assign _layout = 'boxed' %}{% else %}{% assign _layout = 'full' %}{% endif %}
+{% if section.settings.border_layout %}{% assign _border = ' border-layout' %}{% endif %}
+{% if settings.show_breabcrumb and section.settings.show_breabcrumb %}
+  {% if section.settings.breadcrumb_image == blank %}
+    {% include 'breadcrumb' with hide_breadcrumb_image: true %}
+  {% else %}
+    {% include 'breadcrumb' %}
+  {% endif %}
+{% endif %}
+{% assign _lazyload       = settings.use_lazyload %}
+{% assign _sidebar_place  = section.settings.sidebar_placement %}
+{% assign _sb_class       = 'col-lg-3 d-none d-lg-block' %}
+{% assign _main_class     = 'col-lg-9 col-12' %}
+
+{%- assign new_comment = false -%}
+{% if comment and comment.created_at %}
+  {%- assign new_comment = true -%}
+  {%- assign new_comment_id = comment.id -%}
+{% endif %}
+
+{% if new_comment %}
+  {%- assign duplicate_comment = false %}
+  {% for comment in article.comments %}
+    {% if comment.id == new_comment_id %}
+      {%- assign duplicate_comment = true %}
+      {% break %}
+    {% endif %}
+  {% endfor %}
+
+  {% if duplicate_comment %}
+    {%- assign number_of_comments = article.comments_count -%}
+  {% else %}
+    {%- assign number_of_comments = article.comments_count | plus: 1 -%}
+  {% endif %}
+{% else %}
+  {%- assign number_of_comments = article.comments_count -%}
+{% endif %}
+
+<div class="page-article layout-{{ _layout }}{{_border}}"
+     {% unless section.settings.background_color == blank %} style="background: {{section.settings.background_color}}"{% endunless %}>
+  {% if _layout == 'boxed' %}<div class="container">{% endif %}
+
+    {% if _sidebar_place != 'none' %}
+      <div class="row">
+        {% if _sidebar_place == 'left' %}
+        <div class="{{_sb_class}}">{% include 'sidebar-blog' %}</div>{% endif %}
+        <div class="{{_main_class}}">
+    {% endif %}
+
+    <div id="col-main" class="page-article-content">
+      <article class="post">
+        <div class="article-heading">
+          <h3 class="post-title">{{ article.title }}</h3>
+          <div class="post-author">
+            <ul class="list-inline">
+              <li><i class="demo-icon icon-calendar"></i><span class="date">{{ article.published_at | date: '%b %d, %Y' }}</span></li>
+              <li><i class="demo-icon icon-look-user"></i><span class="blog-author">{{ article.author }}</span></li>
+              <li><i class="demo-icon icon-folder-open-empty"></i><a href="{{blog.url}}"><span class="blog-collection">{{blog.title}}</span></a></li>
+            </ul>
+          </div>
+        </div>
+
+        {% if article.image %}
+          <div class="post-image">
+            <a href="{{ article.url }}">
+              {% include 'image-style' with image: article.image, image_size: '1920x' %}
+            </a>
+          </div>
+        {% endif %}
+        <div class="post-content-wrap">
+          <div class="post-excerpt">{{ article.excerpt }}</div>
+          <div class="post-description">{{ article.content }}</div>
+
+          <div class="article-bottom">
+            {% if article.tags.size > 0 %}
+              <div class="article-tag">
+                <ul class="list-inline">
+                  <li><i class="demo-icon icon-tag-1"></i></li>
+                  {% for tag in article.tags %}<li>{{ tag }}</li>{% endfor %}
+                </ul>
+              </div>
+            {% endif %}
+
+            <div class="article-share">
+              <div id="share-post" class="btn"><i class="demo-icon icon-sharing"></i>{{ 'general.text.share' | t }}</div>
+              <div id="share-post-cotent" style="display: none;">{% include 'social-sharing' %}</div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+    {% if settings.disqus_enabled %}
+      <div id="disqus_thread"></div>
+      <script>
+          var disqus_config = function () {
+              this.page.url = "{{ canonical_url }}";
+              this.page.identifier = "{{ article.id }}";
+          };
+          (function() {
+              var d = document, s = d.createElement('script');
+              s.src = '//{{ settings.disqus_shortname }}.disqus.com/embed.js';
+              s.setAttribute('data-timestamp', +new Date());
+              (d.head || d.body).appendChild(s);
+          })();
+      </script>
+      <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+    {% else %}
+      {% if blog.comments_enabled? %}
+        {% if number_of_comments > 0 %}
+          <div class="grid-comments">
+            <h5>{{ 'blogs.comments.comments_with_count' | t: count: number_of_comments }}</h5>
+
+            {% paginate article.comments by 5 %}
+
+              {% comment %}#comments is required, it is used as an anchor link by Shopify.{% endcomment %}
+              <div id="comments">
+
+                {% if new_comment %}
+                  <p class="note form-success">
+                    {% if blog.moderated? %}
+                      {{ 'blogs.comments.success_moderated' | t }}
+                    {% else %}
+                      {{ 'blogs.comments.success' | t }}
+                    {% endif %}
+                  </p>
+                {% endif %}
+
+                <ul class="comments">
+                  {% comment %}If a comment was just submitted with no blank field, show it.{% endcomment %}
+                  {% if new_comment %}
+                    <li id="{{ comment.id }}" class="comment">{% include 'comment' %}</li>
+                  {% endif %}
+
+                  {% for comment in article.comments %}
+                    {% unless comment.id == new_comment_id %}
+                      <li id="{{ comment.id }}" class="comment">
+                        {% include 'comment' %}
+                      </li>
+                    {% endunless %}
+                  {% endfor %}
+                </ul>
+
+                {% if paginate.pages > 1 %}{% include 'pagination' %}{% endif %}
+
+              </div>
+
+            {% endpaginate %}
+          </div>
+        {% endif %}
+
+        <div class="comment-form">
+          {% form 'new_comment', article %}
+
+            <h3>{{ 'blogs.comments.title' | t }}</h3>
+
+            {{ form.errors | default_errors }}
+
+            {% if blog.moderated? %}
+              <p class="moderated">{{ 'blogs.comments.moderated' | t }}</p>
+            {% endif %}
+
+            <div class="grid-form">
+              <div class="row">
+                <div class="form-group col-md-6 col-sm-12">
+                  <label for="comment-author">{{'blogs.comments.name' | t }}<span class="req">*</span></label>
+                  <input type="text" name="comment[author]" id="comment-author" class="form-control {% if form.errors contains 'author' %} input-error{% endif %}" value="{{ form.author }}" required>
+                </div>
+
+                <div class="form-group col-md-6 col-sm-12">
+                  <label for="comment-email">{{'blogs.comments.email' | t }}<span class="req">*</span></label>
+                  <input type="email" name="comment[email]" id="comment-email" class="form-control {% if form.errors contains 'email' %} input-error{% endif %}" value="{{ form.email }}" autocorrect="off" autocapitalize="off" required>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="comment-body">{{'blogs.comments.message' | t }}<span class="req">*</span></label>
+              <textarea name="comment[body]" id="comment-body" class="form-control {% if form.errors contains 'body' %} input-error{% endif %}" required>{{ form.body }}</textarea>
+            </div>
+
+            <input type="submit" class="btn btn-1" value="{{ 'blogs.comments.submit' | t }}">
+          {% endform %}
+        </div>
+      {% endif %}
+    {% endif %}
+    </div>
+
+    {% if _sidebar_place != 'none' %}
+        </div>
+        {% if _sidebar_place == 'right' %}<div class="{{_sb_class}}">{% include 'sidebar-blog' %}</div>{% endif %}
+      </div>
+    {% endif %}
+
+  {% if  _layout == 'boxed' %}</div>{% endif %}
+</div>
+
+{% schema %}
+{
+   "name":"Article pages",
+   "settings":[
+      {
+         "type":"checkbox",
+         "id":"show_breabcrumb",
+         "label":"Show Breadcrumb",
+         "default":true
+      },
+      {
+         "type":"image_picker",
+         "id":"breadcrumb_image",
+         "label":"Breadcrumb image"
+      },
+      {
+         "type":"header",
+         "content":"LAYOUT"
+      },
+      {
+         "type":"checkbox",
+         "id":"boxed_layout",
+         "label":"Boxed layout",
+         "default":true
+      },
+      {
+         "type":"checkbox",
+         "id":"border_layout",
+         "label":"Border layout",
+         "default":true
+      },
+      {
+         "type":"color",
+         "id":"background_color",
+         "label":"Background Color"
+      },
+      {
+         "type":"select",
+         "id":"sidebar_placement",
+         "label":"Sidebar Placement",
+         "options":[
+            {
+               "value":"none",
+               "label":"None"
+            },
+            {
+               "value":"left",
+               "label":"Left"
+            },
+            {
+               "value":"right",
+               "label":"Right"
+            }
+         ],
+         "default":"none"
+      }
+   ],
+   "blocks":[
+      {
+         "type":"categories",
+         "name":"Sidebar - Categories",
+         "limit":1,
+         "settings":[
+            {
+               "type":"text",
+               "id":"sb_categories_title",
+               "label":"Heading",
+               "default":"Categories"
+            },
+            {
+               "type":"select",
+               "id":"sb_categories_type",
+               "label":"Content Components",
+               "options":[
+                  {
+                     "value":"categories",
+                     "label":"Categories"
+                  },
+                  {
+                     "value":"menu",
+                     "label":"Menu"
+                  }
+               ],
+               "default":"categories"
+            },
+            {
+               "type":"select",
+               "id":"icon",
+               "label":"Thumbnail icon",
+               "options":[
+                  {
+                     "value":"collection-image",
+                     "label":"Use collection image"
+                  },
+                  {
+                     "value":"upload",
+                     "label":"Upload from Assets - png format"
+                  },
+                  {
+                     "value":"upload-svg",
+                     "label":"Upload from Assets - svg format"
+                  },
+                  {
+                     "value":"none",
+                     "label":"None"
+                  }
+               ],
+               "default":"collection-image",
+               "info":"If you select 'Upload from Assets', please go to Assets folder, then click 'Add a new asset' to upload the image. The image size is 25x25 pixels, syntax is xxx.png. 'xxx' is collection handle."
+            },
+            {
+               "type":"link_list",
+               "id":"sb_categories_menu",
+               "label":"Menu item",
+               "info":"Only for Content Component is Menu"
+            },
+            {
+               "type":"range",
+               "id":"sb_categories_limit",
+               "label":"Limited items",
+               "min":1,
+               "max":50,
+               "default":6
+            }
+         ]
+      },
+      {
+         "type":"post",
+         "name":"Posts",
+         "limit":1,
+         "settings":[
+            {
+               "type":"header",
+               "content":"Sidebar Posts"
+            },
+            {
+               "type":"text",
+               "id":"sidebar_post_title",
+               "label":"Title",
+               "default":"NEW ARTICLES"
+            },
+            {
+               "type":"blog",
+               "id":"sidebar_post",
+               "label":"Blog item"
+            },
+            {
+               "type":"range",
+               "id":"sidebar_post_limit",
+               "label":"Limited items",
+               "min":1,
+               "max":20,
+               "step":1,
+               "default":5
+            }
+         ]
+      },
+      {
+         "type":"tag",
+         "limit":1,
+         "name":"Tags",
+         "settings":[
+            {
+               "type":"header",
+               "content":"Sidebar Tags"
+            },
+            {
+               "type":"text",
+               "id":"sidebar_tags_title",
+               "label":"Title",
+               "default":"ARTICLES BY TAG"
+            }
+         ]
+      },
+      {
+         "type":"banner",
+         "name":"Banner",
+         "settings":[
+            {
+               "type":"image_picker",
+               "id":"image_banner",
+               "label":"Image",
+               "info":"The default image size is 270x400 pixels"
+            },
+            {
+               "type":"url",
+               "id":"link",
+               "label":"Link to"
+            },
+            {
+               "type":"text",
+               "id":"image_text",
+               "label":"Text"
+            },
+            {
+               "type":"color",
+               "id":"title_color",
+               "label":"Text color",
+               "default":"#ffffff"
+            },
+            {
+               "type":"text",
+               "id":"button_text",
+               "label":"Button text"
+            }
+         ]
+      }
+   ]
+}
+{% endschema %}

@@ -1,0 +1,256 @@
+{% assign dis_ajax    = settings.disable_ajax_cart %}
+{% assign enable_term = settings.enable_term %}
+{% assign linK_term   = settings.linK_term %}
+  
+
+<script type="text/javascript">
+  var globalCartProduct = [];
+  var productIdWithourQty = [
+    	6727792885918,
+        6727453540510,
+        6727672037534,
+        6722471067806,
+        6727739310238
+    ];
+  Shopify.updateCartInfo = function(cart, cart_summary_id, cart_count_id, type = null) {
+    
+    if (type == 'changeQty') {
+      jQuery('.cart-item-total-price').html(Shopify.formatMoney(cart.total_price, '{{shop.money_format}}'));
+    }else{
+      if ((typeof cart_summary_id) === 'string') {
+        var cart_summary = jQuery(cart_summary_id);
+        if (cart_summary.length) {
+
+          cart_summary.empty();
+
+          jQuery.each(cart, function(key, value) {
+            if (key === 'items') {
+
+              if (value.length) {
+                jQuery('.cart-sb .cart-sb-title .c-title .number').html(cart.item_count);
+                jQuery('<div class="items"></div>').appendTo(cart_summary);
+                jQuery('<div class="cart-order-note"></div>').appendTo(cart_summary);
+                jQuery('<div class="wrap-action"></div>').appendTo(cart_summary);
+
+                var table = jQuery(cart_summary_id + ' div.items');
+                var note_order = jQuery(cart_summary_id + ' div.cart-order-note');
+                var table_action = jQuery(cart_summary_id + ' div.wrap-action');
+
+                jQuery.each(value, function(i, item) {
+                  console.log(item);
+                  if(productIdWithourQty.includes(item.product_id)){
+                  	globalCartProduct.push(item.product_id);
+                  }
+                  let has_no_qty = productIdWithourQty.includes(item.product_id);
+                  jQuery('<div class="items-inner">\
+                          <div class="cart-item-image"><a href="'+item.url+'"><img class="lazyload" data-src="'+Shopify.resizeImage(item.image, '90x')+'"/></a></div>\
+                          <div class="cart-item-info">\
+                          <div class="cart-item-title"><a href="'+item.url+'">'+item.title+'</a></div>\
+                          {%- if dis_ajax -%}<div class="cart-item-quantity{% unless dis_ajax %} d-block{% endunless %}">\
+                          <span>{{"products.product.qty" | t }}: '+item.quantity+'</span></div>\
+                          <div class="cart-item-price">'+Shopify.formatMoney(item.price, '{{shop.money_format}}')+'</div>\
+                          {%-else-%}<div class="cart-item-price">'+Shopify.formatMoney(item.price, '{{shop.money_format}}')+'</div>\
+                          <div class="cart-item-quantity{% unless dis_ajax %} d-block{% endunless %}">\
+                          <div class="quantity">\
+                          <div class="qty-wrapper" data-id="'+item.id+'">\
+                          <span  class="qty-inner" '+ ((has_no_qty)? 'style="display: none;"' : '') +'><span class="qty-down-'+item.id+' qty-down ajax-down"></span></span>\
+						  <input class="replace input-cart-qty" id="'+item.id+'" value="'+item.quantity+'" type="text" readonly name="item-quantity">\
+<span class="qty-inner" '+ ((has_no_qty)? 'style="display: none;"' : '') +'><span class="qty-up-'+item.id+' qty-up ajax-up"></span></span>\
+                          </div></div></div>{%- endif -%}</div>\
+                          <a data-cart-item="'+item.id+'" class="cart-close" title="{{ 'general.header.cart_info.remove' | t }}" href="javascript:void(0);">\
+                          <i class="demo-icon icon-trash" aria-hidden="true"></i></a></div>').appendTo(table);
+                });
+
+                jQuery('<span>{{ "cart.general.add_note" | t }}</span><div class="cart-note"><textarea name="note" id="CartSpecialInstructions"></textarea></div>').appendTo(note_order);
+
+                jQuery('<div class="wrap-total"> \
+                        {% if enable_term %}<div class="terms-conditions"><input type="checkbox" id="agree"><a href="{{linK_term}}" target="_blank" rel="noopener">{{'cart.general.terms_conditions' | t }}</a></div>{% endif %}\
+                        <div class="total"><span>{{ "general.header.cart_info.subtotal" | t }}</span>\
+                        <span class="cart-item-total-price">' + Shopify.formatMoney(cart.total_price, '{{shop.money_format}}') + '</span></div>\
+                        <div class="action"><button class="btn btn-checkout" type="submit" name="checkout" data-term="{{enable_term}}">{{ "general.header.cart_info.checkout" | t }}</button></div></div>').appendTo(table_action);
+  
+                       //orig jQuery('<div class="wrap-total"> \
+                        //<div class="wrap-progress"><div class="sb-progress"></div><div class="sb-text"></div></div> \
+                       // {% if enable_term %}<div class="terms-conditions"><input type="checkbox" id="agree"><a href="{{linK_term}}" target="_blank" rel="noopener">{{'cart.general.terms_conditions' | t }}</a></div>{% endif %}\
+                       // <div class="total"><span>{{ "general.header.cart_info.subtotal" | t }}</span>\
+                       // <span class="cart-item-total-price">' + Shopify.formatMoney(cart.total_price, '{{shop.money_format}}') + '</span></div>\
+                       // <div class="action"><button class="btn btn-checkout" type="submit" name="checkout" data-term="{{enable_term}}">{{ "general.header.cart_info.checkout" | t }}</button></div></div>').appendTo(table_action);
+
+                       
+              }
+              else {
+                jQuery('.cart-sb .cart-sb-title .c-title .number').html('0');
+              }
+            }
+          });
+
+
+        }
+      }
+    }
+    updateCartDesc(cart);
+  };
+
+  function updateCartDesc(data){
+    var $cartLinkText = $('.cart-target .number');
+    var $cartPrice = Shopify.formatMoney(data.total_price, '{{shop.money_format}}');
+
+      switch(data.item_count){
+         case 0:
+         $cartLinkText.html('<span class="n-item">0</span>');
+         break;
+         case 1:
+         $cartLinkText.html('<span class="n-item">1</span>');
+         break;
+         default:
+         $cartLinkText.html('<span class="n-item">' + data.item_count + '</span>');
+         break;
+       }
+
+        //$cartLinkText.append($cartPrice);
+
+        // Update free shipping
+        var _cart_total = data.total_price
+            ,_free_shipping_price = {{ settings.free_shipping_price }}
+            ,_free_shipping_price_100 = {{ settings.free_shipping_price }}*100;
+
+        if (_cart_total >= _free_shipping_price_100){
+          $('.sb-progress').html('<span class="sb-progress-bar" style="width: 100%">100%</span>');
+          $('.sb-text').html("{{'cart.general.free_shipping_success' | t }}");
+        }
+
+        else{
+          var _progress = Number(_cart_total / _free_shipping_price).toFixed(2)
+              ,_spend = _free_shipping_price_100 - _cart_total;
+
+          $('.sb-progress').html('<span class="sb-progress-bar" style="width:' + _progress +'%">' + _progress + '%</span>');
+         // $('.sb-text').html("{{ 'cart.shipping_text.free_shipping_text_1' | t }} " + Shopify.formatMoney(_spend, "{{shop.money_format}}") + " {{ 'cart.shipping_text.free_shipping_text_2' | t }}");
+        }
+
+        {% if settings.show_multiple_currencies %}
+        currenciesCallbackSpecial('.cart-target span.money');
+        currenciesCallbackSpecial('#cart-info span.money');
+        currenciesCallbackSpecial('.layer-addcart-modal span.money');
+        {% endif %}
+      }
+
+      Shopify.onCartUpdate = function(cart) {
+        Shopify.updateCartInfo(cart, '#cart-info #cart-content', 'shopping-cart');
+      };
+
+      $(window).load(function() {
+
+        Shopify.getCart(function(cart) {
+          Shopify.updateCartInfo(cart, '#cart-info #cart-content');
+        });
+
+        $('.cart-sb').on('click', '.cart-close', function(e){
+          var prodId = $(e.currentTarget).data('cart-item');
+          $('body').addClass('cart-loading');
+          $.ajax({
+            type: 'POST',
+            url: '/cart/change.js',
+            data: { quantity: 0, id: prodId },
+            dataType: 'json',
+            error: function(err){
+              console.log(err);
+            },
+            success: function(resp) {
+             $('body').removeClass('cart-loading');
+             Shopify.updateCartInfo(resp, '#cart-info #cart-content', 'shopping-cart');
+             if(typeof cartObj != "undefined") {
+              cartObj.syncCartSB(resp, prodId)
+            } else {
+              Currency.convertAll('{{ settings.default_currency }}', Currency.currentCurrency);
+            }
+            // Update free shipping
+            var _cart_total = resp.total_price
+            ,_free_shipping_price = {{ settings.free_shipping_price }}
+            ,_free_shipping_price_100 = {{ settings.free_shipping_price }}*100;
+
+            if (_cart_total >= _free_shipping_price_100){
+              $('.sb-progress').html('<span class="sb-progress-bar" style="width: 100%">100%</span>');
+              $('.sb-text').html("{{ 'cart.general.free_shipping_success' | t }}");
+            }
+
+            else{
+              var _progress = Number(_cart_total / _free_shipping_price).toFixed(2)
+              ,_spend = _free_shipping_price_100 - _cart_total;
+
+              $('.sb-progress').html('<span class="sb-progress-bar" style="width:' + _progress +'%">' + _progress + '%</span>');
+              $('.sb-text').html("{{ 'cart.shipping_text.free_shipping_text_1' | t }} " + Shopify.formatMoney(_spend, "{{shop.money_format}}") + " {{ 'cart.general.free_shipping_text_2' | t }}");
+            }
+
+            {% if settings.show_multiple_currencies %}
+            currenciesCallbackSpecial('.wrap-progress .sb-text span.money');
+            {% endif %}
+          }
+        })
+        })
+      });
+    </script>
+{% unless template contains 'cart' %}
+  {% unless dis_ajax %}
+    <script crossorigin="anonymous" src="{{ 'underscore-min.js' | asset_url }}"></script>
+    <script>
+      var cartObj = (function($,_){
+
+        var cartPage = {
+            init: function() {
+                this.qtyUp      = $('.qty-up');
+                this.qtyDown    = $('.qty-down');
+                this.totalPrice = $('.cart-total');
+                this.actionHandle();
+            },
+            showLoading: function() {$('body').addClass('cart-loading');},
+            hideLoading: function() {$('body').removeClass('cart-loading');},
+            actionHandle: function() {
+                var _this = this;
+                jQuery(document).on('click','.ajax-up',   _.debounce(function(e){cartPage.updateCart(jQuery(this));}, 250));
+                jQuery(document).on('click','.ajax-down', _.debounce(function(e){cartPage.updateCart(jQuery(this));}, 250));
+            },
+            updateCart: function(elem){
+                var _this     = this;
+                var jqElem    = $(elem),
+                    patt      = /\d+/g,
+                    _class    = jqElem.attr('class'),
+                    prodId    = patt.exec(_class)[0],
+                    qtyInput  = jqElem.parents('.quantity').find('.input-cart-qty'),
+                    qtyVal    = qtyInput.val();
+                if (_class.indexOf('up') != -1) {
+                    qtyInput.val(++qtyVal);
+                } else {
+                    if (qtyVal != 1) {
+                        qtyInput.val(--qtyVal);
+                    } else {
+                        return false;
+                    }
+                }
+
+                var postData = {
+                    quantity: qtyVal,
+                    id: prodId
+                };
+
+                _this.showLoading();
+
+                $.ajax({
+                    type: 'POST',
+                    url: '/cart/change.js',
+                    data: postData,
+                    dataType: 'json',
+                    complete:function(){_this.hideLoading();},
+                    error: function(err){console.log(err);},
+                    success: function(resp) {
+                      //Shopify.updateCartInfo(resp, '#cart-info #cart-content',);
+                      Shopify.updateCartInfo(resp, '#cart-info #cart-content', 'shopping-cart', 'changeQty');
+                    }
+                })
+            }
+        }
+
+        cartPage.init();
+      })(jQuery,_)
+    </script>
+  {% endunless %}
+{% endunless %}

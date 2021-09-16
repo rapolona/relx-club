@@ -1,0 +1,64 @@
+{% assign _lazyload = settings.use_lazyload %}
+{% if settings.show_breabcrumb %}{% include 'breadcrumb' %}{% endif %}
+<div id="col-main" class="page-404">  
+  <div class="container text-center">
+
+    <div class="box-404-text">
+      {% unless section.settings.content == blank %}
+        <p>{{section.settings.content}}</p>
+      {% endunless %}
+      {% unless section.settings.banner == blank %}
+        <div class="image">
+          <img {% if _lazyload %} class="lazyload" data-{% endif %}src="{{section.settings.banner | img_url: '1920x'}}">
+        </div>
+      {% endunless %}
+      {% unless section.settings.sub_content == blank %}
+        <p>{{section.settings.sub_content}}</p>
+      {% endunless %}
+
+      {%- if section.settings.show_search -%}
+      <div class="searchbox search-404">
+        <form id="search" class="navbar-form search" action="/search" method="get">
+          <input type="hidden" name="type" value="product" />
+          <input id="bc-product-search" type="text" name="q" class="form-control search-form-404"  placeholder="{{ 'general.text.search_placeholder' | t }}" autocomplete="off" />
+          <button type="submit" class="btn btn-1 fas-search {{ settings.search_font_icon }}">
+          </button>
+        </form>
+      </div>
+      {%- endif -%}
+
+      <div class="back-404">
+        <a href="/" class="btn btn-1"><i class="demo-icon icon-home"></i>{{- 'general.text.404' | t -}}</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+  {
+    "name": "404 page",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "banner",
+        "label": "Banner"
+      },
+      {
+        "type": "text",
+        "id": "content",
+        "label": "Content",
+        "default":"We’re sorry!<br>We can’t seem to find the page you’re looking for."
+      },
+      {
+        "type": "text",
+        "id": "sub_content",
+        "label": "Content 2"
+      },
+      {
+         "type"  :"checkbox",
+         "id"    :"show_search",
+         "label" :"Show Search"
+      }
+    ]
+  }
+{% endschema %}

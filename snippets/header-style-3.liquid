@@ -1,0 +1,52 @@
+<div class="header-main">
+  <div class="table-row">
+
+    {% if section.settings.search and settings.show_search %}
+      <div class="search-icon" data-toggle="modal" data-target="#searchModal">
+        <a href="javascript:;">
+          {% include 'include-list-icons', type: 'icon_type', f: 'search' %}
+        </a>
+      </div>
+    {% endif %}
+    <div class="wrap-header-left">
+      {% unless section.settings.left_nav_linklist == blank %}
+        <div class="horizontal-menu">
+          <div class="sidemenu-holder">
+            <nav class="navbar navbar-expand-lg">
+              <div class="collapse navbar-collapse">
+                <ul class="menu-list">
+                  {% for l in linklists[section.settings.left_nav_linklist ].links %}
+                    {% include 'nav-link' %}
+                  {% endfor %}
+                </ul>
+              </div>
+            </nav>
+          </div>
+        </div>
+      {% endunless %}
+    </div>
+
+    {% include 'include-logo' %}
+
+    <div class="wrap-header-right">
+      {% unless section.settings.right_nav_linklist == blank %}
+        <div class="horizontal-menu">
+          <div class="sidemenu-holder">
+            <nav class="navbar navbar-expand-lg">
+              <div class="collapse navbar-collapse">
+                <ul class="menu-list">
+                  {% for l in linklists[section.settings.right_nav_linklist ].links %}
+                    {% include 'nav-link' %}
+                  {% endfor %}
+                </ul>
+              </div>
+            </nav>
+          </div>
+        </div>
+      {% endunless %}
+    </div>
+    <div class="header-icons">
+     {% include 'include-header-icons' %}
+    </div>
+  </div>
+</div>

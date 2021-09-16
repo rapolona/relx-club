@@ -1,0 +1,59 @@
+<div class="page-wishlist container">
+	<h1 class="page-title">{{ page_title }}</h1>
+	{% if customer %}
+		<table class="wishlist-table pending">
+			<thead>
+				<tr>
+					<th class="product-remove-heading"></th>
+					<th class="product-image-heading"></th>
+					<th class="product-title-heading">Product Name</th>
+					<th class="product-price-heading">Product Price</th>
+					<th class="product-available-heading">Available</th>
+					<th class="product-detail-heading"></th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for tag in customer.tags %}
+					{% if tag contains 'bc_wishlist__' %}
+						{% assign handle_tag = tag | strip | replace: 'bc_wishlist__', '' %}
+						<tr class="wishlist-item">
+							{% assign productItem = all_products[handle_tag] %}
+							<td class="product-remove-btn">
+                              <button data-handle-product="{{ handle_tag }}" class="remove-wishlist">X</button>
+                          	</td>
+							<td class="product-image">
+                              <img src="{{ productItem.featured_image | product_img_url: '200x'}}"/>
+                          	</td>
+							<td class="product-title">{{ productItem.title }}</td>
+							<td class="product-price">{{ productItem.price | money}}</td>
+							<td class="product-available">
+							{% if productItem.available %}
+                              <span class="instock">In stock</span>
+							{% else %}
+                              <span class="outstock">Out stock</span>
+							{% endif %}	
+							</td>
+							<td class="product-detail">
+                              <a href="{{ productItem.url }}" class="view-btn">View</a>
+                          	</td>
+						</tr>	
+					{% endif %}
+				{% endfor %}
+			</tbody>
+		</table>
+		<p class="no-wishlist-msg">You have no products in wishlist!</p>
+	{% else %}
+		{% assign login_msg = 'general.wishlist_modal.go_to_wishlist' | t %}
+		{% if login_msg and login_msg != '' %}
+			<p class="msg">{{ 'general.wishlist_modal.go_to_wishlist' | t }}</p>
+		{% else %}
+			<p class="msg">You has not logged in. Please <a title='Login url' href='/account/login'>Login</a> to view wishlist content.</p>
+		{% endif %}
+	{% endif %}
+</div>
+<script type="text/javascript">
+	if (!bc_wl_cp_config.enable_wishlist) {
+		window.location = '/'
+	}
+	$('body').addClass('bc-page-wishlist');
+</script>

@@ -1,0 +1,85 @@
+{% if type == 'block' %}
+  {% assign countdown     = block.settings.countdown %}
+  {% assign block_type    = block.type %}
+  {% assign b_product     = block.settings.bproduct %}
+  {% assign image_block   = block.settings.image %}
+  {% assign image_link    = block.settings.link %}
+  {% assign image_height  = block.settings.image_height %}
+  {% assign deal_title    = block.settings.b_title %}
+  {% assign deal_subtitle = block.settings.b_subtitle %}
+  {% assign button_text   = block.settings.button_text %}
+  {% assign button_link   = block.settings.button_link %}
+  {% assign width         = block.settings.width %}
+  {% assign width_mob     = block.settings.width_mobile %}
+{% else %}
+  {% assign countdown     = section.settings.countdown %}
+  {% assign block_type    = section.settings.type %}
+  {% assign b_product     = section.settings.bproduct %}
+  {% assign image_block   = section.settings.image %}
+  {% assign image_link    = section.settings.link %}
+  {% assign image_height  = section.settings.image_height %}
+  {% assign deal_title    = section.settings.b_title %}
+  {% assign deal_subtitle = section.settings.b_subtitle %}
+  {% assign button_text   = section.settings.button_text %}
+  {% assign button_link   = section.settings.button_link %}
+{% endif %}
+
+{% case width %}
+  {% when 0 %}
+    {%- assign b_item_class = "d-lg-none" -%}
+  {% when 5 %}
+    {%- assign b_item_class = "col-lg-5th" -%}
+  {% else %}
+    {%- assign b_item_class = "col-lg-" | append: width -%}
+{% endcase %}
+
+{% case width_mob %}  
+  {% when 0 %}
+    {%- assign b_item_class_mob = "d-none d-lg-block" -%}
+  {% when 5 %}
+    {%- assign b_item_class_mob = "col-5th" -%}
+  {% else %}
+    {%- assign b_item_class_mob = "col-" | append: width_mob -%}
+{% endcase %}
+
+{% capture spc_content %}
+  {%- unless countdown == blank -%}
+    <div class="block-countdown">
+      <div class="wrapper-countdown" data-id="{{block.id}}" data-date="{{countdown}}">
+        <p class="deal-title">{{deal_title}}</p>
+        <p class="deal-subtitle">{{deal_subtitle}}</p>
+        {% unless countdown == blank %}<div class="countdown_{{ block.id }}"></div>{% endunless %}
+        {% unless button_text == blank %}<a class="btn-deal" href="{{ button_link }}">{{ button_text }}</a>{% endunless %}
+      </div>
+    </div>
+  {%- endunless -%}
+{% endcapture %}
+
+<div class="spc-block spc-type-{{block_type}}{% if type == 'block' %} {{b_item_class}} {{b_item_class_mob}}{% endif %} image-height-{{image_height}}"{% if type == 'block' %}{{ block.shopify_attributes }}{% endif %}>
+  {% if b_product != blank and block_type == 'product' %}
+    <div class="products-grid-item">
+      {% assign product = all_products[b_product] %}
+      <div class="product-wrapper big-product-item">
+        <div class="product-image">
+
+          {% capture number_of_images %}{{ product.images | size }}{% endcapture %}
+          {% assign number_images = number_of_images | plus: 0 %}
+
+          <div class="featured-img">
+            <a href="{{ product.url | within: collection }}">
+              {% include 'image-style' with image: product.featured_image, image_size: '390x', image_class: 'featured-image' %}
+            </a>
+          </div>
+          {{spc_content}}
+        </div>
+      </div>
+    </div>
+  {% elsif block_type == 'image' and image_block != blank %}
+    <a href="{{image_link}}">
+        {% include 'image-style' with image: image_block %}
+    </a>
+    {{spc_content}}
+  {% else %}
+    <div class="image">{{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}</div>
+  {% endif %}
+</div>

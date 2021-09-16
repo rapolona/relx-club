@@ -1,0 +1,148 @@
+{% if _type == 'masonry' %}
+  <div class="home-banner-masonry masonry_{{section.id}}">
+    <div class="bc-masonry padding-{{_padding_item}}">
+{% else %}
+  <div class="{% if _type == 'row' %}row{% else %}home-banner-carousel home-banner-carousel-{{ section.id }}{% endif %}" {% include 'include-carousel-attr' %}>
+{% endif %}
+
+{% for block in section.blocks %}
+  {% if block.type == 'image' %}
+    {% assign _image              = block.settings.image %}
+    {% assign _img_link           = block.settings.img_link %}
+    {% assign _image_width        = block.settings.image_width_desk %}
+    {% assign _image_width_mobile = block.settings.image_width_mobile %}
+    {% assign _top                = block.settings.position_top  | append: '%' %}
+    {% assign _left               = block.settings.position_left | append: '%' %}
+
+    {% assign _text_content_style = block.settings.text_content_style %}
+    {% assign _opacity            = block.settings.opacity | times: 0.01 %}
+    {% assign _background_text    = block.settings.background_text %}
+    {% assign _bg_color           = _background_text | color_to_rgb | replace: ')',', ' | append: _opacity | append: ' )' %}
+    {% assign _width_content      = block.settings.content_with %}
+    {% assign _textAlign          = block.settings.text_align %}
+
+    {% assign _title_text     = block.settings.title_text %}
+    {% assign _subtitle_text  = block.settings.subtitle_text %}
+    {% assign _offer_text     = block.settings.offer_text %}
+    {% assign _expire         = block.settings.expire_text %}
+    {% assign _button_text    = block.settings.button_text %}
+    {% assign _link           = block.settings.button_link %}
+
+    {% assign _title_color    = block.settings.title_text_color %}
+    {% assign _subtitle_color = block.settings.subtitle_text_color %}
+    {% assign _offer_color    = block.settings.offer_text_color %}
+    {% assign _button_color   = block.settings.button_text_color %}
+    {% assign _button_bg      = block.settings.button_text_bg_color %}
+
+    {% assign _title_size     = block.settings.title_font_size %}
+    {% assign _subtitle_size  = block.settings.subtitle_font_size %}
+    {% assign _offer_size     = block.settings.offer_font_size %}
+    {% assign _button_size    = block.settings.button_font_size %}
+    {% assign _border         = block.settings.border %}
+    {% assign _rounded        = block.settings.button_rounded %}
+    {% assign _buttonStyle    = block.settings.button_style %}
+    {% assign _title_spacing  = block.settings.title_spacing %}
+    {% assign _sub_spacing    = block.settings.subtitle_spacing %}
+    {% assign _offer_spacing  = block.settings.offer_spacing %}
+
+    {% if _image_width < 5 %}
+      {% assign _image_size = '1080x' %}
+    {% elsif _image_width >= 5 and _image_width < 8 %}
+      {% assign _image_size = '1366x' %}
+    {% else %}
+      {% assign _image_size = '1920x' %}
+    {% endif %}
+      
+    <div class="block-{{block.id}} banner-item text-box-{{_text_content_style}} padding-{{_padding_item}}{% if _type == 'row' %} {{ items_class }}{% elsif _type == 'masonry' %} width-col-{{_image_width}} width-col-mob-{{_image_width_mobile}}{% endif %}" {{ block.shopify_attributes }}>
+
+      {% unless _image == blank %}
+        <div class="image">
+          <a href="{{ _img_link }}">
+            {% include 'image-style' with image: _image, image_size: _image_size, setPadding: image_padding_adapt %}
+          </a>
+        </div>
+        {% else %}
+        {{ emptyImage }}
+      {% endunless %}
+
+      {% if _title_text == blank and _subtitle_text == blank and _expire == blank and _button_text == blank %}
+        {% assign _text_content_style = 'hidden'  %}
+      {% endif %}
+
+      {% unless _text_content_style == 'hidden' %}
+
+        <div class="text text-{{_textAlign}} border-{{_border}}" style="{% if 'overlay default' contains _text_content_style %} {% if _width_content > 0 %}width:{{_width_content}}%;{% endif %}{% endif %}{% if 'overlay' contains _text_content_style %}left:{{_left}} ;top:{{_top}} ;transform: translate(-{{_left}},-{{_top}});{% endif %}">
+          <div class="text-container">
+            {% unless _title_text == blank %}
+              <div class="title">{{ _title_text }}</div>
+            {% endunless %}
+
+            {% unless _subtitle_text == blank %}
+              <div class="subtitle">{{ _subtitle_text }}</div>
+            {% endunless %}
+
+
+            {% unless _expire == blank and _offer_text == blank %}
+              <div class="offer">
+                <div class="offer-text">{{ _offer_text }}</div>
+                {% unless _expire == blank %}
+                  <div class="block-countdown">
+                    <div class="wrapper-countdown" data-id="{{block.id}}" data-date="{{_expire}}">
+                      <div class="countdown_{{ block.id }}"></div>
+                    </div>
+                  </div>
+                {% endunless %}
+              </div>
+            {% endunless %}
+
+            {% unless _button_text == blank %}
+              <div class="btn-group">
+                <a class="btn btn-{{_buttonStyle}} btn-banner{% if _rounded %} button-radius{% endif %}" href="{{ _link }}">
+                  <span class="button-text">{{ _button_text }}</span>
+                </a>
+              </div>
+            {% endunless %}
+          </div>
+        </div>
+        
+        
+        
+        <style>                    
+          {% if _background_text != blank %}
+            .block-{{block.id}} .text{background-color: {{_bg_color}};}
+            .block-{{block.id}} .image{background-color: {{_bg_color}};}
+          {% endif %}
+          {% if _button_bg != blank %}.block-{{block.id}} .btn-banner{background: {{ _button_bg }};}{% endif %}
+          .block-{{block.id}} .text.border-true{padding: 5px;}
+          .block-{{block.id}} .text.border-true .text-container{padding: 5px;border: 1px solid {{block.settings.border_color}};}
+
+          .block-{{block.id}} .title{       color: {{ _title_color }};   font-size:{{_title_size    | append: 'px'}};{%- if _title_spacing and _title_spacing > 0 -%}margin-bottom: {{_title_spacing}}px !important;{%- endif -%}}
+          .block-{{block.id}} .subtitle{    color: {{ _subtitle_color }};font-size:{{_subtitle_size | append: 'px'}};{%- if _sub_spacing and _sub_spacing > 0 -%}margin-bottom: {{_sub_spacing}}px !important;{%- endif -%}}
+          .block-{{block.id}} .offer{       color: {{ _offer_color }};   font-size:{{_offer_size    | append: 'px'}};{%- if _offer_spacing and _offer_spacing > 0 -%}margin-bottom: {{_offer_spacing}}px !important;{%- endif -%}}
+          .block-{{block.id}} .button-text{ {%- if _button_color != blank and _button_color != 'rgba(0,0,0,0)' -%}color: {{ _button_color }};{%- endif -%}font-size:{{_button_size   | append: 'px'}};}
+
+          @media (max-width: 991px){
+            .block-{{block.id}} .title{       font-size:{{_title_size     | times: 0.7 | append: 'px' }};}
+            .block-{{block.id}} .subtitle{    font-size:{{_subtitle_size  | times: 0.7 | append: 'px' }};}
+            .block-{{block.id}} .offer{       font-size:{{_offer_size     | times: 0.7 | append: 'px' }};}
+            .block-{{block.id}} .button-text{ font-size:{{_button_size    | times: 0.7 | append: 'px' }};}
+          }
+          @media (max-width: 767px), (max-width: 1439px) and (min-width: 992px){
+            .block-{{block.id}} .title{       font-size:{{_title_size     | times: 0.8 | append: 'px' }};}
+            .block-{{block.id}} .subtitle{    font-size:{{_subtitle_size  | times: 0.8 | append: 'px' }};}
+            .block-{{block.id}} .offer{       font-size:{{_offer_size     | times: 0.8 | append: 'px' }};}
+            .block-{{block.id}} .button-text{ font-size:{{_button_size    | times: 0.8 | append: 'px' }};}
+          }
+        </style>
+      {% endunless %}
+
+    </div>
+  {% endif %}
+{% endfor %}
+
+{% if _type == 'masonry' %}
+    </div>
+  </div>
+{% else %}
+  </div>
+{% endif %}

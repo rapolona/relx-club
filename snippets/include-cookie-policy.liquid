@@ -1,0 +1,28 @@
+ <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.1.0/cookieconsent.min.css" />
+ <script crossorigin="anonymous" src="{{ 'cookieconsent.min.js' | asset_url }}"></script>
+
+ <script>
+  window.addEventListener("load", function(){
+    window.cookieconsent.initialise({
+      "palette": {
+        "popup": {
+          "background": "{{ settings.eu_background_color }}",
+          "text": "{{ settings.eu_text_color }}"
+        },
+        "button": {
+          "background": "{{ settings.eu_button_bg }}",
+          "text": "{{ settings.eu_button_text_color }}"
+        }
+      },
+      "position": "{{ settings.eu_cookie_position }}",
+      "content": {
+        "message": "{{ 'general.cookie.message' | t }}",
+        "dismiss": "{{ 'general.cookie.dismiss_button_text' | t }}",
+        "link": "{{ 'general.cookie.policy_link_text' | t }}",
+        "href": "{{ settings.eu_policy_link }}"
+      },
+      "location": {{ settings.cookie_auto_detect }}
+
+    })
+  });
+</script>

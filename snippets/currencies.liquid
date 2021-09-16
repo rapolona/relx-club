@@ -1,0 +1,112 @@
+{%- if settings.show_multiple_currencies -%}
+	<script crossorigin="anonymous" src="//cdn.shopify.com/s/javascripts/currencies.js"></script>
+	<script crossorigin="anonymous" src="{{ 'jquery.currencies.min.js' | asset_url }}"></script>
+
+  <script crossorigin="anonymous" type="text/javascript" defer>
+    jQuery('.currencies_src').on('change',function(e){
+      var selectedValue = jQuery(this).val();
+      Currency.convertAll(Currency.currentCurrency, selectedValue);
+      currency_change_data(selectedValue);
+    });
+
+    jQuery('.currencies-list li').on('click',function(e){
+      var selectedValue = jQuery(this).attr('data-value');
+      Currency.convertAll(Currency.currentCurrency, selectedValue);
+      currency_change_data(selectedValue);
+      jQuery('.currencies_src option[value='+selectedValue+']').prop('selected',true);
+      jQuery('.currencies-btn > a').removeClass('active');
+      jQuery('ul.currencies-list').removeClass('open');
+    })
+
+    var shopCurrency     = ''
+        ,defaultCurrency = ''
+        ,cookieCurrency  = '';
+
+    currenciesCallback();
+
+    function currency_change_data (selectValue){
+      jQuery('.currencies-list li').removeClass('active')
+      jQuery('.currencies-list li[data-value='+selectValue+']').addClass('active');
+      let t = jQuery('.currencies-list li[data-value='+selectValue+']').html();
+      jQuery('.currencies-btn > a').html(t);
+      jQuery('.currency-flag-btn').length && jQuery('.currency-flag-btn').remove();
+      {% if settings.flag_currency != 'none' %}
+      jQuery('.topbar-config').addClass('hide');
+      {% endif %}
+      jQuery('.topbar-popup').prepend('<div class="currency-flag-btn">'+t+'</div>');
+    };
+
+    function currenciesCallback (){
+      {% if settings.currency_format %}Currency.format = '{{ settings.currency_format }}';{% endif %}
+
+       shopCurrency = '{{ shop.currency }}';
+        /* Sometimes merchants change their shop currency, let's tell our JavaScript file */
+       Currency.money_with_currency_format[shopCurrency] = {{ shop.money_with_currency_format | strip_html | json }};
+       Currency.money_format[shopCurrency] = {{ shop.money_format | strip_html | json }};
+
+
+      /* Default currency */
+      defaultCurrency = '{{ settings.default_currency }}' || shopCurrency;
+
+      /* Cookie currency */
+      cookieCurrency = Currency.cookie.read();
+
+      /* Fix for customer account pages */
+      jQuery('span.money span.money').each(function() {
+        jQuery(this).parents('span.money').removeClass('money');
+      });
+
+      /* Saving the current price */
+      jQuery('span.money').each(function() {
+        jQuery(this).attr('data-currency-{{ shop.currency }}', jQuery(this).html());
+      });
+
+      // If there's no cookie.
+      if (cookieCurrency == null) {
+        if (shopCurrency !== defaultCurrency) {
+          Currency.convertAll(shopCurrency, defaultCurrency);
+        }
+        else {
+          Currency.currentCurrency = defaultCurrency;
+        }
+        Currency.cookie.write(defaultCurrency);
+        currency_change_data (defaultCurrency);
+      }
+      // If the cookie value does not correspond to any value in the currency dropdown.
+      else if (jQuery('[name=currencies]').size() && jQuery('[name=currencies] option[value=' + cookieCurrency + ']').size() === 0) {
+        Currency.currentCurrency = shopCurrency;
+        Currency.cookie.write(shopCurrency);
+        currency_change_data(shopCurrency);
+      }
+      else if (cookieCurrency === shopCurrency) {
+        Currency.currentCurrency = shopCurrency;
+        currency_change_data(shopCurrency)
+      }
+      else {
+        Currency.convertAll(shopCurrency, cookieCurrency);
+        jQuery('.currencies_src option').removeAttr('selected');
+        jQuery('.currencies_src option[value='+cookieCurrency+']').attr('selected', true);
+        currency_change_data(cookieCurrency);
+      }
+
+      jQuery('.currencies_src').on("change", function(e) {
+        var newCurrency = jQuery(e.currentTarget).find(':selected').attr('value');
+
+        jQuery('.selected-currency').text(Currency.currentCurrency);
+        if($('.templateProduct').length != 0)
+          updatePricing();
+      });
+    }
+
+    function currenciesCallbackSpecial(id){
+      /* Saving the current price */
+      jQuery(id).each(function() {
+        jQuery(this).attr('data-currency-{{ shop.currency }}', jQuery(this).html());
+      });
+
+      /* Update currency */
+      Currency.convertAll(shopCurrency, Currency.cookie.read(), id, '{{ settings.currency_format }}');
+    }
+  </script>
+
+{%- endif -%}

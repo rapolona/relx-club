@@ -1,0 +1,26 @@
+<div class="header-main">
+  <div class="table-row">
+    {% include 'include-logo' %}
+
+    {% unless section.settings.nav_linklist == blank %}
+      <div class="horizontal-menu">
+        <div class="sidemenu-holder">
+          <nav class="navbar navbar-expand-lg">
+            <div class="collapse navbar-collapse">
+              <ul class="menu-list {{section.settings.menu_align}}">
+                {% for l in linklists[section.settings.nav_linklist ].links %}
+                  {% include 'nav-link' %}
+                {% endfor %}
+              </ul>
+            </div>
+          </nav>
+        </div>
+      </div>
+    {% endunless %}
+
+    <div class="header-icons">
+     {% include 'include-header-icons' %}
+    </div>
+  </div>
+</div>
+

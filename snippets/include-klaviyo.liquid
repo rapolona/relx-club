@@ -1,0 +1,47 @@
+{%- if type == 'block' -%}
+  {%- assign klaviyo_link = block.settings.action -%}
+  {%- assign _placeholder = block.settings.placeholder -%}
+  {%- assign _button_text = block.settings.button_text -%}
+{%- else -%}
+  {%- assign klaviyo_link = section.settings.action -%}
+{%- endif -%}
+  <form action="//manage.kmail-lists.com/subscriptions/subscribe" method="post" class="klaviyo_styling klaviyo_standard_embed_{{klaviyo_link}}" target="_blank" novalidate="novalidate">
+    <input type="hidden" name="g" value="{{klaviyo_link}}">
+    <input type="hidden" name="$fields" value="firstName,lastName"/>
+    <div class="input-group password__input-group klaviyo_field_group">
+      {% if section.settings.display_first_name %}
+      <input id="klaviyo_form_firstName" type="text" value="" class="firstName" name="firstName" placeholder="{{ 'general.newsletter_form.subscriber_first_name' | t }}">
+      {% endif %}
+      {% if section.settings.display_last_name %}
+      <input id="klaviyo_form_favorite_lastName" type="text" value="" name="lastName" placeholder="{{ 'general.newsletter_form.subscriber_last_name' | t }}">
+      {% endif %}
+      <input type="email" class="form-control input-group__field contact_email newsletter__input" value="" name="EMAIL" class="contact_email" placeholder="{{ _placeholder | default: 'Your email' }}">
+      <span class="input-group__btn">
+        <button type="submit" class="btn btn-1 newsletter__submit klaviyo_submit_button" name="subscribe" value="{{ 'general.newsletter_form.submit' | t }}">
+          <span class="newsletter__submit-text--large">
+            {%- unless _button_text == blank -%}{{_button_text}}
+            {%- else -%}{{ 'contact.form.subscrible' | t }}
+            {%- endunless -%}
+        </span>
+        </button>
+      </span>
+    </div>
+  </form>
+  {% comment %}<form action="//manage.kmail-lists.com/subscriptions/subscribe" method="post" class="klaviyo_styling klaviyo_standard_embed_{{klaviyo_link}}" id="email_signup" target="_blank" novalidate="novalidate">
+    <input type="hidden" name="g" value="{{klaviyo_link}}">
+    <input type="hidden" name="$fields" value="firstName,lastName"/>
+    <div class="input-group password__input-group klaviyo_field_group">
+      {% if section.settings.display_first_name %}
+      <input id="klaviyo_form_firstName" type="text" value="" class="firstName" name="firstName" placeholder="{{ 'general.newsletter_form.subscriber_first_name' | t }}">
+      {% endif %}
+      {% if section.settings.display_last_name %}
+      <input id="klaviyo_form_favorite_lastName" type="text" value="" name="lastName" placeholder="{{ 'general.newsletter_form.subscriber_last_name' | t }}">
+      {% endif %}
+      <input type="email" id="k_id_email" class="form-control input-group__field contact_email newsletter__input" value="" name="EMAIL" class="contact_email" placeholder="{{ settings.mailchip_popup_placeholder }}">
+      <span class="input-group__btn">
+        <button type="submit" class="btn newsletter__submit klaviyo_submit_button" name="subscribe" id="btnSubmit" value="{{ 'general.newsletter_form.submit' | t }}">
+          <span class="newsletter__submit-text--large">{{ 'contact.form.subscrible' | t }}</span>
+        </button>
+      </span>
+    </div>
+  </form>{% endcomment %}

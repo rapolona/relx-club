@@ -1,0 +1,131 @@
+<div class="cata-toolbar d-none d-lg-table" data-grid-col="{{section.settings.number_product_per_row}}" data-filter="{{_filters_style}}">
+  <div class="group-toolbar{% if _filter_pos != 'body_filter' %} no-filter{% endif %}">
+
+    {% if collection.all_tags.size > 0 and _filter_pos == 'body_filter' and _filters_style != 'select' %}
+        <div class="filter-icon {{ _filters_style }}"><i class="demo-icon icon-filter-2"></i>{{ 'collections.general.filter' | t }}</div>
+    {% endif %}
+
+    {% if section.settings.show_col_sort_by %}
+      <div class="sort-by bc-toggle">
+        <div class="sort-by-inner">
+
+          <label class="sort-by-title">{{ 'collections.sorting.title' | t }}</label>
+
+          <div id="cata_sort_by" class="d-none d-lg-block">
+            <button id="sort_by_button">
+              <span class="name"></span>
+              <i class="demo-icon icon-down-dir"></i>
+            </button>
+          </div>
+
+          <ul id="sort_by_box" class="bc-dropdown d-none d-lg-block">
+            <li class="sort-action title-ascending"   data-sort="title-ascending">   <a href="javascript:;">{{- 'collections.sorting.az'               | t -}}</a></li>
+            <li class="sort-action title-descending"  data-sort="title-descending">  <a href="javascript:;">{{- 'collections.sorting.za'               | t -}}</a></li>
+            <li class="sort-action manual"            data-sort="manual">            <a href="javascript:;">{{- 'collections.sorting.featured'         | t -}}</a></li>
+            <li class="sort-action price-ascending"   data-sort="price-ascending">   <a href="javascript:;">{{- 'collections.sorting.price_ascending'  | t -}}</a></li>
+            <li class="sort-action price-descending"  data-sort="price-descending">  <a href="javascript:;">{{- 'collections.sorting.price_descending' | t -}}</a></li>
+            <li class="sort-action created-ascending" data-sort="created-ascending"> <a href="javascript:;">{{- 'collections.sorting.date_ascending'   | t -}}</a></li>
+            <li class="sort-action created-descending"data-sort="created-descending"><a href="javascript:;">{{- 'collections.sorting.date_descending'  | t -}}</a></li>
+            <li class="sort-action best-selling"      data-sort="best-selling">      <a href="javascript:;">{{- 'collections.sorting.best_selling'     | t -}}</a></li>
+          </ul>
+        </div>
+      </div>
+    {% endif %}
+    {%- if type contains 'order-form' -%}
+      {%- assign is_order_form = true -%}
+    {%- endif -%}
+    {% if section.settings.show_col_gl and is_order_form == blank %}
+
+      {%- if _catalog_sb_placement == 'none' -%}
+        {% capture g5 %} d-none d-ml-show{% endcapture %}
+        {% capture g4 %} d-none d-md-inline-block{% endcapture %}
+        {% capture g3 %} d-none d-ms-show d-ml-none{% endcapture %}
+        {% capture g2 %} d-md-none{% endcapture %}
+      {%- else -%}
+        {% capture g5 %} d-none{% endcapture %}
+        {% capture g4 %} d-none d-ml-show{% endcapture %}
+        {% capture g3 %} d-none d-ms-show{% endcapture %}
+        {% capture g2 %} d-md-none{% endcapture %}
+      {%- endif -%}
+      <div class="grid-list">
+        <span class="grid{{g5}}" data-grid="5" title="{{ 'collections.general.grid5' | t }}"><i class="demo-icon icon-grid-5"></i></span>
+        <span class="grid{{g4}}" data-grid="4" title="{{ 'collections.general.grid4' | t }}"><i class="demo-icon icon-grid-4"></i></span>
+        <span class="grid{{g3}}" data-grid="3" title="{{ 'collections.general.grid3' | t }}"><i class="demo-icon icon-grid-3"></i></span>
+        <span class="grid{{g2}}" data-grid="2" title="{{ 'collections.general.grid2' | t }}"><i class="demo-icon icon-grid-2"></i></span>
+        <span class="list" title="{{ 'collections.general.list' | t }}"><i class="demo-icon icon-list"></i></span>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+<div class="mobile-layout-bar d-lg-none">
+  <div class="cata-toolbar container">
+    <div class="group-toolbar">
+      {% if collection.all_tags.size > 0 and _filter_pos != 'none' %}
+        <div class="filter-icon filter-icon-handle drawer"><i class="demo-icon icon-filter-2"></i>{{ 'collections.general.filter' | t }}</div>
+      {% endif %}
+
+      {% if section.settings.show_col_sort_by %}
+        <div class="sort-by bc-toggle">
+          <div class="sort-by-inner">
+            <select class="select-sort d-lg-none">
+              <option value="title-ascending">   {{- 'collections.sorting.az'               | t -}}</option>
+              <option value="title-descending">  {{- 'collections.sorting.za'               | t -}}</option>
+              <option value="manual">            {{- 'collections.sorting.featured'         | t -}}</option>
+              <option value="price-ascending">   {{- 'collections.sorting.price_ascending'  | t -}}</option>
+              <option value="price-descending">  {{- 'collections.sorting.price_descending' | t -}}</option>
+              <option value="created-ascending"> {{- 'collections.sorting.date_ascending'   | t -}}</option>
+              <option value="created-descending">{{- 'collections.sorting.date_descending'  | t -}}</option>
+              <option value="best-selling">      {{- 'collections.sorting.best_selling'     | t -}}</option>
+            </select>
+          </div>
+        </div>
+      {% endif %}
+
+      {% if section.settings.show_col_gl and is_order_form == blank %}
+        <div class="grid-list">
+          <span class="grid{{g3}}" data-grid="3" title="{{ 'collections.general.grid3' | t }}"><i class="demo-icon icon-grid-3"></i></span>
+          <span class="grid{{g2}}" data-grid="2" title="{{ 'collections.general.grid2' | t }}"><i class="demo-icon icon-grid-2"></i></span>
+          <span class="list" title="{{ 'collections.general.list' | t }}"><i class="demo-icon icon-list"></i></span>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+  Shopify.queryParams = {};
+  if (location.search.length) {
+    for (var aKeyValue, i = 0, aCouples = location.search.substr(1).split('&'); i < aCouples.length; i++) {
+      aKeyValue = aCouples[i].split('=');
+      if (aKeyValue.length > 1) {
+        Shopify.queryParams[decodeURIComponent(aKeyValue[0])] = decodeURIComponent(aKeyValue[1]);
+      }
+    }
+  }
+
+  var val_default = '{{ collection.sort_by | default: collection.default_sort_by }}';
+
+  jQuery('.sort-by li.sort-action').removeClass('active');
+
+  jQuery('.sort-by li.' + val_default).addClass('active');
+  jQuery('.select-sort option[value='+val_default+']').attr('selected', true);
+
+  var s = $('#sort_by_box li.sort-action.active');
+  jQuery('.sort-by .name').html(s.html());
+
+  {% assign _sb_filters = false %}
+  {% if section.settings.filter_pos != 'none' %}
+    {% assign _sb_filters = true %}
+  {% endif %}
+
+  {% if collection.all_tags.size == 0 or _sb_filters == false %}
+    jQuery('.sort-by li.sort-action').click(function(){  // add event any time the sort box changes
+      if(!$(this).hasClass('active')){
+        var value = jQuery(this).attr('data-sort');
+        Shopify.queryParams.sort_by = value;
+        location.search = jQuery.param(Shopify.queryParams);
+      }
+    });
+  {% endif %}
+</script>

@@ -1,0 +1,49 @@
+{% if search.performed %}
+	{% layout none %}
+		{% capture output %}
+		    {% for item in search.results limit: 10 %}
+  {% if item.object_type == 'product' and item.type == 'SHOPSTORM_HIDDEN_PRODUCT' %}{% continue %}{% endif %}
+
+  {% if item.object_type == 'product' and item.type == 'SHOPSTORM_HIDDEN_PRODUCT' %}{% continue %}{% endif %}
+
+		    	{% assign product 	 		= item %}
+		        {% assign result_url 		= product.url %}
+		        {% assign has_compare_price = false %}
+		        {% if item.object_type == 'product' %}
+		        	{% assign thumb_url = product.images[0] | img_url: '100x' %}
+		        	{% assign item_type	= 'product' %}
+		        {% else %}
+		        	{% assign thumb_url = item.image.src | img_url: '200x' %}
+		    		{% assign item_type	= 'article' %}
+		        {% endif %}
+		        {% if product.available %}
+		        	{% assign product_price = product.price %}
+			        {% if product.compare_at_price_max > product.price %}
+			        	{% assign product_compare_price = product.compare_at_price %}
+			        	{% assign has_compare_price = true %}
+			        {% else %}
+						{% assign product_compare_price = -1 %}
+			        {% endif %}
+		        {% else %}
+		        	{% assign product_price = -1 %}
+		        {% endif %}
+		        {
+		        "value":{{ product.title | json }}
+		        ,"title":{{ product.title | json }}
+		        ,"handle":{{ result_url | json }}
+		        ,"featured_image":{{ thumb_url | json }}
+		        ,"item_type":{{ item_type | json }}
+		        ,"id":{{product.id}}
+		        ,"available":{{ product.available | json }}
+		        ,"has_compare_price":{{ has_compare_price | json }}
+		        ,"price":{{ product_price | money | json }}
+		        ,"compare_price":{{ product_compare_price | money | json }}
+		        ,"out_stock_nofication":{{ 'products.product.sold_out' | t | json }}
+		        }
+		        {% unless forloop.last %},{% endunless %}
+		    {% endfor %}
+		{% endcapture %}
+		{% comment %} Enclose in square brackets and output the json object {% endcomment %}
+		{{ output | strip_newlines | prepend: '[' | append: ']' }}
+
+{% endif %}

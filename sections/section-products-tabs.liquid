@@ -1,0 +1,438 @@
+{% if section.settings.boxed_layout %}{% assign _layout = 'boxed' %}{% else %}{% assign _layout = 'full' %}{% endif %}
+{% if section.settings.carousel_layout %}{% assign _type = 'carousel' %}{% else %}{% assign _type = 'row' %}{% endif %}
+{% assign _lazyload             = settings.use_lazyload %}
+{% assign _padding_item         = section.settings.padding_item %}
+{% assign _text_align           = section.settings.text_align %}
+{% assign _text_align_tab_title = section.settings.text_align_title %}
+{% assign _total                = section.settings.total_items %}
+{% assign _number_active        = section.settings.number_active | plus: 0 %}
+{% assign heading_style         = section.settings.heading_style | append: '' %}
+{% assign heading_content_align = section.settings.heading_content_align %}
+{% include 'include-item-per-row' %}
+
+{% capture emptyProduct %}
+  {% for i in (1..6)  %}
+  <div class="{{ items_class }}">
+    <div class="product-wrapper">
+
+      <div class="product-head">
+        <div class="product-image">
+
+          <div class="featured-img-empty">
+            {% capture current %}{% cycle 1, 2, 3, 4, 5, 6 %}{% endcapture %}
+            {{ 'product-' | append: current | placeholder_svg_tag: 'placeholder-svg' }}
+          </div>
+
+        </div>
+      </div>
+
+      <div class="product-content text-{{ _text_align }}">
+        <div class="pc-inner">
+          <h5 class="product-name">{{ 'homepage.onboarding.product_title' | t }}</h5>
+          <div class="product-price"><span class="price">{{ 1999 | money }}</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+{% endcapture %}
+
+<div role="tabpanel" id="hp-tabs-{{ section.id }}"
+     class="hp-tabs-section layout-{{_layout }} section-show-{{section.id}}"
+     data-section-type="product-tabs"
+     data-section-id="{{section.id}}"
+     {% unless section.settings.background_color == blank %} style="background: {{section.settings.background_color}}"{% endunless %}>
+  {% if _layout == 'boxed' %}<div class="container">{% endif %}
+
+    {% if heading_style == '1' %}{% include 'head-title' %}{% endif %}
+
+    {% if section.blocks.size > 0 %}
+
+      <!-- Begin nav tabs -->
+
+      <div class="nav-tab-wrapper{% if heading_style == '2' %} d-lg-flex justify-content-lg-between{% endif %}">
+        {% if heading_style == '2' %}
+        {% assign heading_content_align = heading_content_align | append: ' d-flex' %}
+        {% include 'head-title', _title_alignment: heading_content_align %}
+        {% endif %}
+        <ul class="nav nav-tabs tab-heading text-{{ _text_align_tab_title }}" role="tablist">
+
+          {% for block in section.blocks %}
+            {%- assign title = block.settings.tab_title -%}
+            {%- assign collection = collections[block.settings.collection] -%}
+
+            <li class="tab-title nav-item">
+              <a class="nav-link{% if _number_active == forloop.index %} active {% endif %}{% if _lazyload %} lazyload{% endif %}" href="#hp-tabs-{{ section.id }}-{{ forloop.index }}" aria-controls="hp-tabs-{{ section.id }}-{{ forloop.index }}" role="tab" data-toggle="tab">
+                {% unless block.settings.collection == blank or collection.products_count == 0 %}
+                  {% unless title == blank %}
+                    {{ title }}
+                  {% else %}
+                    {{ collection.title }}
+                  {% endunless %}
+                  {% else %}
+                  {{ 'homepage.onboarding.tab_title' | t }}
+                {% endunless %}
+              </a>
+            </li>
+
+          {% endfor %}
+
+        </ul>
+      </div>
+
+      <!-- End nav tabs -->
+
+      <!-- Begin tab content -->
+
+      <div class="tab-content">
+        {% for block in section.blocks %}
+          {% assign collection = collections[block.settings.collection] %}
+          {% assign b_product    = all_products[block.settings.product]   %}
+
+            <div role="tabpanel" class="{% if _number_active == forloop.index %}show active {% endif %}tab-pane" id="hp-tabs-{{ section.id }}-{{ forloop.index }}">
+
+              {% unless block.settings.collection == blank or collection.products_count == 0 %}
+                <div class="hp-tabs-list padding-item-{{_padding_item}}{% if _type == 'row' %} row{% else %} tabs-list-carousel{% endif %}" {% include 'include-carousel-attr' %}>
+                  {% if b_product == blank %}
+
+                    {% for product in collection.products limit: _total %}
+  {% if product.object_type == 'product' and product.type == 'SHOPSTORM_HIDDEN_PRODUCT' %}{% continue %}{% endif %}
+
+  {% if product.object_type == 'product' and product.type == 'SHOPSTORM_HIDDEN_PRODUCT' %}{% continue %}{% endif %}
+
+{%- include 'bold-product' with product, hide_action: 'skip' -%}
+
+                      {% if _type == 'row' %}<div class="{{items_class}}">{% endif %}
+                        {% include 'product-item' %}
+                      {% if _type == 'row' %}</div>{% endif %}
+                    {% endfor %}
+
+                  {% elsif _type == 'row' %}
+
+                    {% assign limit = _total | divided_by: 2 | round %}
+                    <div class="col-md-3 col-12">
+                      <div class="row">
+                      {% for product in collection.products limit: limit %}
+  {% if product.object_type == 'product' and product.type == 'SHOPSTORM_HIDDEN_PRODUCT' %}{% continue %}{% endif %}
+
+  {% if product.object_type == 'product' and product.type == 'SHOPSTORM_HIDDEN_PRODUCT' %}{% continue %}{% endif %}
+
+{%- include 'bold-product' with product, hide_action: 'skip' -%}
+
+                        <div class="col-md-12 col-6">
+                          {% include 'product-item' %}
+                        </div>
+                      {% endfor %}
+                      </div>
+                    </div>
+                    <div class="col-md-6 col-12">
+                      <div class="big-product-wrapper">
+                        {% include 'product-item' with product: b_product,product_style:3 ,product_button:5  %}
+                      </div>
+                    </div>
+                    {% assign offset = limit | plus: 1 %}
+                    <div class="col-md-3 col-12">
+                      <div class="row">
+                      {% for product in collection.products offset: offset limit: limit %}
+  {% if product.object_type == 'product' and product.type == 'SHOPSTORM_HIDDEN_PRODUCT' %}{% continue %}{% endif %}
+
+  {% if product.object_type == 'product' and product.type == 'SHOPSTORM_HIDDEN_PRODUCT' %}{% continue %}{% endif %}
+
+{%- include 'bold-product' with product, hide_action: 'skip' -%}
+
+                        <div class="col-md-12 col-6">
+                            {% include 'product-item' %}
+                        </div>
+                      {% endfor %}
+                      </div>
+                    </div>
+                  {% endif %}
+
+                </div>
+
+              {% else %}
+                <div class="hp-tabs-list tabs-list-row row">
+                  {{ emptyProduct }}
+                </div>
+
+              {% endunless  %}
+
+            </div>
+        {% endfor %}
+      </div>
+
+      <!-- End tab content -->
+
+    {% else %}
+
+      <div class="nav-tab-wrapper">
+        <ul class="nav nav-tabs tab-heading text-{{ _text_align_tab_title }}" role="tablist">
+          {% for i in (1..3) %}
+
+          <li class="tab-title nav-item">
+            <a class="nav-link{% if forloop.first %} active{% endif %}{% if _lazyload %} lazyload{% endif %}" href="#hp-tabs-{{ section.id }}-{{ forloop.index }}" aria-controls="hp-tabs-{{ section.id }}-{{ forloop.index }}" role="tab" data-toggle="tab">
+              {{ 'homepage.onboarding.tab_title' | t }}
+            </a>
+          </li>
+
+          {% endfor %}
+        </ul>
+      </div>
+
+      <div class="tab-content">
+        {% for i in (1..3) %}
+
+        <div role="tabpanel" class="{% if _number_active == forloop.index %}show active {% endif %}tab-pane no-big-product" id="hp-tabs-{{ section.id }}-{{ forloop.index }}">
+          <div class="hp-tabs-list tabs-list-row row">
+            {{ emptyProduct }}
+          </div>
+        </div>
+
+        {% endfor %}
+      </div>
+
+    {% endif %}
+
+  {% if _layout == 'boxed' %}</div>{% endif %}
+</div>
+{% schema %}
+{
+   "name":"Products Tabs",
+   "max_blocks":6,
+   "settings":[
+      {
+         "type":"paragraph",
+         "content":"Created by 'Products Tabs' section"
+      },
+      {
+         "id":"title",
+         "type":"text",
+         "label":"Section Label",
+         "default":"Products Tabs"
+      },
+      {
+         "type":"header",
+         "content":"LAYOUT"
+      },
+      {
+         "type":"checkbox",
+         "id":"boxed_layout",
+         "label":"Boxed layout",
+         "default":true
+      },
+      {
+        "type":"color",
+        "id":"background_color",
+        "label":"Background color"
+      },
+      {
+         "type":"checkbox",
+         "id":"padding_item",
+         "label":"Padding items",
+         "default":true
+      },
+      {
+         "type":"header",
+         "content":"Carousel settings"
+      },
+      {
+         "type":"checkbox",
+         "id":"carousel_layout",
+         "label":"Enable Carousel Layout"
+      },
+      {
+         "type":"checkbox",
+         "id":"autoplay",
+         "label":"Enable Autoplay"
+      },
+      {
+         "type":"checkbox",
+         "id":"loop",
+         "label":"Enable Loop"
+      },
+      {
+         "type":"checkbox",
+         "id":"nav",
+         "label":"Show Next & Prev arrows",
+         "default":true
+      },
+      {
+         "type":"checkbox",
+         "id":"dot",
+         "label":"Show Dots",
+         "default":false
+      },
+      {
+         "type":"header",
+         "content":"Heading content"
+      },
+      {
+         "type":"select",
+         "id":"heading_style",
+         "label":"Heading style",
+         "options":[
+            {
+               "value":"1",
+               "label":"Style 1"
+            },
+            {
+               "value":"2",
+               "label":"Style 2"
+            }
+         ],
+         "default":"1"
+      },
+      {
+         "type":"select",
+         "id":"heading_content_align",
+         "label":"Heading alignment",
+         "options":[
+            {
+               "value":"left",
+               "label":"Left"
+            },
+            {
+               "value":"center",
+               "label":"Center"
+            },
+            {
+               "value":"right",
+               "label":"Right"
+            }
+         ],
+         "default":"center",
+         "info":"Use only when Heading style 1"
+      },
+      {
+         "type":"text",
+         "id":"heading_text",
+         "label":"Heading",
+         "default":"Heading"
+      },
+      {
+         "type":"text",
+         "id":"subheading_text",
+         "label":"Subheading",
+         "default":"Subheading"
+      },
+      {
+         "type":"header",
+         "content":"Tab Config"
+      },
+      {
+         "type":"range",
+         "id":"number_active",
+         "label":"Set active tab by default",
+         "info":"Value is the tab order number.",
+         "min":1,
+         "max":6,
+         "step":1,
+         "default":1
+      },
+      {
+         "type":"select",
+         "id":"text_align_title",
+         "label":"Text align for tab title",
+         "options":[
+            {
+               "value":"left",
+               "label":"Left"
+            },
+            {
+               "value":"center",
+               "label":"Center"
+            },
+            {
+               "value":"right",
+               "label":"Right"
+            }
+         ],
+         "default":"center",
+         "info":"Use only when Heading style 1"
+      },
+      {
+         "type":"header",
+         "content":"LAYOUT CONTENT"
+      },
+      {
+         "type":"select",
+         "id":"text_align",
+         "label":"Text align for product title",
+         "options":[
+            {
+               "value":"left",
+               "label":"Left"
+            },
+            {
+               "value":"center",
+               "label":"Center"
+            },
+            {
+               "value":"right",
+               "label":"Right"
+            }
+         ],
+         "default":"left"
+      },
+    {
+       "type"  :"text",
+       "id"    :"items_resp",
+       "label":"Responsive number of items",
+       "placeholder": "xl,lg,md,sm,xs",
+       "info": "You can define the number of slides to display for various breakpoint settings. e.g. 4 items on desktop, 3 items on tablet and 2 items on mobile. Input: 4,3,2. [Read more](https:\/\/help.arenacommerce.com\/customization\/grid.html)",
+       "default": "4,2,1"
+    },
+      {
+         "type":"range",
+         "id":"total_items",
+         "label":"Total items",
+         "default":12,
+         "min":1,
+         "max":30,
+         "step":1
+      }
+   ],
+   "blocks":[
+      {
+         "type":"collection",
+         "name":"Collection",
+         "settings":[
+            {
+               "type":"text",
+               "id":"tab_title",
+               "label":"Title",
+               "default":"Lifestyle",
+               "info":"Blank to use collection title."
+            },
+            {
+               "id":"collection",
+               "type":"collection",
+               "label":"Collection item"
+            },
+            {
+               "id": "product",
+               "type": "product",
+               "label": "Big product item"
+            }
+         ]
+      }
+   ],
+   "presets":[
+      {
+         "name":"Products Tabs",
+         "category":"Collection",
+         "blocks":[
+            {
+               "type":"collection"
+            },
+            {
+               "type":"collection"
+            },
+            {
+               "type":"collection"
+            }
+         ]
+      }
+   ]
+}
+{% endschema %}

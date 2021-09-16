@@ -1,0 +1,59 @@
+{%- assign posTit           = section.settings.title_pos -%}
+{%- assign show_date_style  = section.settings.show_date_style -%}
+{%- assign show_author      = section.settings.show_author -%}
+{%- assign show_tags        = section.settings.show_tags -%}
+{%- assign show_excerpt     = section.settings.show_excerpt -%}
+{%- assign show_readmore    = section.settings.show_readmore -%}
+{%- assign show_comment     = section.settings.show_comment -%}
+
+<div class="post-item-inner">
+  <div class="post-image">
+    <a href="{{ article.url }}">
+      {% if article.image %}
+        {% include 'image-style' with image: article.image, image_size: '570x' %}
+      {% else %}
+        {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+      {% endif %}
+    </a>
+  </div>
+
+  <div class="post-content style-{{show_date_style}}{% unless article.image %}no-image{% endunless %}">
+    {% if show_date_style == '2' %}
+      <div class="blog-date-{{show_date_style}}">
+        <span class="blog-day">{{ article.published_at | date: '%d' }}</span>
+        <span class="blog-mon">{{ article.published_at | date: '%B' }}</span>
+      </div>
+    {% endif %}
+    <div class="info">
+      {%- if posTit == 'above' -%}      
+        <div class="blog-title{% if _bold_title %} bold{% endif %}"><a href="{{ article.url }}" >{{ article.title }}</a></div>
+      {%- endif -%}
+      <div class="meta-data">
+        {% if show_author %}<span class="blog-author"><a href="{{ article.url }}">{{ article.author }}</a></span>{% endif %}
+        {% if show_date_style == '1' %}<span class="blog-date">{{ article.published_at | date: '%b %d, %Y' }}</span>{% endif %}
+        {% if show_tags %}<span class="blog-tag">{% for tag in article.tags %}{{ tag }}{% endfor %}</span>{% endif %}
+      </div>
+      {%- if posTit == 'below' -%}      
+        <div class="blog-title{% if _bold_title %} bold{% endif %}"><a href="{{ article.url }}" >{{ article.title }}</a></div>
+      {%- endif -%}
+      {% if show_excerpt %}
+        <div class="post-excerpt">{{ article.excerpt }}</div>
+      {% endif %}
+      {% if show_readmore %}<a href="{{article.url}}" class="btn">{{ 'blogs.article.read_more' | t }}</a>{% endif %}
+      {%- if show_comment and show_date_style == '2'-%}
+        <div class="post-comment">
+          <i class="demo-icon icon-chat-1"></i>
+          <span>({%- if settings.disqus_enabled -%}<a href="{{canonical_url}}{{ article.url }}#disqus_thread" data-disqus-identifier="{{ article.id }}" class="disqus-comment-count">0</a>{%- else -%}{{ article.comments_count }}{%- endif -%})</span>
+          <a class="link-to-post float-right" href="{{article.url}}" title="{{ 'blogs.article.read_more' | t }}"><i class="demo-icon icon-right-open"></i></a>
+        </div>
+      {%- endif -%}
+    </div>
+    {%- if show_comment and show_date_style != '2'-%}
+      <div class="post-comment">
+        <i class="demo-icon icon-chat-1"></i>
+        <span>({%- if settings.disqus_enabled -%}<a href="{{canonical_url}}{{ article.url }}#disqus_thread" data-disqus-identifier="{{ article.id }}" class="disqus-comment-count">0</a>{%- else -%}{{ article.comments_count }}{%- endif -%})</span>
+        <a class="link-to-post float-right" href="{{article.url}}" title="{{ 'blogs.article.read_more' | t }}"><i class="demo-icon icon-right-open"></i></a>
+      </div>
+    {%- endif -%}
+  </div>
+</div>

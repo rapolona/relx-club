@@ -1,0 +1,343 @@
+{% assign _lazyload   = settings.use_lazyload %}
+{% assign dis_ajax    = settings.disable_ajax_cart %}
+{% assign enable_term = settings.enable_term %}
+{% assign linK_term   = settings.linK_term %}
+
+
+<div id="col-main" class="page-cart">
+  <div class="container">
+
+    {% if cart.item_count > 0 %}
+      <form action="/cart" method="post" id="cartform">
+
+        <div class="cart-table">
+          <div class="row">
+            <div class="col-lg-9 col-12">
+              <div class="cart-heading">
+                <div class="d-none d-md-inline-block"><p>{{ 'cart.general.cart_title' | t }}</p></div>
+                <div class="">
+                  <div class="d-md-none">
+                    <div class="cart-total d-lg-none cart-total d-flex h4">
+                      <div class="flex-fill">{{- 'cart.general.total' | t -}}</div>
+                      <div class="flex-fill tt-price text-right"><span id='revy-cart-subtotal-price'>{{ cart.total_price | money }}</span></div>
+                    </div>
+                    <div class="mobile-fixed-wrap">
+                      <div class="mobile-fixed">
+                        {%- if enable_term -%}
+                        <div class="terms-conditions">
+                          <input type="checkbox" id="agree-mobile">
+                          <a href="{{linK_term}}" target="_blank" rel="noopener">{{'cart.general.terms_conditions' | t }}</a>
+                        </div>
+                        {%- endif -%}
+                        <a class="btn btn-1" href="/checkout" name="checkout" data-term="{{enable_term}}">{{ 'cart.button_label.checkout' | t }}</a>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="shopping-back"><a href="/collections/all" class="btn btn-continue btn-3"><i class="demo-icon icon-left-open"></i>{{ 'cart.general.continue_shopping' | t }}</a></div>
+                </div>
+              </div>
+
+              <table>
+                <thead>
+                  <tr>
+                    <th class="item">       {{- 'cart.general.table_item'     | t -}} </th>
+                    <th class="price">      {{- 'cart.general.table_price'    | t -}} </th>
+                    <th class="qty">        {{- 'cart.general.table_quantity' | t -}} </th>
+                    <th class="total-price">{{- 'cart.general.table_price'    | t -}} </th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {% for line_item in cart.items %}
+                    <tr class="cart-item" data-id="{{ line_item.id }}">
+                      <td class="item-name">
+                        <div class="item-image">
+                          <a href="{{ line_item.url }}">
+                            {% include 'image-style' with image:line_item.image , image_size: 'medium',_type: 'product' %}
+                          </a>
+                        </div>
+                        <div class="item-title">
+                          <p><a href="{{ line_item.url }}"><span class="item-name">{{ line_item.product.title }}</span></a></p>
+                          <div class="d-flex">
+
+                          <a href="/cart/change?line={{ forloop.index }}&quantity=0" class="cart-remove-btn remove-{{ line_item.id }}" type="button" title="{{ 'cart.button_label.remove' | t }}">
+                            <u>Remove</u>
+                          </a>
+                          {% if settings.enable_product_wishlist %}
+                          {% assign wishlist_link = pages["wishlist-page"].url %}
+                            <a href="{{ wishlist_link }}" class="add-to-wishlist add-product-wishlist" data-handle-product="{{line_item.product.handle}}"{% if customer %} data-user="{{ customer.id }}"{% endif %} title="{{ 'products.product.add_to_wishlist' | t }}">{{ 'products.product.add_to_wishlist' | t }}</a>
+                          {% endif %}
+                          </div>
+                        </div>
+                      </td>
+                      <td class="item-price">
+                        <div class="item-title">
+                          <a href="{{ line_item.url }}"><span class="item-name">{{ line_item.product.title }}</span></a>
+
+                          {% unless line_item.variant.title contains 'Default' %}
+                            <div class="wrap-item-variant">
+                              {% for option in line_item.product.options %}
+                                <span class="item-variant"><span class="variant-title">{{ line_item.variant.options[forloop.index0] }}</span></span>
+                              {% endfor %}
+                            </div>
+                          {% endunless %}
+                        </div>
+                        <div>{{ line_item.price | money }}</div>
+                      </td>
+
+                      <td class="item-qty">
+                        <div class="wrapper-fix">
+                          <div class="quantity">
+                            <div class="qty-wrapper" data-id="{{ line_item.id }}">
+                              <span class="qty-inner">
+                                <span class="qty-down-{{ line_item.id }} qty-down"></span>
+                              </span>
+                              <input class="replace input-cart-qty" id="{{ line_item.id }}" value="{{ line_item.quantity }}" type="text"{% unless dis_ajax %} readonly name="item-quantity"{% else %} name="updates[]"{% endunless %}>
+                              <span class="qty-inner">
+                                <span class="qty-up-{{ line_item.id }} qty-up"></span>
+                              </span>
+                            </div>
+                          </div>
+
+                          <div class="action-2">
+                            <a href="/cart/change?line={{ forloop.index }}&quantity=0" class="cart-remove-btn remove-{{ line_item.id }}" type="button" title="{{ 'cart.button_label.remove' | t }}">
+                              {{- 'cart.button_label.remove' | t -}}
+                            </a>
+                          </div>
+                        </div>
+
+                      </td>
+                      <td class="item-total">
+                        {{- line_item.line_price | money -}}
+                      </td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+              <div class="row flex-md-row-reverse">
+                <div class="col-md-4 col-12 float-right">
+                  <div class="cart-clear">
+                    <a class="btn btn-3 btn-clear" href="/cart/clear"><i class="demo-icon icon-delete"></i>{{ 'cart.button_label.clear_cart' | t }}</a>
+                    {% if dis_ajax %}
+                    <button type="submit" name="update" class="btn btn-1 btn-update">
+                      <i class="demo-icon icon-compare-1"></i>{{- 'cart.button_label.update' | t -}}
+                    </button>
+                    {% endif %}
+                  </div>
+                </div>
+                <div class="col-md-8 col-12">
+                  {% if settings.enable_order_notes %}
+                  <div class="cart-order-note">
+                    <div class="d-md-none">
+                      <a href="#cart_note" data-toggle="collapse">
+                        {{ 'cart.general.add_note' | t }}
+                        <i class="demo-icon icon-angle-down float-right"></i>
+                      </a>
+                    </div>
+                    <div class="cart-note collapse" id="cart_note">
+                      <textarea name="note" id="CartSpecialInstructions" placeholder="{{ 'cart.general.add_note' | t }}">{{ cart.note }}</textarea>
+                    </div>
+                  </div>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-3 col-12">
+              <div class="cart-summary">
+                <p class="summary-order-text">{{'cart.general.summary_text' | t }}</p>
+                <div class="cart-total h5">
+                    <strong><span id='revy-cart-subtotal-label'>{{ 'cart.general.subtotal' | t }}</span>:</strong><span class="tt-price"><span id='revy-cart-subtotal-price'>{{ cart.total_price | money }}</span></span>
+                </div>
+                <div class="checkout-wrapper">
+                  {%- if enable_term -%}
+                    <p>{{'cart.general.term_text' | t }}</p>
+                    <div class="terms-conditions">
+                      <input type="checkbox" id="agree">
+                      <a href="{{linK_term}}" target="_blank" rel="noopener">{{'cart.general.terms_conditions' | t }}</a>
+                    </div>
+                  {%- endif -%}
+                  <input type="submit" name="checkout" class="btn btn-1" value="{{ 'cart.button_label.checkout' | t }}" data-term="{{enable_term}}">
+                </div>
+                <div class="cart-condition">                  
+                  <img {% if _lazyload %} class="lazyload" data-{% endif %}src="https://cdn.shopify.com/s/files/1/0085/2312/0720/files/9147129754234561293857203495724958235.jpg?378028">
+                </div>
+              </div>
+              <div class="cart-summary">
+
+                {% if settings.enable_free_shipping %}
+                  <div class="free-shipping">
+                    {% assign cart_total              = cart.total_price | times: 1 %}
+                    {% assign free_shipping_price     = settings.free_shipping_price %}
+                    {% assign free_shipping_price_100 = settings.free_shipping_price | times: 100 %}
+
+                    {% if cart_total > free_shipping_price_100 %}
+                      <div class="text">{{'cart.shipping_text.free_shipping_success' | t }}</div>
+                      <div class="progress"><span class="progress-bar" style="width:100%">100%</span></div>
+                    {% else %}
+                      {% capture progress %}{{ cart_total | divided_by: free_shipping_price }}{% endcapture %}
+                      {% assign spend = free_shipping_price_100 | minus: cart_total %}
+                      {% if spend > 0 %}
+                        <div class="text">{{ 'cart.shipping_text.free_shipping_text_1' | t }} {{ spend | money }} {{ 'cart.shipping_text.free_shipping_text_2' | t }}</div>
+                      {% else %}
+                        <div class="text">{{ 'cart.shipping_text.free_shipping_success' | t }}</div>
+                      {% endif %}
+                      <div class="progress"><span class="progress-bar" style="width:{{ progress }}%">{{ progress }}%</span></div>
+                    {% endif %}
+                  </div>
+                {% endif %}
+                {% if settings.shipping_calculator %}{% include 'shipping-calculator' %}{% endif %}
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </form>
+
+    {% else %}
+      <div class="text-center cart-empty-wrapper">
+        <p class="cart empty">{{ 'cart.general.empty' | t }}</p>
+        <a href="/collections/all"><i class="icon-right"></i> {{ 'cart.general.continue_shopping' | t }}</a>
+      </div>
+    {% endif %}
+
+    {% include 'include-recently-viewd' %}
+  </div>
+</div>
+{% unless dis_ajax %}
+  <script crossorigin="anonymous" src="{{ 'underscore-min.js' | asset_url }}"></script>
+  <script>
+    var cartObj = (function($,_){
+
+      var cartPage = {
+          init: function() {
+              this.qtyUp = $('.qty-up');
+              this.qtyDown = $('.qty-down');
+              this.totalPrice = $('.cart-total .tt-price');
+              this.actionHandle();
+          },
+          showLoading: function(){$('body').addClass('cart-loading');},
+          hideLoading: function(){$('body').removeClass('cart-loading');},
+          actionHandle: function() {
+              var _this = this;
+              this.qtyUp.on('click',   _.debounce(function(e){_this.updateCart(e.currentTarget);}, 250));
+              this.qtyDown.on('click', _.debounce(function(e){_this.updateCart(e.currentTarget);}, 250));
+          },
+          updateCart: function(elem){
+              var _this     = this;
+              var jqElem    = $(elem),
+                  patt      = /\d+/g,
+                  _class    = jqElem.attr('class'),
+                  prodId    = patt.exec(_class)[0],
+                  qtyInput  = jqElem.parents('.quantity').find('.input-cart-qty'),
+                  linePrice = jqElem.parents('.cart-item').find('.item-total'),
+                  qtyVal    = qtyInput.val();
+
+              if (_class.indexOf('up') != -1) {
+                  qtyInput.val(++qtyVal);
+              } else {
+                  if (qtyVal != 1) {
+                      qtyInput.val(--qtyVal);
+                  } else {
+                      return false;
+                  }
+              }
+
+              var postData = {
+                  quantity: qtyVal,
+                  id: prodId
+              };
+
+              _this.showLoading();
+
+              $.ajax({
+                  type: 'POST',
+                  url: '/cart/change.js',
+                  data: postData,
+                  dataType: 'json',
+                  error: function(err){
+                      _this.hideLoading();
+                      console.log(err);
+                  },
+                  success: function(resp) {
+                      _this.hideLoading();
+                      var item_price = '';
+                      // Update cart total price
+                      _this.totalPrice.html(Shopify.formatMoney(resp.total_price, '{{shop.money_format}}'));
+                      // Update item total price
+                      for (var i = 0; i < resp.items.length; i++) {
+                          if (resp.items[i].id.toString() == prodId) {
+                              item_price = resp.items[i].line_price;
+                              linePrice.html(Shopify.formatMoney(item_price, '{{shop.money_format}}'))
+                              break;
+                          } else {
+                              continue;
+                          }
+                      }
+                      Shopify.updateCartInfo(resp, '#cart-info #cart-content');
+                      Currency.convertAll('{{ settings.default_currency }}', Currency.currentCurrency);
+                      var symbol_curr = jQuery('.symbol-currency .money').length && jQuery('.symbol-currency .money').html().replace(/[a-zA-Z0-9,.]/g,'');
+                      jQuery('.symbol-currency .money').html(symbol_curr);
+                      // Update free shipping
+                      var cart_total           = resp.total_price
+                      ,free_shipping_price     = Number('{{ settings.free_shipping_price }}') ? Number('{{ settings.free_shipping_price }}') : 0
+                      ,free_shipping_price_100 = Number('{{ settings.free_shipping_price }}') ? Number('{{ settings.free_shipping_price }}')*100 : 0;
+
+                      if (cart_total >= free_shipping_price_100){
+
+                       $('.progress').html('<span class="progress-bar" style="width: 100%">100%</span>');
+                       $('.text').html("{{'cart.shipping_text.free_shipping_success' | t }}");
+                     }
+                     else{
+
+                       var progress = Number(cart_total / free_shipping_price).toFixed(2)
+                       ,_spend = free_shipping_price_100 - cart_total;
+
+                       $('.progress').html('<span class="progress-bar" style="width:' + progress +'%">' + progress + '%</span>');
+                       $('.text').html("{{ 'cart.shipping_text.free_shipping_text_1' | t }} " + Shopify.formatMoney(_spend, "{{shop.money_format}}") + " {{ 'cart.shipping_text.free_shipping_text_2' | t }}");
+                     }
+
+                  }
+              })
+          }
+      }
+
+      cartPage.init();
+
+      return {
+        syncCartSB: function(res, id) {
+          cartPage.totalPrice.html(Shopify.formatMoney(res.total_price, '{{shop.money_format}}'));
+          $('.cart-table .cart-item').each(function(index,item){
+            if($(item).data('id') == id) {
+              $(item).remove();
+              return false;
+            }
+          });
+          if (res.item_count == 0) {
+            location.reload();
+          }
+          Currency.convertAll('{{ settings.default_currency }}', Currency.currentCurrency);
+        }
+      }
+    })(jQuery,_)
+  </script>
+{% else %}
+<script>
+  jQuery(".qty-inner .qty-up").on("click", function() {
+    let qty_id = jQuery(this).parents('.qty-wrapper').data('id');
+    var oldValue = jQuery("#"+qty_id).val(),
+    newVal = 1;
+    newVal = parseInt(oldValue) + 1;
+    jQuery("#"+qty_id).val(newVal);
+  });
+  jQuery(".qty-inner .qty-down").on("click", function() {
+    let qty_id = jQuery(this).parents('.qty-wrapper').data('id');
+    var oldValue = jQuery("#"+qty_id).val();
+    if (oldValue > 1) {
+      newVal = 1;
+      newVal = parseInt(oldValue) - 1;
+      jQuery("#"+qty_id).val(newVal);
+    }
+  });
+</script>
+{% endunless %}

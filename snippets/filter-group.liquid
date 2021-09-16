@@ -1,0 +1,84 @@
+{% if collection.all_tags.size > 0 and _filter_pos != 'none' %}
+  {% assign file_extension  = 'png' %}
+  {% assign i_fil           = i_fil | plus: 1 %}
+  {% assign _prefix_filter  = block.settings.filter_prefix | strip | downcase %}
+  {% assign _arr_prop       = block.settings.filter_prefix_prop | split: ',' %}
+  {% assign _two_columns    = block.settings.two_columns %}
+  {% assign _show_color     = section.settings.color_filter_show_color %}
+  {% assign _sidebar_style  = section.settings.sidebar_style %}
+  {% if _font_size == blank %}{% assign _font_size = 'h4' %}{% endif %} 
+
+  {% unless _prefix_filter == blank %}
+    {% capture ci %}{{ _prefix_filter }}{% endcapture %}
+    <div class="sbw-filter {{ _filters_style }}{% if _filters_style == 'toggle' or _filters_style == 'select' %} width-col-{{block.settings.toggle_width}}{% endif %} filter-nth-{{i_fil}}"{{block.shopify_attributes}}>
+      <div class="grid-uniform{% if _two_columns %} two-columns{% endif %}" data-prefix="{{_prefix_filter}}">
+
+        <div id="filter-{{ i_fil }}" class="sb-filter {{_prefix_filter}}" data-type="{{_prefix_filter}}">
+          <div class="sbf-title">
+            <span class="{{_font_size}}">{{ _prefix_filter | capitalize }}</span>
+            <a id="clear-filter-{{ i_fil }}" class="clear-filter hidden" style="float: right;" href="javascript:void(0);">{{'collections.general.clear' | t }}</a>
+          </div>
+          <ul class="advanced-filters{% if _show_color and _sidebar_style != 3 and ci == 'color' and _filters_style != 'select' %} list-inline{% endif %}">
+            {% for cus_tag in _arr_prop %}
+              {% capture af_tag %}{{ cus_tag | strip | downcase | prepend: '+++' | append: '+++' }}{% endcapture %}
+              {% assign custom_tag = cus_tag | strip | downcase %}
+
+              {% if _all_tags contains af_tag %}
+                {% assign value = custom_tag %}
+                {% capture in_current_tag %}
+                {% for tag in current_tags %}{% capture cur_tag %}{{ tag | strip | downcase | prepend: '+++' | append: '+++' }}{% endcapture %}{{cur_tag}}{% endfor %}
+                {% endcapture %}
+
+                {% if in_current_tag contains af_tag %}
+                  {% for tag in collection.all_tags %}
+                    {% capture t %}{{ tag | strip | downcase }}{% endcapture %}
+
+                    {% if t == custom_tag  %}
+                      {% if ci == 'color' %}
+                        <li data-group="{{ _prefix_filter }}" class="advanced-filter color-{{ value | handle }}{% if _show_color  and _filters_style != 'select'%} af-color cf-{{ value }}{% endif %} active-filter"
+                            data-handle="{{ custom_tag | handleize }}">
+                          {% if _show_color and _sidebar_style != 3 and _filters_style != 'select'%}
+                            {% assign _title = custom_tag | capitalize %}
+                            {% assign new_title = 'title="' | append: _title | append: '" data-unnecessary' %}
+                            {{ '' | link_to_remove_tag: tag | replace: 'title', new_title }}
+                          {% else %}
+                            {{ custom_tag | capitalize | link_to_remove_tag: tag | replace: 'Remove tag ','' }}
+                          {% endif %}
+                        </li>
+                      {% else %}
+                        <li data-group="{{ _prefix_filter }}" class="advanced-filter rt active-filter" data-handle="{{ custom_tag | handleize }}">
+                          {{ custom_tag | capitalize | link_to_remove_tag: tag | replace: 'Remove tag ','' }}
+                        </li>
+                      {% endif %}
+
+                    {% endif %}
+                  {% endfor %}
+                {% else %}
+
+                  {% if ci == 'color' %}
+
+                    <li data-group="{{ _prefix_filter }}" class="advanced-filter color-{{ value | handle }}{% if _show_color  and _filters_style != 'select'%} af-color cf-{{ value }}{% endif %}">
+                      {% if _show_color and _sidebar_style != 3 and _filters_style != 'select' %}
+                      {% assign _title = custom_tag | capitalize %}
+                      {% assign new_title = 'title="' | append: _title | append: '" data-unnecessary' %}
+                        {{ '' | link_to_add_tag: custom_tag | replace: 'title', new_title }}
+                      {% else %}
+                        {{ custom_tag | capitalize | link_to_add_tag: custom_tag | replace: 'Narrow selection to products matching tag ', '' }}
+                      {% endif %}
+                    </li>
+
+                  {% else %}
+                    <li data-group="{{ _prefix_filter }}" class="advanced-filter rt">
+                      {{ custom_tag | capitalize | link_to_add_tag: custom_tag | replace: 'Narrow selection to products matching tag ', '' }}
+                    </li>
+
+                  {% endif %}
+                {% endif %}
+              {% endif %}
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
+  {% endunless %}
+{% endif %}

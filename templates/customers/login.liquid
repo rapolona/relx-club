@@ -1,0 +1,96 @@
+{% include 'breadcrumb',hide_breadcrumb_image: true %}
+{% assign title_h = 'h2' %}
+
+<div class="container">
+  <div id="col-main" class="page-login">
+    <div class="row">
+      <div class="col-md-3">&nbsp;</div>
+      <div class="col-md-6 col-12">
+        <{{ title_h }}>{{'customer.login.title' | t }}</{{ title_h }}>
+        <div id="customer-login">
+          <div id="customer-login-form">
+            <div class="form-wrapper">
+
+              {% form 'customer_login' %}
+                <input type="hidden" name="checkout_url" value="/account" />
+                <input type="hidden" name="token" id="token" value=""/>
+                {% if form.errors %}
+                <div class="alert alert-error">
+                  <button type="button" class="close" title="{{'customer.general.close' | t }}" data-dismiss="alert">×</button>
+                  {{ form.errors | default_errors }}
+                </div>
+                {% endif %}
+
+                <div class="control-wrapper">
+                  <label for="customer_email">{{ 'customer.login.email' | t }}<span class="req">*</span></label>
+                  <input type="email" required name="customer[email]" id="customer_email" autofocus/>
+                </div>
+
+                {% if form.password_needed %}
+                <div class="control-wrapper">
+                  <label for="customer_password">{{ 'customer.login.password' | t }}<span class="req">*</span></label>
+                  <input type="password" required name="customer[password]" id="customer_password" class="password" />
+                </div>
+                {% endif %}
+
+                <div class="control-wrapper last">
+                  <a class="forgot-pass" href="javascript:;" onclick="showRecoverPasswordForm()">{{ 'customer.login.forgot_password' | t }}</a>
+                  <button class="btn btn-1" type="submit">{{ 'customer.login.sign_in' | t }}</button>
+                </div>
+              {% endform %}
+
+            </div>
+          </div>
+
+          <div id="recover-password" style="display: none;">
+            <p>Please enter your email address below. You will receive a link to reset your password.</p>
+
+            <div class="form-wrapper">
+              {% form 'recover_customer_password' %}
+
+              {% if form.posted_successfully? %}<span class="hide reset-password-success">We've sent you an email with a link to update your password.</span>{% endif %}
+
+              {% if form.errors %}
+              <div class="alert alert-danger">
+                <button type="button" class="close" title="{{'customer.general.close' | t }}" data-dismiss="alert">×</button>
+                {{ form.errors | default_errors }}
+              </div>
+              {% endif %}
+
+              <div class="control-wrapper">
+                <input type="email" value="" name="email" id="recover-email" placeholder="{{ 'customer.recover_password.email' | t }}" />
+              </div>
+
+              <div class="control-wrapper">
+                <button class="btn btn-1" type="submit">{{ 'customer.recover_password.submit' | t }}</button>
+                <a class="cancel btn btn-4" href="javascript:;" onclick="hideRecoverPasswordForm();">{{ 'customer.recover_password.cancel' | t }}</a>
+              </div>
+
+              {% endform %}
+            </div>
+
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">&nbsp;</div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+  if (window.location.hash == '#recover') { showRecoverPasswordForm(); }
+
+  function showRecoverPasswordForm() {
+    $('#recover-password').fadeIn();
+    $('#customer-login-form').hide();
+    window.location.hash = '#recover';
+    return false;
+  }
+
+  function hideRecoverPasswordForm() {
+    $('#recover-password').hide();
+    $('#customer-login-form').fadeIn();
+    window.location.hash = '';
+    return false;
+  }
+</script>

@@ -1,0 +1,38 @@
+<script type="text/javascript">
+	let customerLogged = '{{ customer.id }}';
+	let bc_wl_cp_config = {
+		// Compare Setting
+		enable_compare: true,
+		number_product_compare: 4,
+		compare_add_class: '.add-to-compare .add-product-compare',
+		compare_show_class: '.show-compare',
+		compare_layout_type: 'popup',
+		compare_translate: {
+			t_features_title: 'Features',
+			t_availability_title: 'Availability',
+			t_add_to_cart: 'Add to cart',
+			t_view_detail: 'View',
+			t_option_title: 'Options',
+			t_vendor_title: 'Vendor',
+			t_collection_title: 'Collection',
+			t_rating_title: 'Rating',
+		},
+		compare_showing_option: {
+			show_availability: true,
+			show_option: true,
+			show_vendor: true,
+			show_collection: true,
+			show_rating: true,
+		},
+		// Wishlist Setting
+		enable_wishlist: true,
+		number_product_wishlist: 20,
+		wishlist_add_class: '.add-to-wishlist .add-product-wishlist',
+		wishlist_show_class: '.show-wishlist',
+      wishlist_translate: {
+        login: `Please login first to use wishlist function`,
+        added: `This product has already been added to wishlist`,
+        limit: 'Only ${maxAllow} products allowed to add to wishlist'
+      }
+	}
+</script>

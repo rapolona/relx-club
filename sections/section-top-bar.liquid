@@ -1,0 +1,592 @@
+{% if section.settings.boxed_layout %}{% assign _layout = 'boxed' %}{% else %}{% assign _layout = 'full' %}{% endif %}
+{% assign _lazyload  = settings.use_lazyload %}
+{% assign visibility = section.settings.visibility %}
+
+{% if settings.topbar_bg_transparent > 0 %}
+  {% assign transparent = settings.topbar_bg_transparent | times: 0.01 %}
+  {% assign topbar_bg   = settings.topbar_bg_color | color_modify: 'alpha',  transparent %}
+{% endif %}
+
+{%- capture topbar_visibility -%}
+  {%- case visibility -%}
+    {%- when 'hide' -%} class="d-none"
+    {%- when 'hide_mobile' -%} class="d-none d-lg-block"
+    {%- when 'hide_desktop' -%} class="d-lg-none"
+    {%- else -%}
+  {%- endcase -%}
+{%- endcapture -%}
+
+<div id="topbar"{{topbar_visibility}} data-section-type="topbar" data-section-id="{{section.id}}">
+  {% for block in section.blocks %}
+    {% if block.type == 'top_image' %}
+        {% assign manual_height = block.settings.manually_height %}
+        {% assign bg            = block.settings.topbar_image %}
+        {% if manual_height > 0 and bg != blank %}
+          <div class="topbar-image d-none d-md-block{% if _lazyload %} lazyload{% endif %}"
+          {% if _lazyload %} data-bgset="{{bg | img_url: '1920x'}} 1920w" style="height: {{ manual_height | append: 'vh' }};"
+          {% else %} style="height: {{ manual_height | append: 'vh' }};background-image: url({{bg | img_url: '1920x'}})"{% endif %}></div>
+        {% endif %}
+      {% break %}
+    {% endif %}
+  {% endfor %}
+
+  <div class="topbar{% if section.settings.border_bottom %} border-bottom{% endif %}"{% if settings.topbar_bg_transparent > 0 %} style="background-color:{{topbar_bg}}"{% endif %}>
+    {% if _layout == 'boxed' %}<div class="container">{% endif %}
+
+      <div class="table-row">
+        {%- assign colum_count = 0 -%}
+
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'spacing' -%}
+            {%- assign sp_des_height   = block.settings.height | default: '0px' -%}
+            {%- assign sp_mob_height   = block.settings.mob_height | default: '0px' -%}
+            {%- assign sp_des_width    = block.settings.width | append: '%' -%}
+            {%- assign sp_mob_width    = block.settings.width_mobi | append: '%' -%}
+            {%- assign sp_border       = block.settings.line -%}
+            {%- assign sp_border_color = block.settings.line_color -%}
+
+            <div class="topbar-spacing block-{{block.id}}{% if sp_border %} f-break{% endif %}"{{block.shopify_attributes}}>
+              <style>
+                {%- unless sp_border -%}
+                  @media (min-width: 992px){.topbar-spacing.block-{{block.id}}{width: {{sp_des_width}};height: {{sp_des_height}};}}
+                  @media (max-width: 991px){.topbar-spacing.block-{{block.id}}{width: {{sp_mob_width}};height: {{sp_mob_height}};}}
+                {%- else -%}
+                @media (min-width: 992px){
+                  .topbar-spacing.block-{{block.id}}.f-break{
+                    border-bottom: 1px solid {{sp_border_color}};
+                    margin-top: calc(({{sp_des_height}} /2) - 0.5px);
+                    margin-bottom: calc(({{sp_des_height}} /2) - 0.5px);
+                  }
+                }
+                @media (max-width: 991px){
+                  .topbar-spacing.block-{{block.id}}.f-break{
+                    border-bottom: 1px solid {{sp_border_color}};
+                    margin-top: calc(({{sp_mob_height}} /2) - 0.5px);
+                    margin-bottom: calc(({{sp_mob_height}} /2) - 0.5px);
+                  }
+                }
+                {%- endunless -%}
+              </style>
+            </div>
+          {%- endif -%}
+          {%- if block.type == 'column' -%}
+            {%- assign colum_count    = colum_count | plus: 1 -%}
+            {%- assign i              = forloop.index -%}
+            {%- assign visibility     = block.settings.visibility -%}
+            {%- assign item_align     = block.settings.column_item_align -%}
+            {%- assign item_mod_align = block.settings.column_mod_item_align -%}
+            {%- assign item_spc       = block.settings.item_spacing -%}
+            {%- assign item_mob_spc   = block.settings.item_mob_spacing -%}
+
+            {% capture column_visible %} {%- case visibility -%}{%- when 'hide' -%}d-none{%- when 'hide_mobile' -%}d-none d-lg-block{%- when 'hide_desktop' -%}d-lg-none{%- else -%}{%- endcase -%}{% endcapture %}
+
+            <div id="topbar-col-{{colum_count}}" class="topbar-column text-{{item_mod_align}} text-lg-{{item_align}}{{ column_visible }}"{{block.shopify_attributes}}>
+              <div class="tb-col-content{% if block.settings.animation_content %} run-t{% endif %}">
+              {%- for block in section.blocks offset: i -%}
+
+                {%- case block.type -%}
+                  {%- when 'logo' -%}{% include 'include-logo' with type: 'block' %}
+
+                  {%- when 'social' -%}{% include 'social-media-icons' %}
+
+                  {%- when 'currencies_languages' -%}
+                    {%- assign __right_icon = block.settings.right_icon -%}
+                    {%- if __right_icon -%}{%- assign _posIcon = 'right' -%}{%- else -%}{%- assign _posIcon = '' -%}{%- endif -%}
+                    <div class="header-icons{% if block.settings.hide_label %} hide-label{% endif %}{% if _posIcon == 'right' %} icon-right-pos{% endif %}">
+                      {%- unless _posIcon == 'right' -%}
+                        {% include 'include-header-icons' with show_popup: true %}
+                      {%- endunless -%}
+                      <div class="topbar-label">{{'general.topbar.currencies'| t }}</div>
+                      {%- if _posIcon == 'right' -%}
+                        {% include 'include-header-icons' with show_popup: true %}
+                      {%- endif -%}
+                    </div>
+
+                  {%- when 'text' -%}
+                    {%- assign icon      = block.settings.icon -%}
+                    {%- assign t_text    = block.settings.text -%}
+                    {%- assign countdown = block.settings.countdown -%}
+                    {%- assign btn_label = block.settings.button_label -%}
+                    {%- assign btn_link  = block.settings.link -%}
+
+                    <div class="custom-text">
+                      {%- unless icon == blank -%}<div class="custom-icon"><i class="iconfont {{icon}}"></i></div>{%- endunless -%}
+                      {%- unless t_text == blank -%}<div class="custom--text">{{t_text}}</div>{%- endunless -%}
+                      {%- unless countdown == blank -%}
+                        <div class="block-countdown">
+                          <div class="wrapper-countdown" data-id="{{block.id}}" data-date="{{countdown}}">
+                            <div class="countdown_{{ block.id }}"></div>
+                          </div>
+                        </div>
+                      {%- endunless -%}
+                      {%- unless btn_label == blank and btn_link == blank -%}
+                        <div class="btn-group">
+                          <a class="btn btn-topbar btn-1" href="{{ btn_link }}"><span class="button-text">{{ btn_label }}</span></a>
+                        </div>
+                      {%- endunless -%}
+                    </div>
+
+                  {% when 'form' %}
+                    {%- assign f_text       = block.settings.text -%}
+                    {%- assign form_text    = block.settings.action -%}
+                    <div class="subscibe-content">
+                      {%- unless f_text == blank -%}<p>{{ f_text }}</p>{%- endunless -%}
+                      {%- if block.settings.action_type == 'mailchimp' -%}
+                      <form action="{{ form_text }}" method="post" class="form-inline form-subscribe" name="mc-embedded-subscribe-form" target="_blank" rel="noopener">
+                        <input class="form-control" type="email" required placeholder="{{ settings.mailchip_popup_placeholder }}" name="EMAIL" id="email-input" />
+                        <button type="submit" title="Subscibe" class="btn">{{ 'contact.form.subscrible' | t }}</button>
+                      </form>
+                      {%- else -%}
+                      {% include 'include-klaviyo' with type: 'block'%}
+                      {%- endif -%}
+                    </div>
+
+                  {%- else -%}
+                    {%- if 'account compare wishlist' contains block.type -%}
+                      {%- assign __right_icon = block.settings.right_icon -%}
+                      {%- if __right_icon -%}{%- assign _posIcon = 'right' -%}{%- else -%}{%- assign _posIcon = '' -%}{%- endif -%}
+                      <div class="{% if block.settings.hide_label %} hide-label{% endif %}{% if _posIcon == 'right' %} icon-right-pos{% endif %}">{% include 'include-list-icons' type: block.type, icon_pos: _posIcon %}</div>
+                    {% else %}{% break %}{%- endif -%}
+                {%- endcase -%}
+              {%- endfor -%}
+              </div>
+            <style>
+              @media (min-width: 992px){
+                #topbar-col-{{colum_count}}{width: {{ block.settings.width | append: '%' }};}
+                {%- unless item_spc == blank -%}
+                #topbar-col-{{colum_count}} .tb-col-content > div:not(:first-child){padding-left: {{item_spc}};}{%- endunless -%}
+              }
+              @media (max-width: 991px){
+                #topbar-col-{{colum_count}}{width: {{ block.settings.width_mobi | append: '%' }};}
+                {%- unless item_mob_spc == blank -%}
+                #topbar-col-{{colum_count}} .tb-col-content > div:not(:first-child){padding-left: {{item_mob_spc}};}{%- endunless -%}
+              }
+            </style>
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+
+      </div>
+    {% if _layout == 'boxed' %}</div>{% endif %}
+  </div>
+</div>
+
+{% schema %}
+{
+   "name":"TopBar",
+   "settings":[
+      {
+         "type":"header",
+         "content":"Layout"
+      },
+      {
+         "type":"checkbox",
+         "id":"boxed_layout",
+         "label":"Boxed layout",
+         "default":true
+      },
+      {
+         "type":"checkbox",
+         "id":"border_bottom",
+         "label":"Border Bottom"
+      },
+      {
+         "type":"select",
+         "id":"visibility",
+         "label":"Visibility",
+         "default":"all",
+         "options":[
+            {
+               "value":"hide",
+               "label":"Hide"
+            },
+            {
+               "value":"hide_desktop",
+               "label":"Show on mobile"
+            },
+            {
+               "value":"hide_mobile",
+               "label":"Show on desktop"
+            },
+            {
+               "value":"all",
+               "label":"Show All"
+            }
+         ]
+      }
+   ],
+   "blocks":[
+      {
+         "type":"top_image",
+         "name":"Top Image",
+         "limit":1,
+         "settings":[
+            {
+               "type":"image_picker",
+               "id":"topbar_image",
+               "label":"Image"
+            },
+            {
+               "type":"range",
+               "id":"manually_height",
+               "label":"Height",
+               "min":0,
+               "max":100,
+               "step":5,
+               "unit":"%",
+               "default":100
+            }
+         ]
+      },
+      {
+         "type":"column",
+         "name":"Column",
+         "limit":6,
+         "settings":[
+            {
+               "type":"text",
+               "id":"title",
+               "label":"Column Label"
+            },
+            {
+               "type":"select",
+               "id":"visibility",
+               "label":"Visibility",
+               "default":"all",
+               "options":[
+                  {
+                     "value":"hide",
+                     "label":"Hide"
+                  },
+                  {
+                     "value":"hide_desktop",
+                     "label":"Show on mobile"
+                  },
+                  {
+                     "value":"hide_mobile",
+                     "label":"Show on desktop"
+                  },
+                  {
+                     "value":"all",
+                     "label":"Show All"
+                  }
+               ]
+            },
+            {
+               "type"  :"checkbox",
+               "id"    :"animation_content",
+               "label" :"Animation Content"
+            },
+            {
+               "type":"header",
+               "content":"Desktop settings"
+            },
+            {
+               "type":"range",
+               "id":"width",
+               "min":10,
+               "max":100,
+               "step":1,
+               "unit":"%",
+               "label":"Column Width",
+               "default":100
+            },
+            {
+               "type":"select",
+               "id":"column_item_align",
+               "label":"Items alignment",
+               "options":[
+                  {
+                     "value":"left",
+                     "label":"Left"
+                  },
+                  {
+                     "value":"center",
+                     "label":"Center"
+                  },
+                  {
+                     "value":"right",
+                     "label":"Right"
+                  }
+               ],
+               "default":"center"
+            },
+            {
+               "type":"text",
+               "id"   :"item_spacing",
+               "label":"Padding between items",
+               "default": "12px"
+            },
+            {
+               "type":"header",
+               "content":"Mobile settings"
+            },
+            {
+               "type":"range",
+               "id":"width_mobi",
+               "min":10,
+               "max":100,
+               "step":1,
+               "unit":"%",
+               "label":"Column Width",
+               "default":100
+            },
+            {
+               "type":"select",
+               "id":"column_mod_item_align",
+               "label":"Items alignment",
+               "options":[
+                  {
+                     "value":"left",
+                     "label":"Left"
+                  },
+                  {
+                     "value":"center",
+                     "label":"Center"
+                  },
+                  {
+                     "value":"right",
+                     "label":"Right"
+                  }
+               ],
+               "default":"center"
+            },
+            {
+               "type":"text",
+               "id"   :"item_mob_spacing",
+               "label":"Padding between items",
+               "default": "6px"
+            }
+         ]
+      },
+      {
+         "type":"text",
+         "name":"Text",
+         "settings":[
+            {
+               "type":"richtext",
+               "id":"text",
+               "label":"Text"
+            },
+            {
+               "type":"text",
+               "id":"icon",
+               "label":"Icon name",
+               "default":"icon-phone",
+               "info":"Optional"
+            },
+            {
+               "type":"text",
+               "id":"countdown",
+               "label":"Countdown text",
+               "placeholder":"MM/DD/YYYY",
+               "info":"Optional"
+            },
+            {
+               "type"  :"text",
+               "id"    :"button_label",
+               "label" :"Button Label",
+               "info"  :"Optional"
+            },
+            {
+               "type"  :"url",
+               "id"    :"link",
+               "label" :"Link",
+               "info"  :"Optional"
+            }
+         ]
+      },
+      {
+         "type":"logo",
+         "name":"Logo",
+         "limit":1,
+         "settings":[
+            {
+               "type":"image_picker",
+               "id":"logo",
+               "label":"Footer logo image"
+            },
+            {
+               "type":"range",
+               "id":"logo_max_width",
+               "min":100,
+               "max":1180,
+               "step":20,
+               "unit":"px",
+               "label":"Logo maximum width",
+               "default":100
+            }
+         ]
+      },
+      {
+         "type":"social",
+         "name":"Social Icons",
+         "limit":1
+      },
+      {
+         "type":"account",
+         "name":"Account",
+         "limit":1,
+         "settings": [
+            {
+               "type":"checkbox",
+               "id"   :"hide_label",
+               "label":"Hide label"
+            },
+            {
+               "type":"checkbox",
+               "id"   :"right_icon",
+               "label":"Order change: Text -> Icon"
+            }]
+      },
+      {
+         "type":"compare",
+         "name":"Compare",
+         "limit":1,
+         "settings":[
+            {
+               "type":"paragraph",
+               "content":"Make sure Compare is Enable, To check go to Theme settings > App Integration"
+            },
+            {
+               "type":"checkbox",
+               "id"   :"hide_label",
+               "label":"Hide label"
+            },
+            {
+               "type":"checkbox",
+               "id"   :"right_icon",
+               "label":"Order change: Text -> Icon"
+            }
+         ]
+      },
+      {
+         "type":"wishlist",
+         "name":"Wishlist",
+         "limit":1,
+         "settings":[
+            {
+               "type":"paragraph",
+               "content":"Make sure Wishlist is Enable, To check go to Theme settings > App Integration"
+            },
+            {
+               "type":"checkbox",
+               "id"   :"hide_label",
+               "label":"Hide label"
+            },
+            {
+               "type":"checkbox",
+               "id"   :"right_icon",
+               "label":"Order change: Text -> Icon"
+            }
+         ]
+      },
+      {
+         "type":"currencies_languages",
+         "name":"Currencies & Languages",
+         "limit":1,
+         "settings": [
+            {
+               "type":"checkbox",
+               "id"   :"hide_label",
+               "label":"Hide label"
+            },
+            {
+               "type":"checkbox",
+               "id"   :"right_icon",
+               "label":"Order change: Text -> Icon"
+            }]
+      },
+      {
+         "type":"form",
+         "name":"Form",
+         "limit":1,
+         "settings":[
+            {
+               "type":"text",
+               "id":"text",
+               "label":"Text"
+            },
+            {
+               "type"  :"select",
+               "id"    :"action_type",
+               "label" :"Form Type:",
+               "options":[
+                 {
+                   "value": "mailchimp",
+                   "label": "Mailchimp"
+                 },
+                 {
+                   "value": "klaviyo",
+                   "label": "Klaviyo"
+                 }
+               ],
+               "default":"mailchimp"
+            },
+            {
+               "type":"textarea",
+               "id":"action",
+               "label":"Form Action"
+            },
+            {
+               "type"  :"paragraph",
+               "content":"Mailchimp: [Where do I get my MailChimp Form Action](http:\/\/shopify.barrelny.com\/where-do-i-find-the-mailchimp-signup-url)"
+            },
+            {
+               "type"  :"paragraph",
+               "content":"KLAVIYO: Please copy the hidden input[name='g'] value from the KLAVIYO form and paste here."
+            }
+         ]
+       },
+       {
+        "type":"spacing",
+        "name":"Spacing",
+        "settings":[
+          {
+             "type":"checkbox",
+             "id"   :"line",
+             "label":"Show Border bottom"
+          },
+          {
+             "type":"color",
+             "id"   :"line_color",
+             "label":"Border color",
+             "default": "#565656"
+          },
+          {
+            "type":"range",
+            "id":"width",
+            "min":10,
+            "max":100,
+            "step":1,
+            "unit":"%",
+            "label":"Column Width",
+            "default":100
+          },
+          {
+            "type":"text",
+            "id"   :"height",
+            "label":"Height",
+            "default": "50px"
+          },
+          {
+            "type":"range",
+            "id":"width_mobi",
+            "min":10,
+            "max":100,
+            "step":1,
+            "unit":"%",
+            "label":"Column Width",
+            "default":100
+          },
+          {
+            "type":"text",
+            "id"   :"mob_height",
+            "label":"Mobile Height",
+            "default": "5px"
+          }
+        ]
+      }
+   ]
+}
+{% endschema %}

@@ -1,0 +1,35 @@
+<div class="modal fade" id="newsletter_popup" data-section-id="{{section.id}}" data-section-type="newsletter-popup">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+
+      <div class="modal-body">
+        {% include 'newsletter-template-config' %}  
+        <div  id="newsletter-popup"
+              data-style="{{ _style }}" 
+              data-scroll="{{ _scroll_position }}" 
+              data-expires="{{ _expires }}" 
+              data-delay="{{ _delay_time | times: 1000 }}">    
+          <div class="newsletter-popup-content block-image-{{ _block_image }}" style="background-color: #ffffff">
+              
+              <span class="np-close" title="Close" data-dismiss="modal"></span>
+              
+              {% if _text_box_position == 'bottom' %}
+                {% include 'newsletter-block-image' %}
+              {% endif %}
+              
+              <div class="text-box-image">
+                {% include 'newsletter-block-textbox' %}
+
+                {% unless _text_box_position == 'bottom' %}
+                  {% include 'newsletter-block-image' %}
+                {% endunless %}
+              </div>
+              
+              {% include 'newsletter-block-subscribe-result' %}
+              
+          </div>   
+        </div>        
+      </div>
+    </div>
+  </div>
+</div>

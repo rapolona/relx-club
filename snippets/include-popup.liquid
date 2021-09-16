@@ -1,0 +1,192 @@
+{%- case type -%}
+
+  {%- when 'account' -%}
+    <span class="topbar-popup-close"><i class="demo-icon icon-delete"></i></span>
+
+    <ul class="nav">
+      {%- if customer -%}
+        <li class="nav-item">
+          <a class="nav-link active h4" data-toggle="tab" href="#account_info">
+          {{- 'general.header.account_with_name' | t: name: customer.first_name -}}
+          </a>
+        </li>
+      {%- else -%}
+        <li class="nav-item">
+          <a class="nav-link active h4" data-toggle="tab" href="#signin">{{- 'general.header.signin' | t -}}</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link h4" data-toggle="tab" href="#signup">{{- 'general.header.signup' | t -}}</a>
+        </li>
+      {%- endif -%}
+    </ul>
+
+    <div class="tab-content">
+      {%- if customer -%}
+
+        <div id="account_info" class="tab-pane active">
+          <ul class="list-group">
+            <li class="list-item"><a href="/account"><i class="demo-icon icon-local-home"></i>{{'general.pop_up.order' | t }}</li></a>
+            <li class="list-item"><a href="{{pages['tracking-order'].url}}"><i class="demo-icon icon-local-star"></i>{{'general.pop_up.tracking_your_order' | t }}</li></a>
+            <li class="list-item"><a href="{{pages['store-locator'].url}}"><i class="demo-icon icon-local-pick"></i>{{'general.pop_up.store_location' | t }}</li></a>
+            <li class="list-item">
+              {%- assign t = 'general.pop_up.wishlist' | t -%}
+              {% include 'include-list-icons', type: 'wishlist',text: t %}</li>
+            <li class="list-item">
+              {%- assign t = 'general.pop_up.compare' | t -%}
+              {% include 'include-list-icons', type: 'compare' ,text: t %}</li>
+            <li class="list-item"><a href="{{pages['store-locator'].url}}"><i class="demo-icon icon-question"></i>Support</li></a>
+            <li class="list-item">
+              <a href="/account/logout" title="{{ 'general.header.logout' | t }}"><i class="demo-icon icon-go-1"></i><span>{{ 'general.header.logout' | t }}</span></a>
+            </li>
+          </ul>
+        </div>
+
+      {%- else -%}
+
+        <div id="signin" class="tab-pane active">
+          <div class="form-wrapper" id="form_signin">
+
+            {% form 'customer_login' %}
+              <input type="hidden" name="checkout_url" value="/account" />
+
+              {% if form.errors %}
+                <div class="alert alert-error">
+                  <button type="button" class="close" title="{{'customer.general.close' | t }}" data-dismiss="alert">×</button>
+                  {{- form.errors | default_errors -}}
+                </div>
+              {% endif %}
+
+              <div class="control-wrapper">
+                <input type="email" required name="customer[email]" id="popup_customer_email" placeholder="{{ 'customer.login.email' | t }}" />
+              </div>
+
+              {% if form.password_needed %}
+                <div class="control-wrapper">
+                  <input type="password" autocomplete="off" required name="customer[password]" id="popup_customer_password" class="password" placeholder="{{ 'customer.login.password' | t }}" />
+                </div>
+              {% endif %}
+
+              <div class="re-captcha"></div>
+              <div class="control-wrapper">
+                <button id="signinBtn" class="btn btn-1" type="submit">{{ 'customer.login.sign_in' | t }}</button>
+                <a class="forgot-pass" href="javascript:;" onclick="showRecoverPasswordForm()">{{ 'customer.login.forgot_password' | t }}</a>
+              </div>
+            {% endform %}
+            {% if shop.checkout.guest_login %}
+              {% form 'guest_login' %}
+                <input type="submit" value="Continue as Guest" />
+              {% endform %}
+            {% endif %}
+          </div>
+          <div id="recover-password-popup" style="display: none;">
+            <p>Please enter your email address below. You will receive a link to reset your password.</p>
+
+            <div class="form-wrapper">
+              {% form 'recover_customer_password' %}
+
+                {% if form.posted_successfully? %}<span class="hide reset-password-success">We've sent you an email with a link to update your password.</span>{% endif %}
+
+                {% if form.errors %}
+                <div class="alert alert-danger">
+                  <button type="button" class="close" title="{{'customer.general.close' | t }}" data-dismiss="alert">×</button>
+                  {{ form.errors | default_errors }}
+                </div>
+                {% endif %}
+
+                <div class="control-wrapper">
+                  <input type="email" value="" name="email" id="popup_recover-email" placeholder="{{ 'customer.recover_password.email' | t }}" />
+                </div>
+
+                <div class="control-wrapper text-center">
+                  <button class="btn btn-1" type="submit">{{ 'customer.recover_password.submit' | t }}</button>
+                  <a class="cancel btn btn-4" href="javascript:;" onclick="hideRecoverPasswordForm();">{{ 'customer.recover_password.cancel' | t }}</a>
+                </div>
+
+              {% endform %}
+            </div>
+          </div>
+        </div>
+
+        <div id="signup" class="tab-pane">
+          <div class="form-wrapper">
+
+            {% form 'create_customer' %}
+
+              {% if form.errors %}
+                <div class="alert alert-danger">
+                  <button type="button" class="close" title="{{'customer.general.close' | t }}" data-dismiss="alert">×</button>
+                  {{- form.errors | default_errors -}}
+                </div>
+              {% endif %}
+
+              <div class="control-wrapper">
+                <div class="row">
+                  <div class="col-6">
+                    <input type="text" name="customer[first_name]" id="popup_first-name" {% if form.first_name %}value="{{ form.first_name }}"{% endif %} autocapitalize="words" autofocus placeholder="{{'customer.register.first_name' | t }}" />
+                  </div>
+                  <div class="col-6">
+                    <input type="text" name="customer[last_name]" id="popup_last-name" {% if form.last_name %}value="{{ form.last_name }}"{% endif %} autocapitalize="words" placeholder="{{'customer.register.last_name' | t }}" />
+                  </div>
+                </div>
+              </div>
+
+              <div class="control-wrapper{% if form.errors contains 'email' %} has-error{% endif %}">
+                <input type="email" value="{{ form.email }}" name="customer[email]" id="popup_email" class="{% if form.errors contains 'email' %}error{% endif %}" placeholder="{{'customer.register.email' | t }}" />
+              </div>
+
+              <div class="control-wrapper{% if form.errors contains 'password' %} has-error{% endif %}">
+                <input type="password" autocomplete="off" value="" name="customer[password]" id="popup_password" class="password{% if form.errors contains 'password' %} error{% endif %}" placeholder="{{'customer.register.password' | t }}" />
+              </div>
+              <div class="re-captcha"></div>
+              <div class="control-wrapper">
+                <button class="btn btn-1" type="submit">{{'customer.register.submit' | t }}</button>
+              </div>
+            {% endform %}
+
+          </div>
+        </div>
+      {%- endif -%}
+    </div>
+
+    {%- unless customer -%}
+      <div class="text-center">
+        {% include 'include-list-icons', type: 'compare'  %}
+      </div>
+      <script type="text/javascript">
+        if (window.location.hash == '#recover') { showRecoverPasswordForm(); }
+
+        function showRecoverPasswordForm() {
+          $('#recover-password-popup').fadeIn();
+          $('#form_signin').hide();
+          window.location.hash = '#recover';
+          return false;
+        }
+
+        function hideRecoverPasswordForm() {
+          $('#recover-password-popup').hide();
+          $('#form_signin').fadeIn();
+          window.location.hash = '';
+          return false;
+        }
+      </script>
+    {%- endunless -%}
+
+  {%- when 'curr_lang' -%}
+      <span class="topbar-popup-close"><i class="demo-icon icon-delete"></i></span>
+      <p class="topbar-title h3">{{'general.topbar.preferences'| t }}:</p>
+
+      {% if settings.show_multiple_currencies %}
+        <p class="topbar-title h4">{{'general.topbar.currencies'| t }}:</p>
+        <div class="topbar-currency currency-{{settings.flag_currency}} notranslate">{% include 'currencies-switcher' %}</div>
+      {% endif %}
+
+      {% assign show = true %}
+      {% if settings.private_mode %}
+        {%- unless customer and customer.tags contains 'staff' -%}{% assign show = false %}{%- endunless -%}
+      {% endif %}
+      {% if settings.lang_type != 'none' and show %}
+        <p class="topbar-title h4">{{'general.topbar.languages'| t }}:</p>
+        {% include 'include-translate' %}
+      {% endif %}
+  {%- else -%}
+{%- endcase -%}

@@ -1,0 +1,28 @@
+<article class="post-item">
+  <div class="post-item-inner">
+    {% if article.image %}
+      <div class="post-image">
+        <a href="{{ article.url }}">
+          {% include 'image-style' with image: article.image, image_size: '1920x' %}
+        </a>
+      </div>
+    {% endif %}
+    <div class="post-content">
+      <div class="info">
+        <div class="meta-data">          
+          {% comment %}<a href="{{blog.url}}"><span class="blog-title">{{blog.title}}</span></a>-{% endcomment %}
+          <span class="date">{{ article.published_at | date: '%b %d, %Y' }}</span>
+        </div>
+        <div class="article-title"><a href="{{ article.url }}" ><span class="h3">{{ article.title }}</span></a></div>
+        <div class="meta-data">
+          <span>{{ 'blogs.article.by' | t }} {{article.author}}</span>
+          {%- if article.tags[0].size > 0 -%}
+            | <span>{{ 'blogs.article.tags' | t }} {{article.tags[0]}}</span>            
+          {%- endif -%}
+        </div>
+        {% if section.settings.show_excerpt %}<div class="blog-excerpt">{{article.excerpt}}</div>{% endif %}
+        <a href="{{article.url}}" class="btn">{{ 'blogs.article.countinute' | t }}</a>
+      </div>      
+    </div>
+  </div>
+</article>

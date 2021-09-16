@@ -1,0 +1,38 @@
+{% assign enable_term = settings.enable_term %}
+{% assign linK_term   = settings.linK_term %}
+
+<div class="layer-addcart-modal">
+  <div class="layer-addcart-modals">
+    <div class="am-close" title="{{ 'customer.general.close' | t }}"><i class="demo-icon icon-delete"></i></div>
+	<div class="cart-table">
+		<p><i class="demo-icon icon-ok"></i>{{ 'general.cart_modal.add_product_success' | t }}:</p>
+		<div class="cart-table-wrapper">
+			<div class="cart-left">
+				<div class="cart-img"></div>
+				<div class="cart-info">
+				    <p class="prod-title"></p>
+				    <p class="prod-subtitle"></p>
+				    <p class="prod-price"></p>
+				</div>
+			</div>
+
+			<div class="cart-right">
+				<p class="layercart-count">{{ 'general.cart_modal.your_cart' | t }}: <span class="cart-count"></span></p>
+				<div class="layercart-total">{{ 'general.cart_modal.subtotal' | t }}:<span id="layer-cart-total" class="float-right"></span></div>
+
+				{%- if enable_term -%}
+					<div class="terms-conditions">
+					  <input type="checkbox" id="agree-mobile">
+					  <a href="{{linK_term}}" target="_blank" rel="noopener">{{'cart.general.terms_conditions' | t }}</a>
+					</div>
+				{%- endif -%}
+				<div><a href="/checkout" name="checkout" class="btn btn-checkout" data-term="{{enable_term}}">{{ 'general.cart_modal.checkout' | t }}</a></div>
+				<div><a href="/cart" class="btn btn-view-cart">{{ 'general.cart_modal.view_cart' | t }}</a></div>
+			</div>
+		</div>
+	</div>
+	<div class="layer-related-wrapper" style="display: none;">
+		<p class="h5">{{"general.cart_modal.related_product"|t}}</p>		
+	</div>
+  </div>
+</div>

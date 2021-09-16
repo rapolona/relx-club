@@ -1,0 +1,379 @@
+{% if settings.show_breabcrumb %}{% include 'breadcrumb' %}{% endif %}
+{% assign _lazyload             = settings.use_lazyload %}
+{% assign _catalog_sb_placement = section.settings.catalog_sb_placement %}
+{% assign layout                = 'boxed' %}
+{%- assign _collection_ratio    = section.settings.collections_image_ratio -%}
+
+{% assign _sb_class     = 'col-lg-3' %}
+{% assign _main_class   = 'col-lg-9 col-12' %}
+{% include 'include-item-per-row' %}
+
+<div id="col-main"
+     class="category-content layout-{{layout}}"
+     data-section-type="collection-list" data-section-id="{{section.id}}">
+  {% assign _button = block.settings.button %}
+  {% assign _button_text = block.settings.button_text %}
+  <div class="category-grid-view">
+    <div class="container">
+      <div class="row">
+        {% if _catalog_sb_placement == 'left' %}{% include 'sidebar-catalog' with btn_style: 1 %}{% endif %}
+
+        <div class="list-collection-wrap{% if _catalog_sb_placement != 'none' %} {{_main_class}}{% else %} col-12{% endif %}{% if _collection_ratio == 'fill' %} fill-image{% endif %}">
+
+          {% if section.settings.display_type == 'except' %}
+            {% assign collection_exist = '' %}
+            {% for block in section.blocks %}
+              {% if block.type == 'collection' %}
+                {%- assign collection_exist = collection_exist | append: collections[block.settings.collection].title | append: ' ' -%}
+              {% endif %}
+            {% endfor %}
+          {% endif %}
+
+            <div class="row">
+              {% if section.settings.display_type == 'all' %}
+                {% for collection in collections %}
+                    <div class="collection-item {{ _item_class }} {{_item_class_mob}}">
+                      {% include 'collection-item' %}
+                    </div>
+                {% endfor %}
+              {% endif %}
+
+              {% if section.settings.display_type == 'except' %}
+                {% for collection in collections %}
+                  {% unless collection_exist contains collection.title %}
+                    <div class="collection-item {{ _item_class }} {{_item_class_mob}}">
+                      {% include 'collection-item' %}
+                    </div>
+                  {% endunless %}
+                {% endfor %}
+              {% endif %}
+
+              {% if section.settings.display_type == 'selected' %}
+                {% for block in section.blocks %}
+                  {% if block.type == 'collection' and block.settings.collection != blank %}
+                    {%- assign collection = collections[block.settings.collection] -%}
+                    {% if section.settings.custom_width %}
+                      {% assign _item_class     = 'col-md-' | append: block.settings.col_width %}
+                      {% assign _item_class_mob = 'col-' | append: block.settings.col_width_mobile %}
+                    {% endif %}
+                    <div class="collection-item {{ _item_class }} {{_item_class_mob}} block-{{block.id}}"{{block.shopify_attributes}}>
+                      {% include 'collection-item' %}
+                    </div>
+                    {%- assign _collection_title_color    = block.settings.collection_title_color   | default: 'rgba(0,0,0,0)' -%}
+                    {%- assign _collection_content_color  = block.settings.collection_content_color | default: 'rgba(0,0,0,0)' -%}
+                    {%- capture block_css -%}
+                      {%- unless _collection_title_color   == 'rgba(0,0,0,0)' -%}.category-content .collection-item.block-{{block.id}} .category-info a{color: {{_collection_title_color}} ;}{%- endunless -%}
+                      {%- unless _collection_content_color == 'rgba(0,0,0,0)' -%}.category-content .collection-item.block-{{block.id}} .category-info p{color: {{_collection_content_color}} ;}{%- endunless -%}
+                    {%- endcapture -%}
+                    {%- assign section_css = section_css | append: block_css -%}
+                  {% endif %}
+                {% endfor %}
+              {% endif %}
+            </div>
+        </div>
+
+        {% if _catalog_sb_placement == 'right' %}{% include 'sidebar-catalog' %}{% endif %}
+      </div>
+    </div>
+  </div>
+  {%- assign _collection_title_color    = section.settings.collection_title_color | default: 'rgba(0,0,0,0)' -%}
+  {%- assign _collection_content_color  = section.settings.collection_content_color | default: 'rgba(0,0,0,0)' -%}
+  {%- assign _text_pos                  = section.settings.position | default: '50%, 50%' | split: ',' -%}
+  {%- assign posX = _text_pos[0] | strip | default: '50%' -%}
+  {%- assign posY = _text_pos[1] | strip | default: '50%' -%}
+  <style>
+    {%- unless _collection_title_color   == 'rgba(0,0,0,0)' -%}.category-content .category-info a{color: {{_collection_title_color}} ;}{%- endunless -%}
+    {%- unless _collection_content_color == 'rgba(0,0,0,0)' -%}.category-content .category-info p{color: {{_collection_content_color}} ;}{%- endunless -%}
+    .category-content .category-info{left: {{posX}}; top: {{posY}};transform: translate(-{{posX}},-{{posY}});}
+    {{section_css}}
+  </style>
+</div>
+
+{% schema %}
+{
+   "name":"Collections list page",
+   "settings":[
+      {
+         "type":"paragraph",
+         "content":"All of your collections are listed by default. To customize your list, choose 'Selected' and add collections. In case, some collections that you don't want to show, choose 'Expect' and add collections to hide"
+      },
+      {
+         "type":"image_picker",
+         "id":"breadcrumb_image",
+         "label":"Breadcrumb image"
+      },
+      {
+         "type":"select",
+         "id":"display_type",
+         "label":"Select type to show collections",
+         "default":"all",
+         "options":[
+            {
+               "value":"all",
+               "label":"All"
+            },
+            {
+               "value":"selected",
+               "label":"Selected"
+            },
+            {
+               "value":"except",
+               "label":"Except"
+            }
+         ]
+      },
+      {
+        "type": "select",
+        "id": "collections_image_ratio",
+        "label": "Collection image ratio:",
+        "options": [
+          {
+            "value": "auto",
+            "label": "Auto detect ratio"
+          },
+          {
+            "value":"fill",
+            "label":"Image fill"
+          },
+          {
+            "value": "100%",
+            "label": "Square (1:1)"
+          },
+          {
+            "value": "150%",
+            "label": "Portrait (2:3)"
+          },
+          {
+            "value": "75%",
+            "label": "Landscape (4:3)"
+          },
+          {
+            "value": "56.25%",
+            "label": "Full HD (16:9)"
+          },
+          {
+            "value": "52.36%",
+            "label": "Facebook standard(1.91:1)"
+          },
+          {
+            "value": "83.4444444%",
+            "label": "(5:6)"
+          }
+        ],
+        "default": "150%",
+        "info": "For best results [all collections photos should be the same ratio](https:\/\/help.shopify.com\/manual\/productivity-tools\/image-editor#image-aspect-ratio)."
+      },
+      {
+         "type":"checkbox",
+         "id":"custom_width",
+         "label":"Custom width",
+         "info":"Use with type to show collections is 'Selected'"
+      },
+      {
+         "type":"range",
+         "id":"item_per_row",
+         "label":"Max number of items",
+         "min":1,
+         "max":5,
+         "step":1,
+         "default":3,
+         "info":"Use when Custom Width is DISABLED"
+      },
+      {
+         "type":"range",
+         "id":"item_per_row_mobile",
+         "label":"Mobile: Number of items per row",
+         "min":1,
+         "max":5,
+         "step":1,
+         "default":1,
+         "info":"Use when Custom Width is DISABLED"
+      },
+      {
+         "type":"header",
+         "content":"Sidebar Placement",
+         "info":"To customize your sidebar content, please click Add content."
+      },
+      {
+         "type":"select",
+         "id":"catalog_sb_placement",
+         "label":"Sidebar Placement",
+         "default":"none",
+         "options":[
+            {
+               "value":"left",
+               "label":"Left"
+            },
+            {
+               "value":"right",
+               "label":"Right"
+            },
+            {
+               "value":"none",
+               "label":"None"
+            }
+         ]
+      },
+      {
+         "type":"header",
+         "content":"Text style"
+      },
+      {
+        "type": "select",
+        "id": "text_align",
+        "label": "Text alignment",
+        "options": [
+          {"value":"left","label":"Left"},
+          {"value":"center","label":"Center"},
+          {"value":"right","label":"Right"}
+        ],
+        "default": "center"
+      },
+      {
+         "type":"text",
+         "id":"position",
+         "label":"Text position",
+         "default": "50%, 50%",
+         "info": "Horizontal(%), Vertical(%)"
+      },
+      {
+         "type":"color",
+         "id":"collection_title_color",
+         "label":"Collection title color",
+         "default": "#1a1a1a"
+      },
+      {
+         "type":"color",
+         "id":"collection_content_color",
+         "label":"Collection content color",
+         "default": "#888888"
+      }
+
+   ],
+   "blocks":[
+      {
+         "type":"collection",
+         "name":"Collection",
+         "settings":[
+            {
+               "label":"Collection",
+               "id":"collection",
+               "type":"collection"
+            },
+            {
+               "type":"range",
+               "id":"col_width",
+               "label":"Width on Desktop",
+               "min":1,
+               "max":12,
+               "step":1,
+               "default":6,
+               "unit":"/12",
+               "info":"Use when Custom Width is ENABLED"
+            },
+            {
+               "type":"range",
+               "id":"col_width_mobile",
+               "label":"Width on Mobile",
+               "min":1,
+               "max":12,
+               "step":1,
+               "default":6,
+               "unit":"/12",
+               "info":"Use when Custom Width is ENABLED"
+            },
+            {
+               "type":"color",
+               "id":"collection_title_color",
+               "label":"Collection title color",
+               "default": "rgba(0,0,0,0)"
+            },
+            {
+               "type":"color",
+               "id":"collection_content_color",
+               "label":"Collection content color",
+               "default": "rgba(0,0,0,0)"
+            }
+         ]
+      },
+      {
+         "type":"categories",
+         "name":"Sidebar - Categories",
+         "limit":1,
+         "settings":[
+            {
+               "type":"text",
+               "id":"sb_categories_title",
+               "label":"Heading",
+               "default":"Categories"
+            },
+            {
+               "type":"select",
+               "id":"sb_categories_type",
+               "label":"Content Components",
+               "options":[
+                  {
+                     "value":"categories",
+                     "label":"Categories"
+                  },
+                  {
+                     "value":"menu",
+                     "label":"Menu"
+                  }
+               ],
+               "default":"categories"
+            },
+            {
+               "type":"link_list",
+               "id":"sb_categories_menu",
+               "label":"Menu item",
+               "info":"Only for Content Component is Menu"
+            },
+            {
+             "type":"range",
+             "id":"sb_categories_limit",
+             "label":"Limited items",
+             "min":1,
+             "max":20,
+             "step":1,
+             "default":6,
+             "info":"Only for Content Component is Categories"
+           }
+         ]
+      },
+      {
+         "type":"banner",
+         "name":"Sidebar - Banner",
+         "settings":[
+            {
+               "type":"image_picker",
+               "id":"image_banner",
+               "label":"Image",
+               "info":"The default image size is 270x400 pixels"
+            },
+            {
+               "type":"url",
+               "id":"link",
+               "label":"Link Image"
+            },
+            {
+               "type":"text",
+               "id":"image_text",
+               "label":"Text"
+            },
+            {
+               "type":"color",
+               "id":"title_color",
+               "label":"Text color",
+               "default":"#ffffff"
+            },
+            {
+               "type":"text",
+               "id":"button_text",
+               "label":"Button text"
+            }
+         ]
+      }
+   ]
+}
+{% endschema %}

@@ -1,0 +1,93 @@
+{{ "jquery.tmpl.min.js" 	| asset_url | script_tag }}
+{{ "jquery.product.min.js" 	| asset_url | script_tag }}
+
+{% assign _recently_viewed_limit = block.settings.sb_recently_viewed_limit | default: 5 %}
+{% assign _recently_viewed_title = block.settings.sb_recently_viewed_heading %}
+
+{% assign _heading 	= section.settings.sb_recently_viewed_product_title %}
+{% assign _limit 	= section.settings.sb_recently_viewed_product_limit %}
+{% if sb_title == blank %}{% assign sb_title = settings.section_heading_size | prepend: 'h'	-%}{% endif %}
+
+
+<div class="{% if template contains 'collection' %}sb-widget {% endif %}widget-recently-viewed hide d-none d-lg-block">
+	<div class="{% if template contains 'collection' %}sb-product sb-recently-viewed{% else %} recent-wrapper{% endif %}">
+
+		{%- if template contains 'collection' -%}
+
+			<p class="{{sb_title}}">{{ _recently_viewed_title }}</p>
+		{%- else -%}
+			{% assign _title = 'products.product.recently_viewed' | t %}
+			{% include 'head-title' , _title: _title, _title_alignment: 'left' %}
+		{%- endif -%}
+
+		<div id="recently-viewed-products" class="{% if template contains 'collection' %} collection clearfix{% else %}cata-product{% endif %}" data-handle="{{ product.handle }}"></div>
+
+		{% unless template contains 'collection' %}
+			<script id="recently-viewed-product-template"  type="text/x-jquery-tmpl">
+				<div id="product-${handle}" class="mode-view-item products-grid-item check-product" data-rwhandle="${handle}" style="width: 20%;">
+					<div class="product-wrapper{% if settings.card_padding %} card-padding{% endif %}{% if settings.card_border %} card-border{% endif %}">
+						<div class="product-head">
+							<div class="product-image">
+								<div class="featured-img">
+									<a href="${url}">
+										<span class="image--style">
+											<img class="lazyload img-lazy" data-src="${Shopify.Products.resizeImage(featured_image, "390x")}" />
+										</span>
+									</a>
+								</div>
+							</div>
+						</div>
+						<div class="product-content text-{{settings.text_align_product_item}}">
+							<div class="pc-inner">
+								<div class="prod-name">
+									<h5 class="product-name">
+										<a href="${url}" title="${title}">${title}</a>
+									</h5>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</script>
+		{% else %}
+			<script id="recently-viewed-product-template"  type="text/x-jquery-tmpl">
+				<div id="product-${handle}" class="product listing-item check-product" data-rwhandle="${handle}">
+					<div class="container">
+						<div class="row">
+							<div class="sb-product-head col-4">
+								<a href="${url}">
+									<img class="lazyload img-lazy" data-src="${Shopify.Products.resizeImage(featured_image, "390x")}" />
+								</a>
+							</div>
+							<div class="sb-product-content col-8">
+								<div class="bp-content-inner">
+									<a href="${url}">${title}</a>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</script>
+		{% endunless %}
+
+		<script>
+			Shopify.Products.showRecentlyViewed({
+				howManyToShow: {{_recently_viewed_limit}},
+				onComplete: function() {
+					var _handle = $('#recently-viewed-products').data('handle');
+
+					$('.check-product').each(function(){
+						var _rwhandle = $(this).data('rwhandle')
+						if(_rwhandle === _handle){
+							$(this).remove();
+						}
+					});
+					{%- if show == true -%}
+						if(jQuery('#recently-viewed-products').children().length){$('.widget-recently-viewed').fadeIn().removeClass('hide');}
+					{%- endif -%}
+				}
+			});
+			Shopify.Products.recordRecentlyViewed();
+		</script>
+	</div>
+</div>

@@ -1,0 +1,29 @@
+{% if type == 'mobile' %}
+	{% assign _logo 		 = section.settings.logo_mobile %}
+	{% assign _logo_size 	 = section.settings.mobile_logo_max_width | append: 'x' %}
+	{% assign _logo_size_2x  = section.settings.mobile_logo_max_width | times: 2 | append: 'x' %}
+	{% assign _logo_size_max = section.settings.mobile_logo_max_width | append: 'px' %}
+{% elsif type == 'block' %}
+	{% assign _logo 		 = block.settings.logo %}
+	{% assign _logo_size 	 = block.settings.logo_max_width | append: 'x' %}
+	{% assign _logo_size_2x  = block.settings.logo_max_width | times: 2 | append: 'x' %}
+	{% assign _logo_size_max = block.settings.logo_max_width | append: 'px' %}
+{% else %}
+	{% assign _logo 		 = section.settings.logo %}
+	{% assign _logo_size 	 = section.settings.logo_max_width | append: 'x' %}
+	{% assign _logo_size_2x  = section.settings.logo_max_width | times: 2 | append: 'x' %}
+	{% assign _logo_size_max = section.settings.logo_max_width | append: 'px' %}
+{% endif %}
+
+<div class="header-logo">
+	{% unless _logo == blank %}
+		<a href="/" title="{{ shop.name | escape }}" class="logo-site">
+			<noscript><img src="{{ _logo | img_url: _logo_size }}" style="max-width: {{ _logo_size_max }};" /></noscript>
+			<img {% if _lazyload %}class="lazyload" data-srcset="{{ _logo | img_url: _logo_size }} 1x,{{ _logo | img_url: _logo_size_2x }} 2x"
+				 {% else %} src="{{ _logo | img_url: _logo_size }}"{% endif %}
+				 alt="{{ shop.name | escape }}" style="max-width: {{ _logo_size_max }};" />
+		</a>
+	{% else %}
+		<h1><a href="/">{{ shop.name | replace: 'Arena ' | upcase | append: '.' }}</a></h1>
+	{% endunless %}
+</div>
