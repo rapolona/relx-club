@@ -4342,7 +4342,6 @@
           },
           "8669c3b6-5e4d-4d78-8dc4-8c520102561c": {
             "type": "image_with_link",
-            "disabled": true,
             "settings": {
               "image": "shopify:\/\/shop_images\/10Podsfor1500Artboard-1.png",
               "image_link": "https:\/\/relxclub.com\/products\/buy-3-get-1?variant=40503202152606"
@@ -4569,8 +4568,8 @@
           "92b44a9e-da3d-42d0-b51d-904f0f128196": {
             "type": "image_with_link",
             "settings": {
-              "image": "shopify:\/\/shop_images\/rc-resized-collectrelx.png",
-              "image_link": "https:\/\/relxtech.club\/ph"
+              "image": "shopify:\/\/shop_images\/10Podsfor1500Artboard-2.png",
+              "image_link": ""
             }
           }
         },
