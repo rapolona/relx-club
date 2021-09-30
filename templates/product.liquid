@@ -10,3 +10,5 @@
   {%- when 'slider' 	-%}{% section 'product-slider' %}
   {%- else -%} 			   {% section 'product-classic' %}
 {%- endcase -%} 
+
+{% render 'judgeme_widgets', widget_type: 'judgeme_review_widget', concierge_install: true, auto_install: true, product: product %}
