@@ -65,6 +65,7 @@ _site
 secrets.json
 .jekyll-metadata
 .ruby-version
+
 assets/vendor.css
 assets/pagefly.487e302e.css
 assets/vendor-rtl.css
