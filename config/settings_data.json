@@ -4345,7 +4345,7 @@
             "disabled": true,
             "settings": {
               "image": "shopify:\/\/shop_images\/10Podsfor1500Artboard-1.png",
-              "image_link": "shopify:\/\/products\/buy-3-get-1"
+              "image_link": "shopify:\/\/products\/10-pods-for-1500"
             }
           },
           "91138194-d272-4587-aa68-f7e3bb3e1032": {
@@ -4357,7 +4357,7 @@
               "heading": "",
               "subheading": "",
               "btn_1": "SHOP NOW! &#62;",
-              "btn_1_link": "shopify:\/\/products\/buy-3-get-1",
+              "btn_1_link": "shopify:\/\/products\/10-pods-for-1500",
               "content_align": "center",
               "content_align_ver": "top",
               "show_second_content": false,
