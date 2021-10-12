@@ -4342,6 +4342,7 @@
           },
           "8669c3b6-5e4d-4d78-8dc4-8c520102561c": {
             "type": "image_with_link",
+            "disabled": true,
             "settings": {
               "image": "shopify:\/\/shop_images\/10Podsfor1500Artboard-1.png",
               "image_link": "shopify:\/\/products\/10-pods-for-1500"
