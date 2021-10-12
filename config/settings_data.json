@@ -4342,10 +4342,9 @@
           },
           "8669c3b6-5e4d-4d78-8dc4-8c520102561c": {
             "type": "image_with_link",
-            "disabled": true,
             "settings": {
               "image": "shopify:\/\/shop_images\/10Podsfor1500Artboard-1.png",
-              "image_link": "https:\/\/relxclub.com\/products\/buy-3-get-1?variant=40503202152606"
+              "image_link": "shopify:\/\/products\/buy-3-get-1"
             }
           },
           "91138194-d272-4587-aa68-f7e3bb3e1032": {
