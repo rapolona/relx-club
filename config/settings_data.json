@@ -4372,10 +4372,9 @@
           },
           "8669c3b6-5e4d-4d78-8dc4-8c520102561c": {
             "type": "image_with_link",
-            "disabled": true,
             "settings": {
               "image": "shopify:\/\/shop_images\/4PodsFor750.psdArtboard-1.png",
-              "image_link": ""
+              "image_link": "shopify:\/\/products\/buy-3-get-1"
             }
           },
           "97b61eaa-f703-4d52-819f-39b37b4dd611": {
@@ -4612,6 +4611,7 @@
         "blocks": {
           "85d7a122-80d8-44bf-ae3b-7e1b474f23e4": {
             "type": "image",
+            "disabled": true,
             "settings": {
               "image": "shopify:\/\/shop_images\/Relx_Club_Refer_a_friend_Banner.png"
             }
@@ -4619,7 +4619,8 @@
           "ce10581f-1e0f-483e-aed1-36fa5ff4224b": {
             "type": "image_with_link",
             "settings": {
-              "image": "shopify:\/\/shop_images\/rc-resized-Infinity_Bundle_1.png"
+              "image": "shopify:\/\/shop_images\/rc-resized-Infinity_Bundle_1.png",
+              "image_link": ""
             }
           }
         },
@@ -4642,6 +4643,7 @@
           "show_prod_category": false,
           "show_prod_vendor": false,
           "show_prod_type": false,
+          "size_chart_page": "",
           "meta_countdown_timer": true,
           "countdown_style": 1,
           "meta_description_excerpt": true,
@@ -4661,7 +4663,8 @@
           "3e954a60-898c-494b-bba2-789da2d209b7": {
             "type": "image_with_link",
             "settings": {
-              "image": "shopify:\/\/shop_images\/rc-resized-Wireless_Charger_Bundle.png"
+              "image": "shopify:\/\/shop_images\/rc-resized-Wireless_Charger_Bundle.png",
+              "image_link": ""
             }
           }
         },
@@ -4683,6 +4686,7 @@
           "show_prod_category": false,
           "show_prod_vendor": false,
           "show_prod_type": false,
+          "size_chart_page": "",
           "meta_countdown_timer": true,
           "countdown_style": 1,
           "meta_description_excerpt": true,
@@ -4784,7 +4788,8 @@
           "9a5338a3-425f-4316-972b-06acfdda24db": {
             "type": "image_with_link",
             "settings": {
-              "image": "shopify:\/\/shop_images\/rc-resized-Essential_Bundle.png"
+              "image": "shopify:\/\/shop_images\/rc-resized-Essential_Bundle.png",
+              "image_link": ""
             }
           }
         },
@@ -4806,6 +4811,7 @@
           "show_prod_category": false,
           "show_prod_vendor": false,
           "show_prod_type": false,
+          "size_chart_page": "",
           "meta_countdown_timer": true,
           "countdown_style": 1,
           "meta_description_excerpt": true,
@@ -4825,7 +4831,7 @@
           "e4a5a753-46cf-4e27-808d-8f3aa48930ee": {
             "type": "image_with_link",
             "settings": {
-              "image": "shopify:\/\/shop_images\/10Podsfor1500Artboard-2.png",
+              "image": "shopify:\/\/shop_images\/rc-resized-relx4thewin.png",
               "image_link": ""
             }
           }
