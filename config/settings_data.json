@@ -4373,6 +4373,7 @@
           },
           "8669c3b6-5e4d-4d78-8dc4-8c520102561c": {
             "type": "image_with_link",
+            "disabled": true,
             "settings": {
               "image": "shopify:\/\/shop_images\/4PodsFor750.psdArtboard-1.png",
               "image_link": "shopify:\/\/products\/buy-3-get-1"
@@ -4384,14 +4385,6 @@
               "image": "shopify:\/\/shop_images\/RC-Web_Bundle_Deals1.png",
               "image_link": "https:\/\/relx-club.myshopify.com\/products\/infinity-device-pod-promo",
               "image_link2": ""
-            }
-          },
-          "066387ed-2029-4ecf-9d35-73424fd33783": {
-            "type": "image_with_link",
-            "disabled": true,
-            "settings": {
-              "image": "shopify:\/\/shop_images\/Relx-Club_Bundle-deals-1Artboard-1-copy_copy.png",
-              "image_link": "https:\/\/relxclub.com\/products\/essential-device-pod-promo"
             }
           },
           "d85dfc05-c623-4797-97e9-244f9c4eec34": {
@@ -4406,6 +4399,14 @@
             "settings": {
               "image": "shopify:\/\/shop_images\/rc-resized-Essential_swap_banner.png",
               "image_link": "https:\/\/relx-club.myshopify.com\/products\/essential-swap-promo"
+            }
+          },
+          "066387ed-2029-4ecf-9d35-73424fd33783": {
+            "type": "image_with_link",
+            "disabled": true,
+            "settings": {
+              "image": "shopify:\/\/shop_images\/Relx-Club_Bundle-deals-1Artboard-1-copy_copy.png",
+              "image_link": "https:\/\/relxclub.com\/products\/essential-device-pod-promo"
             }
           },
           "64dbff37-d67b-4ce0-a80b-92eb2503f7f2": {
@@ -4451,9 +4452,9 @@
           "ae67e62f-e221-40d8-a0e4-ccbfd02063ee",
           "8669c3b6-5e4d-4d78-8dc4-8c520102561c",
           "97b61eaa-f703-4d52-819f-39b37b4dd611",
-          "066387ed-2029-4ecf-9d35-73424fd33783",
           "d85dfc05-c623-4797-97e9-244f9c4eec34",
           "bb08958b-0ba1-41d9-a6b9-d9e56170a695",
+          "066387ed-2029-4ecf-9d35-73424fd33783",
           "64dbff37-d67b-4ce0-a80b-92eb2503f7f2",
           "4e670ad0-75d1-4931-a8a1-6f84b377d8d1"
         ],
