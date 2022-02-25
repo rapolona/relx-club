@@ -21,9 +21,14 @@
 {%- comment -%} SOCIAL LOGIN RENDER {%- endcomment -%}
 {% render 'flits_capture_code' with 'component',template:'comp_flitsSocialLoginLoader' %}
 
+{% if customer %}
+    {% assign flitsSecretKey = shop.metafields.Flits.SHOP_ID | append: shop.metafields.Flits.SHOP_TOKEN | append: shop.metafields.Flits.APP_PROXY | append: customer.id %}
+    {% assign flitsSecureCustomerHash = customer.id | plus: shop.metafields.Flits.SHOP_ID | hmac_sha256: flitsSecretKey %}
+{% endif %}
 <script>
   window.flitsObjects&&void 0!==window.flitsObjects||(window.flitsObjects={});
   window.flitsObjects.global = {
+    customerHash: '{{ flitsSecureCustomerHash }}',
     shop_name: '{{ shop.name }}',
     token: '{{ shop.metafields.Flits.SHOP_TOKEN }}',
     base_url: '/apps/{{ shop.metafields.Flits.APP_PROXY }}/api/{{ shop.metafields.Flits.APP_ID }}/{{ shop.metafields.Flits.SHOP_ID }}',
