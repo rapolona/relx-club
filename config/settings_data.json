@@ -4367,7 +4367,7 @@
             "type": "image_with_link",
             "settings": {
               "image": "shopify:\/\/shop_images\/RC-Web_B1T1CLASSIC.png",
-              "image_link": "https:\/\/relxclub.com\/products\/buy-1-take-1-classic-3in1-pods"
+              "image_link": "shopify:\/\/products\/buy-1-take-1-classic-3in1-pods"
             }
           },
           "8669c3b6-5e4d-4d78-8dc4-8c520102561c": {
