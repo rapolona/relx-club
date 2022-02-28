@@ -4365,6 +4365,7 @@
           },
           "ae67e62f-e221-40d8-a0e4-ccbfd02063ee": {
             "type": "image_with_link",
+            "disabled": true,
             "settings": {
               "image": "shopify:\/\/shop_images\/RC-Web_B1T1CLASSIC.png",
               "image_link": "shopify:\/\/products\/buy-1-take-1-classic-3in1-pods"
