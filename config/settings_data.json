@@ -550,15 +550,15 @@
               "button_animation_delay": 0
             }
           },
-          "78844dfa-fa18-40bf-a99e-c132452f694b": {
+          "96ac8437-bd45-472c-9310-c4902070851a": {
             "type": "image",
             "settings": {
-              "image": "shopify:\/\/shop_images\/RC-Homepage-1_1Kit.png",
+              "image": "shopify:\/\/shop_images\/RC-Web_MarchBanners-Payment_copy_5b34f352-599d-481b-817a-716f7792add8.jpg",
               "image_position": "center center",
               "overlay_color": "#000000",
               "image_overlay": 0,
-              "link": "shopify:\/\/products\/essential-device",
-              "use_layer": false,
+              "link": "shopify:\/\/collections\/packages",
+              "use_layer": true,
               "position_top": 50,
               "position_left": 50,
               "alignment": "text-center",
@@ -566,9 +566,9 @@
               "title_text": "",
               "subtitle_text": "",
               "caption_text": "",
-              "button_icon": "icon-right-open-big",
-              "button_text": "ADD TO CART",
-              "button_link": "shopify:\/\/products\/essential-device",
+              "button_icon": "",
+              "button_text": "",
+              "button_link": "",
               "title_bold": false,
               "subtitle_bold": false,
               "caption_bold": false,
@@ -598,15 +598,15 @@
               "button_animation_delay": 0
             }
           },
-          "96ac8437-bd45-472c-9310-c4902070851a": {
+          "78844dfa-fa18-40bf-a99e-c132452f694b": {
             "type": "image",
             "settings": {
-              "image": "shopify:\/\/shop_images\/RC-WEB-Homepage-xendit_copy.png",
+              "image": "shopify:\/\/shop_images\/RC-Homepage-1_1Kit.png",
               "image_position": "center center",
               "overlay_color": "#000000",
               "image_overlay": 0,
-              "link": "shopify:\/\/collections\/packages",
-              "use_layer": true,
+              "link": "shopify:\/\/products\/essential-device",
+              "use_layer": false,
               "position_top": 50,
               "position_left": 50,
               "alignment": "text-center",
@@ -614,9 +614,9 @@
               "title_text": "",
               "subtitle_text": "",
               "caption_text": "",
-              "button_icon": "",
-              "button_text": "",
-              "button_link": "",
+              "button_icon": "icon-right-open-big",
+              "button_text": "ADD TO CART",
+              "button_link": "shopify:\/\/products\/essential-device",
               "title_bold": false,
               "subtitle_bold": false,
               "caption_bold": false,
@@ -747,8 +747,8 @@
         "block_order": [
           "1556895682588",
           "09f3c4d1-cdc9-4dbf-a9c8-fb56f40b533c",
-          "78844dfa-fa18-40bf-a99e-c132452f694b",
           "96ac8437-bd45-472c-9310-c4902070851a",
+          "78844dfa-fa18-40bf-a99e-c132452f694b",
           "8ac7d21c-e6b8-4aa9-9d92-5541b06e474a",
           "5ce384d7-be27-4cf1-8763-6dd2420c2e13"
         ],
