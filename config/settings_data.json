@@ -4394,7 +4394,6 @@
           },
           "d85dfc05-c623-4797-97e9-244f9c4eec34": {
             "type": "image_with_link",
-            "disabled": true,
             "settings": {
               "image": "shopify:\/\/shop_images\/rc-resized-Infinity_swap_banner.png",
               "image_link": "https:\/\/relx-club.myshopify.com\/products\/infinity-swap-promo"
@@ -4402,7 +4401,6 @@
           },
           "bb08958b-0ba1-41d9-a6b9-d9e56170a695": {
             "type": "image_with_link",
-            "disabled": true,
             "settings": {
               "image": "shopify:\/\/shop_images\/rc-resized-Essential_swap_banner.png",
               "image_link": "https:\/\/relx-club.myshopify.com\/products\/essential-swap-promo"
