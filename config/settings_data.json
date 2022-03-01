@@ -4363,20 +4363,18 @@
               "content_2_align_ver": "top"
             }
           },
-          "ae67e62f-e221-40d8-a0e4-ccbfd02063ee": {
-            "type": "image_with_link",
-            "disabled": true,
-            "settings": {
-              "image": "shopify:\/\/shop_images\/RC-Web_B1T1CLASSIC.png",
-              "image_link": "shopify:\/\/products\/buy-1-take-1-classic-3in1-pods"
-            }
-          },
           "8669c3b6-5e4d-4d78-8dc4-8c520102561c": {
             "type": "image_with_link",
-            "disabled": true,
             "settings": {
               "image": "shopify:\/\/shop_images\/4PodsFor750.psdArtboard-1.png",
               "image_link": "shopify:\/\/products\/buy-3-get-1"
+            }
+          },
+          "ae67e62f-e221-40d8-a0e4-ccbfd02063ee": {
+            "type": "image_with_link",
+            "settings": {
+              "image": "shopify:\/\/shop_images\/RC-Web_B1T1CLASSIC.png",
+              "image_link": "shopify:\/\/products\/buy-1-take-1-classic-3in1-pods"
             }
           },
           "97b61eaa-f703-4d52-819f-39b37b4dd611": {
@@ -4389,7 +4387,6 @@
           },
           "066387ed-2029-4ecf-9d35-73424fd33783": {
             "type": "image_with_link",
-            "disabled": true,
             "settings": {
               "image": "shopify:\/\/shop_images\/RC-Web_Bundle_DealsEssential.png",
               "image_link": "https:\/\/relxclub.com\/products\/essential-device-pod-promo"
@@ -4397,6 +4394,7 @@
           },
           "d85dfc05-c623-4797-97e9-244f9c4eec34": {
             "type": "image_with_link",
+            "disabled": true,
             "settings": {
               "image": "shopify:\/\/shop_images\/rc-resized-Infinity_swap_banner.png",
               "image_link": "https:\/\/relx-club.myshopify.com\/products\/infinity-swap-promo"
@@ -4404,6 +4402,7 @@
           },
           "bb08958b-0ba1-41d9-a6b9-d9e56170a695": {
             "type": "image_with_link",
+            "disabled": true,
             "settings": {
               "image": "shopify:\/\/shop_images\/rc-resized-Essential_swap_banner.png",
               "image_link": "https:\/\/relx-club.myshopify.com\/products\/essential-swap-promo"
@@ -4449,8 +4448,8 @@
           "7efdeb36-be9a-40c0-97ae-eb0e20b074f9",
           "88f4ee9a-4f5c-4dc0-9217-bd946a3c9caa",
           "91138194-d272-4587-aa68-f7e3bb3e1032",
-          "ae67e62f-e221-40d8-a0e4-ccbfd02063ee",
           "8669c3b6-5e4d-4d78-8dc4-8c520102561c",
+          "ae67e62f-e221-40d8-a0e4-ccbfd02063ee",
           "97b61eaa-f703-4d52-819f-39b37b4dd611",
           "066387ed-2029-4ecf-9d35-73424fd33783",
           "d85dfc05-c623-4797-97e9-244f9c4eec34",
