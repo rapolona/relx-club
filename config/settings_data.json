@@ -457,7 +457,7 @@
           "1556895682588": {
             "type": "image",
             "settings": {
-              "image": "shopify:\/\/shop_images\/Relx_Club_Homepage_Wtc_copy.png",
+              "image": "shopify:\/\/shop_images\/RC-Web_MarchBanner-wtc.jpg",
               "image_position": "center center",
               "overlay_color": "#000000",
               "image_overlay": 10,
@@ -467,8 +467,8 @@
               "position_left": 90,
               "alignment": "text-right",
               "spacing_text": 8,
-              "title_text": "Welcome",
-              "subtitle_text": "to the Club",
+              "title_text": "",
+              "subtitle_text": "",
               "caption_text": "",
               "button_icon": "icon-right-open-big",
               "button_text": "RELX AND CHOOSE",
