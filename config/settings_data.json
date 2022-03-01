@@ -3975,7 +3975,7 @@
             "type": "image",
             "settings": {
               "image": "shopify:\/\/shop_images\/relx-pods.png",
-              "img_link": "shopify:\/\/products\/infinity-device",
+              "img_link": "shopify:\/\/collections\/device",
               "image_width_desk": 12,
               "image_width_mobile": 12,
               "text_content_style": "default",
@@ -3992,7 +3992,7 @@
               "offer_text": "",
               "expire_text": "",
               "button_text": "RELX AND CHOOSE",
-              "button_link": "shopify:\/\/products\/infinity-device",
+              "button_link": "shopify:\/\/collections\/device",
               "button_rounded": false,
               "button_style": 1,
               "title_text_color": "#000000",
