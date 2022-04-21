@@ -4366,6 +4366,7 @@
           },
           "8669c3b6-5e4d-4d78-8dc4-8c520102561c": {
             "type": "image_with_link",
+            "disabled": true,
             "settings": {
               "image": "shopify:\/\/shop_images\/4PodsFor7501wk.png",
               "image_link": "shopify:\/\/products\/buy-3-get-1"
