@@ -1,0 +1,96 @@
+<script>
+  if(window.ak_mm){
+  }
+  else{
+    window.ak_mm = {};
+    window.ak_mm = window.ak_mm || {};  //check object exists or not
+    window.wcn = function(o){return"undefined"==typeof o||null==o||""==o.toString().trim()};
+    var cartArray=[];
+    var metafieldArray=[];
+    ak_mm.shopid = "{{shop.metafields.ak_mm_minmax.ak_mm_shopid }}";
+    ak_mm.shop_url="{{ shop.url }}";
+    ak_mm.general_setting={{ shop.metafields.ak_mm_minmax.general_settings|parse_json }};
+    //     ak_mm.general_setting=JSON.parse(ak_mm.general_setting);
+    ak_mm.cartMinAmt="{{shop.metafields.ak_mm_minmax.minAmt}}";
+    ak_mm.cartMaxAmt="{{shop.metafields.ak_mm_minmax.maxAmt}}";
+    ak_mm.cartMinQty="{{shop.metafields.ak_mm_minmax.minQty}}";
+    ak_mm.cartMaxQty="{{shop.metafields.ak_mm_minmax.maxQty}}";
+    ak_mm.cartTotalQty="{{cart.item_count}}";
+    ak_mm.CartTotalAmt="{{cart.total_price}}";
+    ak_mm.product_title="{{product.title}}";
+    ak_mm.pid="{{product.id}}";
+    ak_mm.line_item="{{ item.product.description }}";
+    ak_mm.enforcement_status={{shop.metafields.ak_mm_minmax.enforcement_status}};
+  }
+</script>
+{% assign productMinMaxMeta = product.metafields.ak_mm_minmax %}
+{% assign pid = product.id %}
+
+{%- for field in productMinMaxMeta -%}
+{% assign key = field | first %}
+{% assign realMinKey="ak_p_miQ_"|append: pid %}
+{% assign realMaxKey="ak_p_maQ_"|append: pid %}
+
+<script>
+  var pid="{{field | first}}";
+  metafieldArray[pid]="{{ field | last }}";
+
+</script>
+
+
+{% if key == realMinKey %}
+<script>
+  ak_mm.product_min_qty="{{ field | last }}";
+</script>
+{% endif %}
+{% if key == realMaxKey %}
+<script>
+  ak_mm.product_max_qty="{{ field | last }}";
+</script>
+{% endif %}
+
+
+
+{%- endfor -%}
+
+{%- for item in cart.items -%}
+{% assign pid = item.id %}
+
+{% assign realMinKey="ak_p_miQ_"|append: item.product_id %}
+{% assign realMaxKey="ak_p_maQ_"|append: item.product_id %}
+{% assign instructions = product.metafields.ak_mm_minmax %}
+<script>
+  var cartObj={};
+
+  cartObj.pid="{{item.product_id}}";
+  cartObj.p_title="{{item.title}}";
+  cartObj.qty_before="{{item.quantity}}";
+  cartObj.pidMinConcate="{{realMinKey}}";
+  cartObj.pidMaxConcate="{{realMaxKey}}";
+  cartObj.minProductMetaQty="{{item.product.metafields.ak_mm_minmax[realMinKey]}}";
+  cartObj.maxProductMetaQty="{{item.product.metafields.ak_mm_minmax[realMaxKey]}}";
+  cartArray[cartObj.pid+"_min"]=cartObj.minProductMetaQty;
+  cartArray[cartObj.pid+"_max"]=cartObj.maxProductMetaQty;
+
+  //   cartObj.minProductMetaQty=metafieldArray[pidConcate];
+  cartArray.push(cartObj);
+</script>
+
+<br>
+{%- endfor -%}
+
+
+
+
+<script>
+  window.jQuery || document.write('<script src="//code.jquery.com/jquery-3.3.1.min.js"><\/script>');
+</script>
+
+{% assign metaValue= shop.metafields.ak_mm_minmax.enforcement_status %}
+
+{% if metaValue == "1" %} 
+{{ 'ak_mm_swal.js'  | asset_url | script_tag}}
+{% comment %}
+{{ 'ak_mm_amtQty.js'  | asset_url | script_tag}}
+{% endcomment %}
+{% endif %}

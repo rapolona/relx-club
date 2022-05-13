@@ -149,7 +149,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   "sameAs": "https://www.facebook.com/R-Club-100691925552662/?view_public_for=100691925552662"
 }
 </script> 
-  </head>
+  {{ 'ak_mm_amtQty.scss.css' | asset_url | stylesheet_tag }}  </head>
 <body class="template{{ template | split: '.' | first | camelize }}{% if settings.catalog_mode %} category-mode{% endif %}{% if settings.button_rounded_border %} btn-rounded{% endif %}{% if settings.enable_rtl %} theme-rtl{% endif %}" data-theme-id="{{theme.id}}">
   <!-- Google Tag Manager (noscript) -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NRHF69H"
@@ -222,5 +222,5 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
  {% include 'smile-initializer' %}
 
 {{ '//cdn.shopify.com/s/files/1/0194/1736/6592/t/1/assets/booster-page-speed-optimizer.js?23' | script_tag }}
-</body>
+{% include 'ak_mm_variables' %}  </body>
 </html
