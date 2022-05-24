@@ -600,6 +600,7 @@
           },
           "78844dfa-fa18-40bf-a99e-c132452f694b": {
             "type": "image",
+            "disabled": true,
             "settings": {
               "image": "shopify:\/\/shop_images\/RC-Homepage-1_1Kit.png",
               "image_position": "center center",
