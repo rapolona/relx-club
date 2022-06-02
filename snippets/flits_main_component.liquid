@@ -1779,4 +1779,34 @@
 				</div>
 			</div>
 		</div>
+{%- when 'comp_storeCreditOrderStatusPage' -%}
+<div class="content-box flits-order-status flits-store-credit-box" style="display:none;">
+  <div class="content-box__row">
+    <div class="flits-skeleton-row">
+      <div class="flits-skeleton-item">
+        <div class="flits-skeleton-box flits-skeleton-box-1"></div>
+      </div>
+      <div class="flits-skeleton-item">
+        <div class="flits-skeleton-box flits-skeleton-box-2"></div>
+      </div>
+      <div class="flits-skeleton-item">
+        <div class="flits-skeleton-box flits-skeleton-box-3"></div>
+      </div>
+      <div class="flits-skeleton-item">
+        <div class="flits-skeleton-box flits-skeleton-box-4"></div>
+      </div>
+    </div>
+    <div class="flits-order-credit-row" style="display:none;">
+      <h2 class="total-earned-credit-on-order"></h2>
+      <ul class="earned-credit-ul" style="display:none;">
+        <li class="earned-credit-on-order_number"></li>
+        <li class="earned-credit-on-product_tag"></li>
+      </ul>
+      <h2 class="current-credit-balance"></h2>
+      <p class="shop-more-to-earn-credit"></p>
+      <p class="shop-more-to-spent-credit"></p>
+    </div>
+  </div>
+</div>
+
 {%- endcase -%}
