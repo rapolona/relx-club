@@ -456,6 +456,7 @@
         "blocks": {
           "78844dfa-fa18-40bf-a99e-c132452f694b": {
             "type": "image",
+            "disabled": true,
             "settings": {
               "image": "shopify:\/\/shop_images\/RC-Web_INFESS_bea03986-e5a0-4f72-bb1b-b30ed44b59b2.jpg",
               "image_position": "center center",
