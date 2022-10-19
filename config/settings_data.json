@@ -4708,7 +4708,8 @@
           "776a80f1-bad8-4d6d-a58b-2f24f2e13558": {
             "type": "image_with_link",
             "settings": {
-              "image": "shopify:\/\/shop_images\/rc-resized-Infinity_Swap_mechanics_copy.png"
+              "image": "shopify:\/\/shop_images\/rc-resized-Infinity_Swap_mechanics_copy.png",
+              "image_link": ""
             }
           }
         },
@@ -4730,6 +4731,7 @@
           "show_prod_category": false,
           "show_prod_vendor": false,
           "show_prod_type": false,
+          "size_chart_page": "",
           "meta_countdown_timer": true,
           "countdown_style": 1,
           "meta_description_excerpt": true,
