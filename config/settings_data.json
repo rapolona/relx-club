@@ -4791,6 +4791,7 @@
         "blocks": {
           "9a5338a3-425f-4316-972b-06acfdda24db": {
             "type": "image_with_link",
+            "disabled": true,
             "settings": {
               "image": "shopify:\/\/shop_images\/rc-resized-Essential_Bundle.png",
               "image_link": ""
