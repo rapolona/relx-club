@@ -4365,8 +4365,15 @@
               "content_2_align_ver": "top"
             }
           },
+          "9a3adcab-e663-41a5-807a-e55f15ad411b": {
+            "type": "image_with_link",
+            "settings": {
+              "image_link": "https:\/\/relxclub.com\/products\/infinity-plus-early-bird-price"
+            }
+          },
           "8669c3b6-5e4d-4d78-8dc4-8c520102561c": {
             "type": "image_with_link",
+            "disabled": true,
             "settings": {
               "image": "shopify:\/\/shop_images\/RELXFOUREVER.jpg",
               "image_link": "shopify:\/\/products\/buy-3-get-1"
@@ -4448,6 +4455,7 @@
           "7efdeb36-be9a-40c0-97ae-eb0e20b074f9",
           "88f4ee9a-4f5c-4dc0-9217-bd946a3c9caa",
           "91138194-d272-4587-aa68-f7e3bb3e1032",
+          "9a3adcab-e663-41a5-807a-e55f15ad411b",
           "8669c3b6-5e4d-4d78-8dc4-8c520102561c",
           "97b61eaa-f703-4d52-819f-39b37b4dd611",
           "066387ed-2029-4ecf-9d35-73424fd33783",
