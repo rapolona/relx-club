@@ -651,11 +651,11 @@
             "type": "image",
             "disabled": true,
             "settings": {
-              "image": "shopify:\/\/shop_images\/RC-WEB-Homepage-Pods_copy.png",
+              "image": "shopify:\/\/shop_images\/RC-Web_Nov10BannerSnW.jpg",
               "image_position": "center center",
               "overlay_color": "#000000",
               "image_overlay": 0,
-              "link": "shopify:\/\/collections\/pods",
+              "link": "https:\/\/relxtech.club\/PH\/event\/raffle?utm_source=PHSpin2WinHotBanner",
               "use_layer": true,
               "position_top": 50,
               "position_left": 50,
