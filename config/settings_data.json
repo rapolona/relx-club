@@ -1078,11 +1078,18 @@
               "content_2_align_ver": "top"
             }
           },
-          "1366917f-3bec-4db2-9afe-e4795fe75652": {
+          "f8f6d537-4b91-433b-bd74-58d3a22a37ca": {
             "type": "image_with_link",
             "settings": {
-              "image": "shopify:\/\/shop_images\/the_club_pt1_infinity-resized.png",
-              "image_link": "https:\/\/relx-club.myshopify.com\/collections\/device\/products\/infinity-device"
+              "image": "shopify:\/\/shop_images\/the_club-infplus.png",
+              "image_link": "shopify:\/\/products\/infinity-plus"
+            }
+          },
+          "8b4a68c5-6190-40f7-8484-4d855f52bf0e": {
+            "type": "image_with_link",
+            "settings": {
+              "image": "shopify:\/\/shop_images\/the_club-artisan.png",
+              "image_link": "shopify:\/\/products\/relx-artisan-1"
             }
           },
           "f91c4852-6ed2-478d-97e3-8a2ba800e933": {
@@ -1091,18 +1098,25 @@
               "image": "shopify:\/\/shop_images\/the_club_reddot_winner_resized.png"
             }
           },
+          "1366917f-3bec-4db2-9afe-e4795fe75652": {
+            "type": "image_with_link",
+            "settings": {
+              "image": "shopify:\/\/shop_images\/the_club_pt1_infinity-resized.png",
+              "image_link": "shopify:\/\/products\/infinity-device"
+            }
+          },
           "dbc933f1-9154-44d3-9563-a78c31718163": {
             "type": "image_with_link",
             "settings": {
               "image": "shopify:\/\/shop_images\/the_club_pt2_essential_resized.png",
-              "image_link": "https:\/\/relx-club.myshopify.com\/collections\/device\/products\/essential-device"
+              "image_link": "shopify:\/\/products\/essential-device"
             }
           },
           "6d38a206-bd95-4ae1-a586-48c42575dea6": {
             "type": "image_with_link",
             "settings": {
               "image": "shopify:\/\/shop_images\/the_club_pt2_pods_resized.png",
-              "image_link": "https:\/\/relx-club.myshopify.com\/collections\/pods\/products\/relx-pod-pro"
+              "image_link": "shopify:\/\/collections\/pods"
             }
           }
         },
@@ -1110,8 +1124,10 @@
           "bbaa6658-e857-46a6-b92d-edbbb682a08a",
           "379dc2db-1a60-4237-9907-2f3bd7398156",
           "cff7f3e9-0449-4250-88bf-2147e825ebbf",
-          "1366917f-3bec-4db2-9afe-e4795fe75652",
+          "f8f6d537-4b91-433b-bd74-58d3a22a37ca",
+          "8b4a68c5-6190-40f7-8484-4d855f52bf0e",
           "f91c4852-6ed2-478d-97e3-8a2ba800e933",
+          "1366917f-3bec-4db2-9afe-e4795fe75652",
           "dbc933f1-9154-44d3-9563-a78c31718163",
           "6d38a206-bd95-4ae1-a586-48c42575dea6"
         ],
