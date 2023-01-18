@@ -1537,10 +1537,10 @@
           "5af31a33-070b-4be7-9086-046e1d1cf626"
         ],
         "settings": {
-          "newsletter_style": "none",
+          "newsletter_style": "delay",
           "visitors": false,
           "homepage": true,
-          "delay_time": 3,
+          "delay_time": 10,
           "scroll_position": 550,
           "expires": 2,
           "width": 55,
