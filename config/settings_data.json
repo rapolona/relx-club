@@ -4328,7 +4328,7 @@
               "width": "12",
               "title_fontsize": 32,
               "heading": "<h1>RELX Club Exclusive Promos<\/h1>",
-              "subheading": "Score the best deals. Enjoy great discounts<br> Just for you.",
+              "subheading": "<h4>Score the best deals. Enjoy great discounts<br> Just for you. <\/h4>",
               "btn_1": "",
               "btn_1_link": "",
               "content_align": "center",
@@ -4871,6 +4871,37 @@
         "block_order": [
           "e4a5a753-46cf-4e27-808d-8f3aa48930ee"
         ],
+        "settings": {
+          "boxed_layout": true,
+          "background_color": "#ffffff",
+          "shaking_cart": true,
+          "enable_payment_button": true,
+          "enable_pre_order_button": true,
+          "show_sticky_cart": false,
+          "sticky_cart_position": "bottom",
+          "tax_text": "",
+          "stock_enable": false,
+          "show_prod_tags": false,
+          "show_prod_sku": false,
+          "show_prod_category": false,
+          "show_prod_vendor": false,
+          "show_prod_type": false,
+          "size_chart_page": "",
+          "meta_countdown_timer": true,
+          "countdown_style": 1,
+          "meta_description_excerpt": true,
+          "product_tab_review": "inside",
+          "enable_related_product": true,
+          "heading_related_product": "Related Products",
+          "related_product_data": "collection",
+          "items_resp": "4,2",
+          "padding_item": true,
+          "related_product_limit": 15,
+          "enable_recently_viewd": true
+        }
+      },
+      "product-package2-template": {
+        "type": "product-package2-template",
         "settings": {
           "boxed_layout": true,
           "background_color": "#ffffff",
