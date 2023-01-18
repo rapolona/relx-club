@@ -1542,7 +1542,7 @@
           "homepage": true,
           "delay_time": 3,
           "scroll_position": 550,
-          "expires": 3,
+          "expires": 2,
           "width": 55,
           "text_box_position": "left",
           "text_box_backgound": "color",
