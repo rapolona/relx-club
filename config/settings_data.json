@@ -1563,6 +1563,7 @@
         "blocks": {
           "13a8441c-a2c7-4470-8510-ebeeb99fd245": {
             "type": "text",
+            "disabled": true,
             "settings": {
               "text": "",
               "icon": "icon-phone",
@@ -1574,7 +1575,7 @@
           "6b200954-64ea-48a7-b746-30219185c71b": {
             "type": "top_image",
             "settings": {
-              "topbar_image": "shopify:\/\/shop_images\/rc_free_shipping_39808219-46a4-4c3f-bc50-5d2aa6fc42a8.png",
+              "topbar_image": "shopify:\/\/shop_images\/RC3.png",
               "manually_height": 5
             }
           }
