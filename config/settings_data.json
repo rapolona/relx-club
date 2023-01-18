@@ -1037,7 +1037,7 @@
           "bbaa6658-e857-46a6-b92d-edbbb682a08a": {
             "type": "image",
             "settings": {
-              "image": "shopify:\/\/shop_images\/RC-WEBBANNER-THE_CLUB.png"
+              "image": "shopify:\/\/shop_images\/RC-Web_Jan2023-innersTHE_CLUB.jpg"
             }
           },
           "379dc2db-1a60-4237-9907-2f3bd7398156": {
@@ -1060,9 +1060,9 @@
             "type": "text",
             "settings": {
               "width": "12",
-              "title_fontsize": 33,
+              "title_fontsize": 35,
               "heading": "<h1>About Us<\/h1>",
-              "subheading": "RELX Club is the trusted and biggest distributor of RELX products here in the Philippines. It is also the first e-commerce site that sells exclusive RELX products.",
+              "subheading": "<h4>RELX Club is the trusted and biggest distributor of RELX products here in the Philippines. It is also the first e-commerce site that sells exclusive RELX products.<\/h4>",
               "btn_1": "",
               "btn_1_link": "",
               "content_align": "center",
