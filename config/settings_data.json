@@ -3975,7 +3975,7 @@
           "161585022566100d8c-0": {
             "type": "image",
             "settings": {
-              "image": "shopify:\/\/shop_images\/relx-pods.png",
+              "image": "shopify:\/\/shop_images\/relx-pods_2560x_copy.png",
               "img_link": "shopify:\/\/collections\/device",
               "image_width_desk": 12,
               "image_width_mobile": 12,
@@ -4004,7 +4004,7 @@
               "title_font_size": 36,
               "subtitle_font_size": 36,
               "offer_font_size": 36,
-              "button_font_size": 16,
+              "button_font_size": 18,
               "title_spacing": 15,
               "subtitle_spacing": 15,
               "offer_spacing": 15
