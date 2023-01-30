@@ -4344,20 +4344,6 @@
               "content_2_align_ver": "top"
             }
           },
-          "7efdeb36-be9a-40c0-97ae-eb0e20b074f9": {
-            "type": "image",
-            "disabled": true,
-            "settings": {
-              "image": "shopify:\/\/shop_images\/RELX_2_WIN_BANNER_1c35e7e3-31c7-423e-a981-3c0bf86b99b3.jpg"
-            }
-          },
-          "88f4ee9a-4f5c-4dc0-9217-bd946a3c9caa": {
-            "type": "image",
-            "disabled": true,
-            "settings": {
-              "image": "shopify:\/\/shop_images\/RELX_2_WIN_MECHS_copy_08c5fb19-ec31-472a-9a51-ac46764067d2.jpg"
-            }
-          },
           "91138194-d272-4587-aa68-f7e3bb3e1032": {
             "type": "text",
             "disabled": true,
@@ -4379,6 +4365,13 @@
               "btn_2_link": "",
               "content_2_align": "right",
               "content_2_align_ver": "top"
+            }
+          },
+          "761fac85-3bdf-4da5-b96a-76add762c80e": {
+            "type": "image_with_link",
+            "settings": {
+              "image": "shopify:\/\/shop_images\/RC-Web_Jan2023valentines_pods.jpg",
+              "image_link": "https:\/\/relxclub.com\/products\/valentines-sale?utm_source=copyToPasteBoard&utm_medium=product-links&utm_content=web"
             }
           },
           "9a3adcab-e663-41a5-807a-e55f15ad411b": {
@@ -4471,9 +4464,8 @@
         "block_order": [
           "d7b5a857-0f93-4289-a6dc-f4c9990f9886",
           "033a569d-69e5-4bdc-b241-6a0f981d806b",
-          "7efdeb36-be9a-40c0-97ae-eb0e20b074f9",
-          "88f4ee9a-4f5c-4dc0-9217-bd946a3c9caa",
           "91138194-d272-4587-aa68-f7e3bb3e1032",
+          "761fac85-3bdf-4da5-b96a-76add762c80e",
           "9a3adcab-e663-41a5-807a-e55f15ad411b",
           "8669c3b6-5e4d-4d78-8dc4-8c520102561c",
           "97b61eaa-f703-4d52-819f-39b37b4dd611",
