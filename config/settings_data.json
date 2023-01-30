@@ -4369,9 +4369,17 @@
           },
           "761fac85-3bdf-4da5-b96a-76add762c80e": {
             "type": "image_with_link",
+            "disabled": true,
             "settings": {
               "image": "shopify:\/\/shop_images\/RC-Web_Jan2023valentines_pods.jpg",
               "image_link": "https:\/\/relxclub.com\/products\/valentines-sale?utm_source=copyToPasteBoard&utm_medium=product-links&utm_content=web"
+            }
+          },
+          "e5c70136-1664-4eaa-889f-e04417e90d1b": {
+            "type": "image_with_link",
+            "settings": {
+              "image": "shopify:\/\/shop_images\/RC-Web_Jan2023valentines_b1t1.jpg",
+              "image_link": "https:\/\/relxclub.com\/products\/valentines-buy-1-take-1-essential-kit?utm_source=copyToPasteBoard&utm_medium=product-links&utm_content=web"
             }
           },
           "9a3adcab-e663-41a5-807a-e55f15ad411b": {
@@ -4466,6 +4474,7 @@
           "033a569d-69e5-4bdc-b241-6a0f981d806b",
           "91138194-d272-4587-aa68-f7e3bb3e1032",
           "761fac85-3bdf-4da5-b96a-76add762c80e",
+          "e5c70136-1664-4eaa-889f-e04417e90d1b",
           "9a3adcab-e663-41a5-807a-e55f15ad411b",
           "8669c3b6-5e4d-4d78-8dc4-8c520102561c",
           "97b61eaa-f703-4d52-819f-39b37b4dd611",
