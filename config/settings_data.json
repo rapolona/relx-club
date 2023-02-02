@@ -4397,6 +4397,7 @@
           },
           "97b61eaa-f703-4d52-819f-39b37b4dd611": {
             "type": "image_with_link2",
+            "disabled": true,
             "settings": {
               "image": "shopify:\/\/shop_images\/Relx_Club_Infinity888Artboard_1_copy_2.jpg",
               "image_link": "https:\/\/relx-club.myshopify.com\/products\/infinity-device-pod-promo",
@@ -4405,6 +4406,7 @@
           },
           "066387ed-2029-4ecf-9d35-73424fd33783": {
             "type": "image_with_link",
+            "disabled": true,
             "settings": {
               "image": "shopify:\/\/shop_images\/Relx_Club_EssBundleArtboard_1_copy.jpg",
               "image_link": "https:\/\/relxclub.com\/products\/essential-device-pod-promo"
