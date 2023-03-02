@@ -505,9 +505,8 @@
           },
           "8ac7d21c-e6b8-4aa9-9d92-5541b06e474a": {
             "type": "image",
-            "disabled": true,
             "settings": {
-              "image": "shopify:\/\/shop_images\/RC-Web_Jan2023valentines_bfc32d25-b2ea-4cbe-926e-440bbcc364d9.jpg",
+              "image": "shopify:\/\/shop_images\/RC-Web_MArch.png",
               "image_position": "center center",
               "overlay_color": "#000000",
               "image_overlay": 0,
@@ -4369,17 +4368,15 @@
           },
           "761fac85-3bdf-4da5-b96a-76add762c80e": {
             "type": "image_with_link",
-            "disabled": true,
             "settings": {
-              "image": "shopify:\/\/shop_images\/RC-Web_Jan2023valentines_pods.jpg",
+              "image": "shopify:\/\/shop_images\/RC-Web_March1.png",
               "image_link": "https:\/\/relxclub.com\/products\/valentines-sale?utm_source=copyToPasteBoard&utm_medium=product-links&utm_content=web"
             }
           },
           "e5c70136-1664-4eaa-889f-e04417e90d1b": {
             "type": "image_with_link",
-            "disabled": true,
             "settings": {
-              "image": "shopify:\/\/shop_images\/RC-Web_Jan2023valentines_b1t1.jpg",
+              "image": "shopify:\/\/shop_images\/RC-Web_March2.png",
               "image_link": "https:\/\/relxclub.com\/products\/valentines-buy-1-take-1-essential-kit?utm_source=copyToPasteBoard&utm_medium=product-links&utm_content=web"
             }
           },
