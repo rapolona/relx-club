@@ -4951,6 +4951,12 @@
         "disabled": false,
         "settings": {
         }
+      },
+      "starapps-vtk": {
+        "type": "shopify:\/\/apps\/variant-title-king\/blocks\/starapps-vtk-embed\/b9b7a642-58c3-4fe1-8f1b-ed3e502da04b",
+        "disabled": false,
+        "settings": {
+        }
       }
     }
   }
