@@ -4376,6 +4376,7 @@
           },
           "e5c70136-1664-4eaa-889f-e04417e90d1b": {
             "type": "image_with_link",
+            "disabled": true,
             "settings": {
               "image": "shopify:\/\/shop_images\/RC-Web_March2.png",
               "image_link": "https:\/\/relxclub.com\/products\/valentines-buy-1-take-1-essential-kit?utm_source=copyToPasteBoard&utm_medium=product-links&utm_content=web"
