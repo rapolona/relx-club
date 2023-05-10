@@ -4736,6 +4736,7 @@
         "blocks": {
           "3e954a60-898c-494b-bba2-789da2d209b7": {
             "type": "image_with_link",
+            "disabled": true,
             "settings": {
               "image": "shopify:\/\/shop_images\/rc-resized-Wireless_Charger_Bundle.png",
               "image_link": ""
