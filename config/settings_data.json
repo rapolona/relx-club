@@ -457,7 +457,7 @@
           "78844dfa-fa18-40bf-a99e-c132452f694b": {
             "type": "image",
             "settings": {
-              "image": "shopify:\/\/shop_images\/RC-May2023MainBanExc.png",
+              "image": "shopify:\/\/shop_images\/RC-MayMainBanExc.png",
               "image_position": "center center",
               "overlay_color": "#000000",
               "image_overlay": 0,
@@ -505,7 +505,7 @@
           "8ac7d21c-e6b8-4aa9-9d92-5541b06e474a": {
             "type": "image",
             "settings": {
-              "image": "shopify:\/\/shop_images\/RC-May2023valentines.png",
+              "image": "shopify:\/\/shop_images\/RC-Mayvalentines.png",
               "image_position": "center center",
               "overlay_color": "#000000",
               "image_overlay": 0,
