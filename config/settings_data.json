@@ -4690,6 +4690,7 @@
           },
           "ce10581f-1e0f-483e-aed1-36fa5ff4224b": {
             "type": "image_with_link",
+            "disabled": true,
             "settings": {
               "image": "shopify:\/\/shop_images\/rc-resized-Infinity_Bundle_1.png",
               "image_link": ""
