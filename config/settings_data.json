@@ -1599,9 +1599,9 @@
           "6b200954-64ea-48a7-b746-30219185c71b"
         ],
         "settings": {
-          "boxed_layout": true,
+          "boxed_layout": false,
           "border_bottom": false,
-          "visibility": "all"
+          "visibility": "hide"
         }
       },
       "cart-template": {
