@@ -4367,10 +4367,9 @@
           },
           "578f9974-e810-4130-b018-7f38a6dadcd5": {
             "type": "image_with_link",
-            "disabled": true,
             "settings": {
-              "image": "shopify:\/\/shop_images\/RC-May2023INfbundle.png",
-              "image_link": "shopify:\/\/products\/infinitybundle"
+              "image": "shopify:\/\/shop_images\/RC-Web_June2023PRICE-OFF.png",
+              "image_link": "shopify:\/\/products\/infinity-device"
             }
           },
           "771d5e31-fc5e-41bb-8b62-b8ec350fafbd": {
@@ -4390,7 +4389,7 @@
           "4bc10224-d470-4167-9016-2f8f6c532757": {
             "type": "image_with_link",
             "settings": {
-              "image": "shopify:\/\/shop_images\/RC-May2023Inf-plus-bundle.png",
+              "image": "shopify:\/\/shop_images\/RC-Web_June2023Inf-plus-bundle.png",
               "image_link": "shopify:\/\/products\/infinity-plus-bundle"
             }
           },
