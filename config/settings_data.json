@@ -457,7 +457,7 @@
           "78844dfa-fa18-40bf-a99e-c132452f694b": {
             "type": "image",
             "settings": {
-              "image": "shopify:\/\/shop_images\/RC-MayMainBanExc_b4af44aa-c3fa-410c-8f23-158ac6178b86.png",
+              "image": "shopify:\/\/shop_images\/RC-Web_June2023MainBanExc.png",
               "image_position": "center center",
               "overlay_color": "#000000",
               "image_overlay": 0,
@@ -4367,6 +4367,7 @@
           },
           "578f9974-e810-4130-b018-7f38a6dadcd5": {
             "type": "image_with_link",
+            "disabled": true,
             "settings": {
               "image": "shopify:\/\/shop_images\/RC-May2023INfbundle.png",
               "image_link": "shopify:\/\/products\/infinitybundle"
