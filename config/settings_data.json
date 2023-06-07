@@ -1589,7 +1589,7 @@
           "6b200954-64ea-48a7-b746-30219185c71b": {
             "type": "top_image",
             "settings": {
-              "topbar_image": "shopify:\/\/shop_images\/RC3.png",
+              "topbar_image": "shopify:\/\/shop_images\/rcFreePod1_5ed29689-a852-4df2-b9f3-656d288f0962.png",
               "manually_height": 5
             }
           }
@@ -1601,7 +1601,7 @@
         "settings": {
           "boxed_layout": false,
           "border_bottom": false,
-          "visibility": "hide"
+          "visibility": "all"
         }
       },
       "cart-template": {
